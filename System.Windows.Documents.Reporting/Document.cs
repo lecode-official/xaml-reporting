@@ -1,7 +1,9 @@
 ﻿
 #region Using Directives
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Markup;
 
@@ -36,6 +38,16 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         public static DependencyProperty PageNumberProperty = Document.pageNumberPropertyKey.DependencyProperty;
 
+        /// <summary>
+        /// Contains a read-only dependency property, which always contains the total number of pages. This can be used to render page numbers within the XAML document, by binding to it.
+        /// </summary>
+        private static DependencyPropertyKey totalNumberOfPagesPropertyKey = DependencyProperty.RegisterAttachedReadOnly("TotalNumberOfPages", typeof(int), typeof(FixedPage), new PropertyMetadata(1));
+
+        /// <summary>
+        /// Contains the actual total number of pages dependency property, which is available in XAML.
+        /// </summary>
+        public static DependencyProperty TotalNumberOfPagesProperty = Document.totalNumberOfPagesPropertyKey.DependencyProperty;
+
         #endregion
 
         #region Public Methods
@@ -50,20 +62,22 @@ namespace System.Windows.Documents.Reporting
             // Creates a new fixed document, which will contain the visual content of the parts of the document
             FixedDocument fixedDocument = new FixedDocument();
 
-            // Cycles over all of the parts of the document, renders them, and adds the visuals to the fixed document
-            int currentPageNumber = 1;
+            // First all pages of all document parts are retrieved, before they are rendered, this is needed to compute the total number of pages
+            IEnumerable<FixedPage> fixedPages = new List<FixedPage>();
             foreach (DocumentPart documentPart in this.Parts)
-            {
-                // Renders the part of the document, the result of the rendering is a list of fixed pages (they are fixed in size), for each page the current page number is set, so that they are able to properly bind to the page number
-                foreach (FixedPage fixedPage in await documentPart.RenderAsync(dataContext))
-                {
-                    // Sets the current page number, so that the fixed page is able to bind against it, the layout of the fixed page must be updated afterwards, because otherwise the bindings would not be updated during the exporting process
-                    fixedPage.SetValue(Document.pageNumberPropertyKey, currentPageNumber++);
-                    fixedPage.UpdateLayout();
+                fixedPages = fixedPages.Union(await documentPart.RenderAsync(dataContext));
 
-                    // Adds the newly rendered fixed page to the fixed document
-                    fixedDocument.Pages.Add(new PageContent { Child = fixedPage });
-                }
+            // Cycles over all of the fixed pages of the document and adds the visuals to the fixed document
+            int currentPageNumber = 1;
+            foreach (FixedPage fixedPage in fixedPages)
+            {
+                // Sets the current page number and the total number of pages, so that the fixed page is able to bind against them, the layout of the fixed page must be updated afterwards, because otherwise the bindings would not be updated during the exporting process
+                fixedPage.SetValue(Document.pageNumberPropertyKey, currentPageNumber++);
+                fixedPage.SetValue(Document.totalNumberOfPagesPropertyKey, fixedPages.Count());
+                fixedPage.UpdateLayout();
+
+                // Adds the newly rendered fixed page to the fixed document
+                fixedDocument.Pages.Add(new PageContent { Child = fixedPage });
             }
 
             // Returns the rendered fixed document
