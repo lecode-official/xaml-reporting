@@ -8,9 +8,14 @@
     <reporting:PagePart>
         <FixedPage Width="29.7cm" Height="21cm">
             <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}">
-                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Path=FrontPageText}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" />
-                    <TextBlock Text="{Binding Path=PageNumber, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18">
+                        <Run>Seite</Run>
+                        <Run Text="{Binding Path=PageNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                        <Run>von</Run>
+                        <Run Text="{Binding Path=TotalNumberOfPages, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                    </TextBlock>
                 </StackPanel>
             </Grid>
         </FixedPage>
@@ -34,7 +39,12 @@
 
                             <ContentPresenter Grid.Row="1" />
 
-                            <TextBlock Text="{Binding Path=PageNumber, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
+                            <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16">
+                                <Run>Seite</Run>
+                                <Run Text="{Binding Path=PageNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                                <Run>von</Run>
+                                <Run Text="{Binding Path=TotalNumberOfPages, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                            </TextBlock>
                         </Grid>
                     </Grid>
                 </FixedPage>
