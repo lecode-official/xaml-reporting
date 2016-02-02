@@ -1,0 +1,20 @@
+﻿<Window x:Class="System.Windows.Documents.Reporting.Sample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:System.Windows.Documents.Reporting.Sample"
+        mc:Ignorable="d" Title="MainWindow" Width="1920" Height="1080">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DocumentViewer Document="{Binding Path=FixedDocument}" Grid.Row="0" />
+
+        <TextBox Text="{Binding Path=FileName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" />
+        <Button Command="{Binding Path=ExportToXpsCommand}" Grid.Row="2">Export</Button>
+    </Grid>
+</Window>

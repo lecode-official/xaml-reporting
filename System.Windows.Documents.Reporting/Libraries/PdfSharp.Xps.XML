@@ -1,0 +1,2690 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PdfSharp.Xps</name>
+    </assembly>
+    <members>
+        <member name="T:PdfSharp.Xps.XpsModel.PathSegmentCollection">
+            <summary>
+            Represents a collection of PathSegment objecs.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Story">
+            <summary>
+            Defines a single story and where each of its story fragments appear in the XPS Document.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.XpsElement">
+            <summary>
+            Base class for all XPS elements.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsElement.GetParent``1">
+            <summary>
+            Gets the parent or ancestor of this element that is of the specified type.
+            Returns null if no such ancestor exists.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.XpsElement.Parent">
+            <summary>
+            Gets or sets the parent of this element.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Story.StoryName">
+            <summary>
+            The name used by story fragments to identify they belong to this story.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.Utils">
+            <summary>
+            Some temporary stuff.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.XPObject">
+            <summary>
+            Base class for all "Xps to Pdf" objects.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.XPObject.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="!:XPObjectBase"/> class.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.PdfContentWriter">
+            <summary>
+            Provides the funtionality to write a PDF content stream for a PdfPage or an XForm.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteGlyphs(PdfSharp.Xps.XpsModel.Glyphs)">
+            <summary>
+            Writes a Glyphs to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteGlyphs_DistanceOnly(PdfSharp.Xps.XpsModel.Glyphs)">
+            <summary>
+            This is just a draft to see what to do in detail.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteGlyphs_ClusterMapping(PdfSharp.Xps.XpsModel.Glyphs)">
+            <summary>
+            This is just a draft to see what to do in detail.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Pdf.PdfPage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.PdfContentWriter"/> class
+            for creating a content stream of the specified page.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Drawing.XForm,PdfSharp.Xps.Rendering.RenderMode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.PdfContentWriter"/> class
+            for creating a content stream of the specified form.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Pdf.PdfDictionary)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteElements(PdfSharp.Xps.XpsModel.XpsElementCollection)">
+            <summary>
+            Writes all elements of the collection to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteElement(PdfSharp.Xps.XpsModel.XpsElement)">
+            <summary>
+            Writes the specified element to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteVisual(PdfSharp.Xps.XpsModel.Visual)">
+            <summary>
+            Writes a Visual to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteCanvas(PdfSharp.Xps.XpsModel.Canvas)">
+            <summary>
+            Writes a Canvas to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WritePath(PdfSharp.Xps.XpsModel.Path)">
+            <summary>
+            Writes a Path to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteStrokeGeometry(PdfSharp.Xps.XpsModel.Path)">
+            <summary>
+            Strokes the path geometry with the Stroke brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSingleLineStrokeWithSpecialCaps(PdfSharp.Xps.XpsModel.Path)">
+            <summary>
+            If the path is a single line with different start and end caps, convert the line into an area.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.GetContent">
+            <summary>
+            Gets the content created by this renderer.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.Close">
+            <summary>
+            Closes the underlying content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.BeginContent(System.Boolean)">
+            <summary>
+            Initializes the default view transformation, i.e. the transformation from the user page
+            space to the PDF page space.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.BeginContentRaw">
+            <summary>
+            Just save current state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteGeometry(PdfSharp.Xps.XpsModel.PathGeometry)">
+            <summary>
+            Writes the specified PathGeometry to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSegment(PdfSharp.Xps.XpsModel.PolyLineSegment)">
+            <summary>
+            Writes the specified PolyLineSegment to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSegment(PdfSharp.Xps.XpsModel.PolyBezierSegment)">
+            <summary>
+            Writes the specified PolyBezierSegment to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSegment(PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment)">
+            <summary>
+            Writes the specified PolyQuadraticBezierSegment to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSegment(PdfSharp.Xps.XpsModel.ArcSegment)">
+            <summary>
+            Writes the specified ArcSegment to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WritePathFillStroke(PdfSharp.Xps.XpsModel.Path)">
+            <summary>
+            Writes the path fill and/or stroke operators to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.BeginGraphic">
+            <summary>
+            Begins the graphic mode (i.e. ends the text mode).
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.BeginText">
+            <summary>
+            Begins the text mode.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteRenderTransform(PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Writes the specified transformation matrix to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteTextTransform(PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Writes the specified text transformation matrix to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteClip(PdfSharp.Drawing.XRect)">
+            <summary>
+            Writes the specified rectangle as intersection with the current clip path to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteClip(PdfSharp.Xps.XpsModel.PathGeometry)">
+            <summary>
+            Writes the specified PathGeometry as intersection with the current clip path to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.MultiplyTransform(PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Muliplies the spcified transformation with the current transformation and returns the new value;
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.MultiplyOpacity(System.Double)">
+            <summary>
+            Muliplies the spcified opacity with the current opacity and returns the new value;
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeFill(PdfSharp.Xps.XpsModel.Brush,PdfSharp.Drawing.XForm@,PdfSharp.Drawing.XImage@)">
+            <summary>
+            Makes the specified brush to the current graphics object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeFillOpacity(System.Double)">
+            <summary>
+            Realizes the opacity for non-stroke operations.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeStroke(PdfSharp.Xps.XpsModel.Path)">
+            <summary>
+            Makes the specified pen to the current graphics object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeStrokeOpacity(System.Double)">
+            <summary>
+            Realizes the opacity for stroke operations.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeExtGState(PdfSharp.Pdf.Advanced.PdfExtGState)">
+            <summary>
+            Realizes the specified graphic state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.RealizeFont(PdfSharp.Xps.XpsModel.Glyphs)">
+            <summary>
+            Makes the specified font and brush to the current graphics objects.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.GetFontName(PdfSharp.Drawing.XFont,PdfSharp.Pdf.Advanced.PdfFont@)">
+            <summary>
+            Gets the resource name of the specified font within this page or form.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.TryGetFontName(System.String,PdfSharp.Pdf.Advanced.PdfFont@)">
+            <summary>
+            Tries to get the resource name of the specified font within this page or form.
+            Returns null if no such font exists.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.GetFontName(System.String,System.Byte[],PdfSharp.Pdf.Advanced.PdfFont@)">
+            <summary>
+            Gets the resource name of the specified font within this page or form.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.GetFontName(PdfSharp.Xps.XpsModel.Font)">
+            <summary>
+            Gets the resource name of the specified font within this page or form.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteSaveState(System.String,System.String)">
+            <summary>
+            Saves the current graphical state and writes a push state operator to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteRestoreState(System.String,System.String)">
+            <summary>
+            Restores the previous graphical state and writes a pop state operator to the content stream.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.PdfContentWriter.graphicsState">
+            <summary>
+            The current graphics state of the PDF content.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.PdfContentWriter.graphicsStateStack">
+            <summary>
+            The graphical state stack.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteLiteral(System.String)">
+            <summary>
+            Writes a string literally to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteLiteral(System.String,System.Object[])">
+            <summary>
+            Writes a formatted string literally to the content stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfContentWriter.WriteIndent">
+            <summary>
+            Helps to make the content stream more human readable.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Context">
+            <summary>
+            Gets the document rendering context this PDF contentwriter belongs to.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.DefaultPageTransform">
+            <summary>
+            Gets the default page transformation.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Transform">
+            <summary>
+            Gets the current transformation.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Opacity">
+            <summary>
+            Gets the current opacity value.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Owner">
+            <summary>
+            Gets the owning PdfDocument of this page or form.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Resources">
+            <summary>
+            Gets the PdfResources of this page or form.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfContentWriter.Size">
+            <summary>
+            Gets the size of this page or form.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Parsing.XpsParser">
+            <summary>
+            Simple XPS parser.
+            The parser is not a syntax checker and therefore expects well-defined XPS XML to work properly.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePolyLineSegment">
+            <summary>
+            Parses a PolyLineSegment element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePathGeometry">
+            <summary>
+            Parses a PathGeometry element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePathGeometry(System.String)">
+            <summary>
+            Parses a PathGeometry from a data string element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.FixHack(System.String)">
+            <summary>
+            Hack to insert blanks because I do not like to fix Tokenizer at this moment.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseDocumentReference">
+            <summary>
+            Parses a DocumentReference element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseStory">
+            <summary>
+            Parses a Story element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseOutlineEntry">
+            <summary>
+            Parses a OutlineEntry element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseSpotLocation">
+            <summary>
+            Parses a SpotLocation element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePolyBezierSegment">
+            <summary>
+            Parses a PolyBezierSegment element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseImageBrush">
+            <summary>
+            Parses an ImageBrush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseCanvas">
+            <summary>
+            Parses a Canvas element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePathFigure">
+            <summary>
+            Parses a PathFigure element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseVisualBrush">
+            <summary>
+            Parses a VisualBrush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseArcSegment">
+            <summary>
+            Parses a PolyBezierSegment element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseStoryFragmentReference">
+            <summary>
+            Parses a StoryFragmentReference element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseGlyphs">
+            <summary>
+            Parses a Glyphs element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseDocumentOutline">
+            <summary>
+            Parses a DocumentOutline element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseDocumentStructure">
+            <summary>
+            Parses a DocumentStructure element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePageContent">
+            <summary>
+            Parses a PageContent element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePath">
+            <summary>
+            Parses a Path element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParsePolyQuadraticBezierSegment">
+            <summary>
+            Parses a PolyQuadraticBezierSegment element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseBrush">
+            <summary>
+            Parses a Brush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseBrush(System.String)">
+            <summary>
+            Parses a Brush attribute.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseGradientStops">
+            <summary>
+            Parses a sequence of GradientStop element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseRadialGradientBrush">
+            <summary>
+            Parses a RadialGradientBrush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseLinearGradientBrush">
+            <summary>
+            Parses a LinearGradientBrush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseMatrixTransform">
+            <summary>
+            Parses a MatrixTransform element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseMatrixTransform(System.String)">
+            <summary>
+            Parses a MatrixTransform attribute.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseFixedPage">
+            <summary>
+            Parses a FixedPage element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseVisual">
+            <summary>
+            Parses a Visual element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseGradientStop">
+            <summary>
+            Parses a GradientStop element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.Parse(System.String)">
+            <summary>
+            1st hack...
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseBool(System.String)">
+            <summary>
+            Parses a boolean value element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseDouble(System.String)">
+            <summary>
+            Parses a double value element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseEnum``1(System.String)">
+            <summary>
+            Parses an enum value element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseStaticResource``1(System.String)">
+            <summary>
+            Parses a static resource element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.TryParseStaticResource``1(System.String)">
+            <summary>
+            Parses a static resource element if value is a static resource key, otherwise returns null.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.MoveToNextAttribute">
+            <summary>
+            Moves to next attribute of the current element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.MoveToNextElement">
+            <summary>
+            Moves to next element by skipping all white space.
+            Returns true if XmlNodeType.Element is the current node type.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.MoveBeyondThisElement">
+            <summary>
+            Moves to first element after the current element with the specified name.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseLinkTarget">
+            <summary>
+            Parses a LinkTarget element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseListItemStructure">
+            <summary>
+            Parses a ListItemStructure element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseNamedElement">
+            <summary>
+            Parses a NamedElement element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseStoryFragment">
+            <summary>
+            Parses a StoryFragment element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseSignatureDefinition">
+            <summary>
+            Parses a SignatureDefinition element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseFixedDocument">
+            <summary>
+            Parses a FixedDocument element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseSolidColorBrush">
+            <summary>
+            Parses a SolidColorBrush element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseResourceDictionary(PdfSharp.Xps.XpsModel.ResourceDictionary)">
+            <summary>
+            Parses a ResourceDictionary element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseObject">
+            <summary>
+            Parses a element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseTableCellStructure">
+            <summary>
+            Parses a TableCellStructure element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.XpsParser.ParseFixedDocumentSequence">
+            <summary>
+            Parses a FixedDocumentSequence element.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.MatrixTransform">
+            <summary>
+            Creates an arbitrary affine matrix transformation that manipulates objects or coordinate systems
+            in a two-dimensional plane.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.MatrixTransform.Matrix">
+            <summary>
+            Specifies the matrix structure that defines the transformation. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.MatrixTransform.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside
+            of a resource dictionary [M7.11]. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.GradientStop">
+            <summary>
+            Indicates a location and range of color progression for rendering a gradien
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GradientStop.Color">
+            <summary>
+            Specifies the gradient stop color. An sRGB color value specified as a 6-digit hexadecimal number
+            (#RRGGBB) or an extended color. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GradientStop.Offset">
+            <summary>
+            Specifies the gradient offset. The offset indicates a point along the progression of the gradient
+            at which a color is specified. Colors between gradient offsets in the progression are interpolated.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.XFormBuilder">
+            <summary>
+            TODO: Rename to XFormBuilder
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.BuilderBase">
+            <summary>
+            Base class for all builder classes.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.BuilderBase.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.BuilderBase"/> class.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.BuilderBase.Context">
+            <summary>
+            Gets the document rendering context this builder is associated with.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.XFormBuilder.FromImageBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.ImageBrush)">
+            <summary>
+            Creates an XForm from an image brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.XFormBuilder.FromVisualBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.VisualBrush)">
+            <summary>
+            Creates an XForm from a visual brush.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Point">
+            <summary>
+            Represents the width and height of an object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Point.op_Implicit(PdfSharp.Xps.XpsModel.Point)~PdfSharp.Drawing.XPoint">
+            <summary>
+            Performs an implicit conversion from <see cref="T:PdfSharp.Xps.XpsModel.Point"/> to <see cref="T:PdfSharp.Drawing.XPoint"/>.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Point.op_Implicit(PdfSharp.Drawing.XPoint)~PdfSharp.Xps.XpsModel.Point">
+            <summary>
+            Performs an implicit conversion from <see cref="T:PdfSharp.Drawing.XPoint"/> to <see cref="T:PdfSharp.Xps.XpsModel.Point"/>.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Point.Parse(System.String)">
+            <summary>
+            Parses the specified value.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Point.ParsePoints(System.String)">
+            <summary>
+            Parses a series of points.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.DiscardControl">
+            <summary>
+            Contains a list of resources that are safe for a consumer to discard.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.DocumentReference">
+            <summary>
+            Contains a reference to a FixedDocument part.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.DocumentReference.Source">
+            <summary>
+            Specifies the URI of the fixed document content.
+            The specified URI MUST refer to a FixedDocument part within the XPS Document [M3.2].
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.TableStructure">
+            <summary>
+            Contains a complete definition of a table in the XPS Document.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.GlyphIndices">
+            <summary>
+            Represents parsed Indices attribute. See 5.1.3.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.GlyphIndices.#ctor">
+            <summary>
+            Initializes an empty GlyphMapping.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.GlyphIndices.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.Glyphs"/> class.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.GlyphIndices.CalcGlyphIndicesComplexity">
+            <summary>
+            Evaluates how complex the GlyphMapping is.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.Count">
+            <summary>
+            Gets the number of GlyphMapping elements.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.Item(System.Int32)">
+            <summary>
+            Gets the <see cref="T:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping"/> with the specified idx.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.#ctor(System.Int32)">
+            <summary>
+            Temporary to make code work: "empgy glyph mapping"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.ClusterCodeUnitCount">
+            <summary>
+            Number of UTF-16 code units that combine to form this cluster. One or more code units may be
+            specified.
+            Default value is 1. 
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.ClusterGlyphCount">
+            <summary>
+            Number of glyph indices that combine to form this cluster. One or more indices may be specified.
+            Default value is 1. 
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.GlyphIndex">
+             <summary>
+            Index of the glyph (16-bit) in the physical font. The entry MAY be empty [M2.72], in which case
+            the glyph index is determined by looking up the UTF-16 code unit in the font character map table.
+            If there is not a one-to-one mapping between code units and the glyph indices, this entry MUST
+            be specified [M5.5]. In cases where character-to-glyph mappings are not one-to-one, a cluster
+            mapping specification precedes the glyph index (further described below). 
+             </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.AdvanceWidth">
+            <summary>
+            Advance width indicating placement for the subsequent glyph, relative to the origin of the current
+            glyph. Measured in direction of advance as defined by the IsSideways and BidiLevel attributes.
+            Base glyphs generally have a non-zero advance width and combining glyphs have a zero advance
+            width.
+            Advance width is measured in hundredths of the font em size. The default value is defined in the
+            horizontal metrics font table (hmtx) if the IsSideways attribute is specified as false or the vertical
+            metrics font table (vmtx) if the IsSideways attribute is specified as true. Advance width is a real
+            number with units specified in hundredths of an em.  
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.UOffset">
+            <summary>
+            Offset in the effective coordinate space relative to glyph origin to move this glyph (x offset for
+            uOffset and â€“y offset for vOffset. The sign of vOffset is reversed from the direction of the y
+            axis. A positive vOffset value shifts the glyph by a negative y offset and vice versa.). Used to
+            attach marks to base characters. The value is added to the nominal glyph origin calculated using
+            the advance width to generate the actual origin for the glyph. The setting of the IsSideways
+            attribute does not change the interpretation of uOffset and vOffset.
+            Measured in hundredths of the font em size. The default offset values are 0.0,0.0. uOffset and
+            vOffset are real numbers.
+            Base glyphs generally have a glyph offset of 0.0,0.0. Combining glyphs generally have an offset
+            that places them correctly on top of the nearest preceding base glyph.
+            For left-to-right text, a positive uOffset value points to the right; for right-to-left text, a
+            positive uOffset value points to the left. 
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.VOffset">
+            <summary>
+            Offset in the effective coordinate space relative to glyph origin to move this glyph (x offset for
+            uOffset and â€“y offset for vOffset. The sign of vOffset is reversed from the direction of the y
+            axis. A positive vOffset value shifts the glyph by a negative y offset and vice versa.). Used to
+            attach marks to base characters. The value is added to the nominal glyph origin calculated using
+            the advance width to generate the actual origin for the glyph. The setting of the IsSideways
+            attribute does not change the interpretation of uOffset and vOffset.
+            Measured in hundredths of the font em size. The default offset values are 0.0,0.0. uOffset and
+            vOffset are real numbers.
+            Base glyphs generally have a glyph offset of 0.0,0.0. Combining glyphs generally have an offset
+            that places them correctly on top of the nearest preceding base glyph.
+            For left-to-right text, a positive uOffset value points to the right; for right-to-left text, a
+            positive uOffset value points to the left. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.HasGlyphIndex">
+            <summary>
+            Gets a value indicating whether the glyph index is not empty.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.HasAdvanceWidth">
+            <summary>
+            Gets a value indicating whether the AdvanceWidth is defined.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.HasUOffset">
+            <summary>
+            Gets a value indicating whether the UOffset is defined.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.HasVOffset">
+            <summary>
+            Gets a value indicating whether the VOffset is defined.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GlyphIndices.GlyphMapping.HasAdvanceWidthOrOffset">
+            <summary>
+            Gets a value indicating whether at least one of AdvanceWidth, UOffset, or VOffset is defined.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.GlyphIndicesParser">
+            <summary>
+            Converts an indices string into a GlyphMapping array.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Comment">
+            <summary>
+            Pseudo element that represents an XML comment in an XPS file.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Comment.Text">
+            <summary>
+            Gets or sets the comment text.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.MuliplyOpacity(System.Double)">
+            <summary>
+            Muliplies the spcified opacity with the current opacity and returns the new value;
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.RealizeStrokeOpacity(System.Double)">
+            <summary>
+            Realizes the opacity for stroke operations.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.RealizeExtGState(PdfSharp.Pdf.Advanced.PdfExtGState)">
+            <summary>
+            Realizes the specified graphic state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.RealizeFillOpacity(System.Double)">
+            <summary>
+            Realizes the opacity for non-stroke operations.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.RealizeFillHack(PdfSharp.Xps.XpsModel.Color)">
+            <summary>
+            Helper for not yet implemented brush types.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfGraphicsState.BuildShadingFunction(PdfSharp.Xps.XpsModel.GradientStopCollection,PdfSharp.Pdf.PdfColorMode)">
+            <summary>
+            Builds the shading function of the specified gradient stop collection.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.PdfGraphicsState.Opacity">
+            <summary>
+            Gets the current opacity value.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.PatternOrShadingBuilder">
+            <summary>
+            Base class for TilingPatternBuilder and ShadingBuilder.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PatternOrShadingBuilder.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.BuilderBase"/> class.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.GradientStopCollection">
+            <summary>
+            Represents a collection of GradientStop objecs.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.GradientStopCollection.GetAverageAlpha">
+            <summary>
+            HACK: Gets the average alpha value.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.GradientStopCollection.HasTransparency">
+            <summary>
+            Gets a value indicating whether at least one color has an alpha value less than 1.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.WpfUtils">
+            <summary>
+            Some temporary stuff.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.WpfUtils.FlattenSegment(PdfSharp.Xps.XpsModel.Point,PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment)">
+            <summary>
+            Converts a PolyQuadraticBezierSegment into a PolyLineSegment because I currently have no muse to calculate
+            the correct Bézier curves.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.WpfUtils.FlattenSegment(PdfSharp.Xps.XpsModel.Point,PdfSharp.Xps.XpsModel.ArcSegment)">
+            <summary>
+            Converts an ArcSegment into a PolyLineSegment because I currently have no muse to calculate
+            the correct Bézier curves.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.DocumentRenderingContext">
+            <summary>
+            Keeps track of the already created PDF objects.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.DocumentRenderingContext.#ctor(PdfSharp.Pdf.PdfDocument)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.DocumentRenderingContext"/> class.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.Rendering.DocumentRenderingContext.PdfDocument">
+            <summary>
+            Gets the PDF document.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.LinearShadingBuilder">
+            <summary>
+            Constructs a PdfShading from LinearGradientBrush or RadialGradientBrush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.LinearShadingBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShadingFromLinearGradientBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.LinearGradientBrush)">
+            <summary>
+            Builds a shading from a linear gradient brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildPatternFromLinearGradientBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.LinearGradientBrush,PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Builds a pattern from a linear gradient brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildFormFromLinearGradientBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.LinearGradientBrush,PdfSharp.Xps.XpsModel.PathGeometry)">
+            <summary>
+            Builds a form XObject from a linear gradient brush that uses transparency.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShading(PdfSharp.Xps.XpsModel.LinearGradientBrush)">
+            <summary>
+            Builds a PdfShading from the specified brush. If a gradient contains transparency, a soft mask is created an added to the 
+            specified graphic state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShadingPattern(PdfSharp.Xps.XpsModel.LinearGradientBrush,PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Builds a PdfShadingPattern from the specified brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildForm(PdfSharp.Xps.XpsModel.LinearGradientBrush,PdfSharp.Xps.XpsModel.PathGeometry)">
+            <summary>
+            Builds a PdfFormXObject from the specified brush. 
+            // If a gradient contains transparency, a soft mask is created an added to the specified graphic state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildSoftMask(PdfSharp.Xps.XpsModel.LinearGradientBrush)">
+            <summary>
+            Builds the soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildSoftMask(PdfSharp.Xps.XpsModel.RadialGradientBrush)">
+            <summary>
+            Builds the soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShadingForSoftMask(PdfSharp.Xps.XpsModel.LinearGradientBrush)">
+            <summary>
+            Builds a monochrome shading for a form XObject of a soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShadingForSoftMask(PdfSharp.Xps.XpsModel.RadialGradientBrush)">
+            <summary>
+            Builds a monochrome shading for a form XObject of a soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.LinearShadingBuilder.BuildShadingFunction(PdfSharp.Xps.XpsModel.GradientStopCollection,System.Boolean,PdfSharp.Pdf.PdfColorMode)">
+            <summary>
+            Builds the shading function of the specified gradient stop collection.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.DevHelper">
+            <summary>
+            Helper functions for developing the XPS to PDF converter.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.DevHelper.RenderComments">
+            <summary>
+            Gets a value indicating whether to render comments into the PDF dictionaries
+            for easier debugging.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.DevHelper.BorderPatterns">
+            <summary>
+            Gets a value indicating whether to draw a black border around the bounding box
+            of a pattern to make it easier to find transformation issues.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.DevHelper.FlattenArcSegments">
+            <summary>
+            Gets a value indicating whether to flatten ArcSegments instead of calculation Beziér curves.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.DevHelper.FlattenPolyQuadraticBezierSegment">
+            <summary>
+            Gets a value indicating whether to flatten PolyQuadraticBezierSegment instead of calculation Beziér curves.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.RadialShadingBuilder">
+            <summary>
+            Constructs a PdfShading from LinearGradientBrush or RadialGradientBrush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.RadialShadingBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.BuildFromRadialGradientBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.RadialGradientBrush,PdfSharp.Drawing.XRect,PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Builds a shading pattern from an radial gradient brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.BuildForm(PdfSharp.Xps.XpsModel.RadialGradientBrush,PdfSharp.Xps.XpsModel.PathGeometry)">
+            <summary>
+            Builds a PdfFormXObject from the specified brush. 
+            // If a gradient contains transparency, a soft mask is created an added to the specified graphic state.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.BuildSoftMask(PdfSharp.Xps.XpsModel.RadialGradientBrush)">
+            <summary>
+            Builds the soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.BuildShadingForSoftMask(PdfSharp.Xps.XpsModel.RadialGradientBrush)">
+            <summary>
+            Builds a monochrome shading for a form XObject of a soft mask.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.RadialShadingBuilder.BuildShadingFunction(PdfSharp.Xps.XpsModel.GradientStopCollection,System.Boolean,PdfSharp.Pdf.PdfColorMode,System.Boolean,PdfSharp.Pdf.PdfDictionary@)">
+            <summary>
+            Builds the shading function of the specified gradient stop collection.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsConverter">
+            <summary>
+            Main class that provides the functionallity to convert an XPS file into a PDF file.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.#ctor(PdfSharp.Pdf.PdfDocument,PdfSharp.Xps.XpsModel.XpsDocument)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsConverter"/> class.
+            </summary>
+            <param name="pdfDocument">The PDF document.</param>
+            <param name="xpsDocument">The XPS document.</param>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.#ctor(PdfSharp.Pdf.PdfDocument,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsConverter"/> class.
+            </summary>
+            <param name="pdfDocument">The PDF document.</param>
+            <param name="xpsDocumentPath">The XPS document path.</param>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.CreatePage(System.Int32)">
+            <summary>
+            HACK
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.RenderPage(PdfSharp.Pdf.PdfPage,System.Int32)">
+            <summary>
+            Renders an XPS document page to the specified PDF page.
+            </summary>
+            <param name="page">The target PDF page. The page must belong to the PDF document of this converter.</param>
+            <param name="xpsPageIndex">The zero-based XPS page number.</param>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.Convert(System.String)">
+            <summary>
+            Converts the specified PDF file into an XPS file. The new file is stored in the same directory.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.Convert(System.String,System.String,System.Int32)">
+            <summary>
+            Implements the PDF file to XPS file conversion.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.Convert(PdfSharp.Xps.XpsModel.XpsDocument,System.String,System.Int32)">
+            <summary>
+            Implements the PDF file to XPS file conversion.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsConverter.Convert(System.String,System.String,System.Int32,System.Boolean)">
+            <summary>
+            Implements the PDF file to XPS file conversion.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsConverter.PdfDocument">
+            <summary>
+            Gets the PDF document of this converter.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsConverter.XpsDocument">
+            <summary>
+            Gets the XPS document of this converter.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.SolidColorBrush">
+            <summary>
+            Fills defined geometric regions with a solid color.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Brush">
+            <summary>
+            Base class of all five brush types
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SolidColorBrush.Opacity">
+            <summary>
+            Defines the uniform transparency of the brush fill. Values range from 0 (fully transparent)
+            to 1 (fully opaque), inclusive. Values outside of this range are invalid. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SolidColorBrush.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M6.1]. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SolidColorBrush.Color">
+            <summary>
+            Specifies the color for filled elements. An sRGB color value specified as a 6-digit
+            hexadecimal number (#RRGGBB) or an extended color. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PolyBezierSegment">
+            <summary>
+            A series of Bézier segments.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PathSegment">
+            <summary>
+            Base class of a path segment classes.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PathSegment.GetBoundingBox">
+            <summary>
+            When overridden in a derived class, gets the smallest rectangle that completely contains all points of the segments.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PolyBezierSegment.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all points of the segments.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.PolyBezierSegment.Points">
+            <summary>
+            Specifies control points for multiple Bézier segments. Coordinate values within each pair are 
+            comma-separated and additional whitespace may appear. Coordinate pairs are separated 
+            from other coordinate pairs by whitespace. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PolyBezierSegment.IsStroked">
+            <summary>
+            Specifies whether the stroke for this segment of the path is drawn. Can be true or false. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Glyphs">
+            <summary>
+            Represents a run of text from a single font.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Glyphs.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.Glyphs"/> class.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.BidiLevel">
+            <summary>
+            Specifies the Unicode algorithm bidirectional nesting level. Even values imply left-to-right layout,
+            odd values imply right-to-left layout. Right-to-left layout places the run origin at the right side
+            of the first glyph, with positive advance widths (representing advances to the left) placing
+            subsequent glyphs to the left of the previous glyph. Valid values range from 0 to 61, inclusive. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.CaretStops">
+            <summary>
+            Identifies the positions within the sequence of Unicode characters at which a text-selection
+            tool may place a text-editing caret. Potential caret-stop positions are identified by their indices
+            into the UTF-16 code units represented by the UnicodeString attribute value. When this attribute
+            is missing, the text in the UnicodeString attribute value MUST be interpreted as having a caret
+            stop between every Unicode UTF-16 code unit and at the beginning and end of the text [M5.1].
+            The value SHOULD indicate that the caret cannot stop in front of most combining marks or in
+            front of the second UTF-16 code unit of UTF-16 surrogate pairs [S5.1].
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.DeviceFontName">
+            <summary>
+            Uniquely identifies a specific device font. The identifier is typically defined by a hardware vendor
+            or font vendor. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.Fill">
+            <summary>
+            Describes the brush used to fill the shape of the rendered glyphs. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.FontRenderingEmSize">
+            <summary>
+            Specifies the font size in drawing surface units, expressed as a float in units of the effective
+            coordinate space. A value of 0 results in no visible text. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.FontUri">
+            <summary>
+            The URI of the physical font from which all glyphs in the run are drawn. The URI MUST reference
+            a font contained in the package [M2.1]. If the physical font referenced is a TrueType Collection
+            (containing multiple font faces), the fragment portion of the URI is a 0-based index indicating
+            which font face of the TrueType Collection should be used.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.OriginX">
+            <summary>
+            Specifies the x coordinate of the first glyph in the run, in units of the effective coordinate space.
+            The glyph is placed so that the leading edge of its advance vector and its baseline intersect with
+            the point defined by the OriginX and OriginY attributes. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.OriginY">
+            <summary>
+            Specifies the y coordinate of the first glyph in the run, in units of the effective coordinate space.
+            The glyph is placed so that the leading edge of its advance vector and its baseline intersect with
+            the point defined by the OriginX and OriginY attributes. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.IsSideways">
+            <summary>
+            Indicates that a glyph is turned on its side, with the origin being defined as the top center
+            of the unturned glyph.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.Indices">
+            <summary>
+            Specifies a series of glyph indices and their attributes used for rendering the glyph run.
+            If the UnicodeString attribute specifies an empty string (“” or “{}”) and the Indices attribute
+            is not specified or is also empty, a consumer MUST generate an error [M5.2]. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.UnicodeString">
+            <summary>
+            Contains the string of text rendered by the  <see cref="T:PdfSharp.Xps.XpsModel.Glyphs"/> element. The text is specified as Unicode
+            code points. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.StyleSimulations">
+            <summary>
+            Specifies a style simulation. Valid values are None, ItalicSimulation, BoldSimulation,
+            and BoldItalicSimulation. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Glyphs.RenderTransform" -->
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Glyphs.Clip" -->
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.Opacity">
+            <summary>
+            Defines the uniform transparency of the glyph element. Values range from 0 (fully transparent)
+            to 1 (fully opaque), inclusive. Values outside of this range are invalid. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.OpacityMask">
+            <summary>
+            Specifies a mask of alpha values that is applied to the glyphs in the same fashion as the
+            Opacity attribute, but allowing different alpha values for different areas of the element.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.Name">
+            <summary>
+            Contains a string value that identifies the current element as a named, addressable point in
+            the document for the purpose of hyperlinking. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.FixedPage_NavigateUri">
+            <summary>
+            Associates a hyperlink URI with the element. May be a relative reference or a URI that
+            addresses a resource that is internal to or external to the package. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.lang">
+            <summary>
+            Specifies the default language used for the current element. The language is specified according
+            to RFC 3066.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Glyphs.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the 
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of 
+            a resource dictionary [M5.3]. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PathFigureCollection">
+            <summary>
+            Represents a collection of PathFigure objecs.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.LinkTarget">
+            <summary>
+            Contains a string value that identifies the current element as a named,
+            addressable point in the document for the purpose of hyperlinking.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinkTarget.Name">
+            <summary>
+            Specifies an addressable point on the page.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.StoryFragment">
+            <summary>
+            Specifies the document structural markup that appears on the current page for a single story block.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.StoryFragment.StoryName">
+            <summary>
+            Identifies the story that this story fragment belongs to.
+            If omitted, the story fragment is not associated with any story.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.StoryFragment.FragmentName">
+            <summary>
+            Used to uniquely identify the story fragment.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.StoryFragment.FragmentType">
+            <summary>
+            Specifies the type of content included in the story fragment. Valid values are Content,
+            Header, and Footer.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.TableRowGroupStructure">
+            <summary>
+            Contains the set of table rows that make up a table.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.PdfRenderer">
+            <summary>
+            Implements the rendering process.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.PdfRenderer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.PdfRenderer"/> class.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PolyLineSegment">
+            <summary>
+            Specifies a set of points between which lines are drawn.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PolyLineSegment.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all points of the segments.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.PolyLineSegment.Points">
+            <summary>
+            Specifies a set of coordinates for the multiple segments that define the poly line segment.
+            Coordinate values within each pair are comma-separated and additional whitespace may appear.
+            Coordinate pairs are separated from other coordinate pairs by whitespace. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PolyLineSegment.IsStroked">
+            <summary>
+            Specifies whether the stroke for this segment of the path is drawn. Can be true or false. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.FigureStructure">
+            <summary>
+            Groups the named elements that constitute a single drawing or diagram.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.FixedDocument">
+            <summary>
+            Binds an ordered sequence of fixed pages together into a single multi-page document.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.FixedDocument.GetFixedPage(System.Int32)">
+            <summary>
+            Gets the fixed page with the specified index.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.FixedDocument.FixedPages">
+            <summary>
+            A collection of document references.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.PageCount">
+            <summary>
+            Gets the number of fixed pages in this document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.XpsDocument">
+            <summary>
+            Gets the XPS document that owns this document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.UriString">
+            <summary>
+            Gets the path to this document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.Payload">
+            <summary>
+            Gets the fixed payload that owns this document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.Package">
+            <summary>
+            Gets the underlying ZIP package.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedDocument.Pages">
+            <summary>
+            Gets a read-only collection of the fixed pages of this fixed documents .
+            </summary>
+        </member>
+        <member name="T:PdfSharp.PSXSR">
+            <summary>
+            The Pdf-Sharp-XPS-String-Resources.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.PSXSR.UnexpectedAttribute(System.String)">
+            <summary>
+            "Unexpected attribute '{0}'."
+            </summary>
+        </member>
+        <member name="M:PdfSharp.PSXSR.UnexpectedElement(System.String,System.String)">
+            <summary>
+            "Unexpected element. Expected '{0}', but found '{1}'"
+            </summary>
+        </member>
+        <member name="M:PdfSharp.PSXSR.Format(PdfSharp.PSXMsgID,System.Object[])">
+            <summary>
+            Loads the message from the resource associated with the enum type and formats it
+            using 'String.Format'. Because this function is intended to be used during error
+            handling it never raises an exception.
+            </summary>
+            <param name="id">The type of the parameter identifies the resource
+            and the name of the enum identifies the message in the resource.</param>
+            <param name="args">Parameters passed through 'String.Format'.</param>
+            <returns>The formatted message.</returns>
+        </member>
+        <member name="M:PdfSharp.PSXSR.GetString(PdfSharp.PSXMsgID)">
+            <summary>
+            Gets the localized message identified by the specified DomMsgID.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.PSXSR.TestResourceMessages">
+            <summary>
+            Writes all messages defined by PSXMsgID.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.PSXSR.ElementExpected">
+            <summary>
+            "Content must start with element or comment."
+            </summary>
+        </member>
+        <member name="P:PdfSharp.PSXSR.MustStandOnElement">
+            <summary>
+            "Must stand on element."
+            </summary>
+        </member>
+        <member name="P:PdfSharp.PSXSR.ResMngr">
+            <summary>
+            Gets the resource manager for this module.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.PSXMsgID">
+            <summary>
+            Represents IDs for error and diagnostic messages generated by PDFsharp.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment">
+            <summary>
+            A series of quadratic Bézier segments.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all points of the segments.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment.Points">
+            <summary>
+            pecifies control points for multiple quadratic Bézier segments. Coordinate values within each
+            pair are comma-separated and additional whitespace may appear. Coordinate pairs are separated
+            from other coordinate pairs by whitespace. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PolyQuadraticBezierSegment.IsStroked">
+            <summary>
+            Specifies whether the stroke for this segment of the path is drawn. Can be true or false.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.sRGB">
+            <summary>
+            "#RRGGBB"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.sRGBwithAlpha">
+            <summary>
+            "#AARRGGBB"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.scRGB">
+            <summary>
+            "sc#RedFloat, GreenFloat,BlueFloat"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.scRGBwithAlpha">
+            <summary>
+            "sc#AlphaFloat,RedFloat, GreenFloat,BlueFloat"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.CMYKwithAlpha">
+            <summary>
+            "ContextColor ProfileURI AlphaFloat, Chan0Float, Chan1Float, Chan2Float, Chan3Float"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.NChannelWithAlpha">
+            <summary>
+            "ContextColor ProfileURI AlphaFloat, Chan0Float, ..., ChanN-1Float"
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.ColorType.NamedColorWithAlpha">
+            <summary>
+            "ContextColor ProfileURI AlphaFloat, TintFloat, 0, 0"
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:PdfSharp.Xps.XpsModel.NamedElement" -->
+        <member name="P:PdfSharp.Xps.XpsModel.NamedElement.NameReference">
+            <summary>
+            Identifies the named element in the FixedPage part markup that is referenced
+            by the document structure markup.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.StoryFragmentReference">
+            <summary>
+            Identifies the StoryFragments part where this individual story fragment is defined.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.StoryFragmentReference.FragmentName">
+            <summary>
+            Used to distingush between multiple story fragments from the same story on a single page.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.StoryFragmentReference.Page" -->
+        <!-- Badly formed XML comment ignored for member "T:PdfSharp.Xps.XpsModel.VisualBrush" -->
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.Opacity">
+            <summary>
+            Defines the uniform transparency of the brush fill. Values range from 0 (fully transparent)
+            to 1 (fully opaque), inclusive. Values outside of this range are invalid.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M6.4].
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.Transform">
+            <summary>
+            Describes the matrix transformation applied to the coordinate space of the brush.
+            The Transform property is concatenated with the current effective render transform to yield
+            an effective render transform local to the brush. The viewport for the brush is transformed
+            using that local effective render transform. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.Viewbox">
+            <summary>
+            Specifies the position and dimensions of the brush's source content. Specifies four
+            comma-separated real numbers (x, y, Width, Height), where width and height are
+            non-negative. The dimensions specified are relative to the image’s physical dimensions
+            expressed in units of 1/96". The corners of the viewbox are mapped to the corners of the
+            viewport, thereby providing the default clipping and transform for the brush’s source content.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.Viewport">
+            <summary>
+            Specifies the region in the containing coordinate space of the prime brush tile that is
+            (possibly repeatedly) applied to fill the region to which the brush is applied. Specifies four
+            comma-separated real numbers (x, y, Width, Height), where width and height are non-negative.
+            The alignment of the brush pattern is controlled by adjusting the x and y values.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.TileMode">
+            <summary>
+            Specifies how contents will be tiled in the filled region. Valid values are None,
+            Tile, FlipX, FlipY, and FlipXY. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.ViewboxUnits">
+            <summary>
+            Specifies the relationship of the viewbox coordinates to the containing coordinate space. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.VisualBrush.ViewportUnits">
+            <summary>
+            Specifies the relationship of the viewport coordinates to the containing coordinate space.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.VisualBrush.Visual" -->
+        <member name="T:PdfSharp.Xps.XpsModel.RadialGradientBrush">
+            <summary>
+            Fills a region with a radial gradient.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.RadialGradientBrush.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.RadialGradientBrush"/> class.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.RadialGradientBrush.Opacity" -->
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M6.4].
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.ColorInterpolationMode">
+            <summary>
+            Specifies the gamma function for color interpolation. The gamma adjustment should not be
+            applied to the alpha component, if specified. Valid values are SRgbLinearInterpolation and
+            ScRgbLinearInterpolatio n. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.SpreadMethod">
+            <summary>
+            Describes how the brush should fill the content area outside of the primary, initial gradient area.
+            Valid values are Pad, Reflect and Repeat.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.MappingMode">
+            <summary>
+            Specifies that the start point and end point are defined in the effective coordinate space
+            (includes the Transform attribute of the brush). 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.Transform">
+            <summary>
+            Describes the matrix transformation applied to the coordinate space of the brush.
+            The Transform property is concatenated with the current effective render transform to yield
+            an effective render transform local to the brush. The viewport for the brush is transformed
+            using that local effective render transform. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.Center">
+            <summary>
+            Specifies the center point of the radial gradient (that is, the center of the ellipse). The radial
+            gradient brush interpolates the colors from the gradient origin to the circumference of the
+            ellipse. The circumference is determined by the center and the radii. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.GradientOrigin">
+            <summary>
+            Specifies the origin point of the radial gradient.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.RadiusX">
+            <summary>
+            Specifies the radius in the x dimension of the ellipse which defines the radial gradient. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.RadialGradientBrush.RadiusY">
+            <summary>
+            Specifies the radius in the y dimension of the ellipse which defines the radial gradient. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.RadialGradientBrush.GradientStops" -->
+        <member name="T:PdfSharp.Xps.XpsModel.Matrix">
+            <summary>
+            Represents a transformation matrix.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Matrix.Parse(System.String)">
+            <summary>
+            Parses the specified value.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Matrix.op_Implicit(PdfSharp.Xps.XpsModel.Matrix)~PdfSharp.Drawing.XMatrix">
+            <summary>
+            Performs an implicit conversion from <see cref="T:PdfSharp.Xps.XpsModel.Matrix"/> to <see cref="T:PdfSharp.Drawing.XMatrix"/>.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.LinearGradientBrush">
+            <summary>
+            Fills a region with a linear gradient.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.LinearGradientBrush.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.LinearGradientBrush"/> class.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.LinearGradientBrush.Opacity" -->
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M6.4].
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.ColorInterpolationMode">
+            <summary>
+            Specifies the gamma function for color interpolation. The gamma adjustment should not be
+            applied to the alpha component, if specified. Valid values are SRgbLinearInterpolation and
+            ScRgbLinearInterpolatio n. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.SpreadMethod">
+            <summary>
+            Describes how the brush should fill the content area outside of the primary, initial gradient area.
+            Valid values are Pad, Reflect and Repeat.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.MappingMode">
+            <summary>
+            Specifies that the start point and end point are defined in the effective coordinate space
+            (includes the Transform attribute of the brush). 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.Transform">
+            <summary>
+            Describes the matrix transformation applied to the coordinate space of the brush.
+            The Transform property is concatenated with the current effective render transform to yield
+            an effective render transform local to the brush. The viewport for the brush is transformed
+            using that local effective render transform. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.StartPoint">
+            <summary>
+            Specifies the starting point of the linear gradient.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.LinearGradientBrush.EndPoint">
+            <summary>
+            Specifies the end point of the linear gradient. The linear gradient brush interpolates the colors
+            from the start point to the end point, where the start point represents an offset of 0, and the
+            EndPoint represents an offset of 1. The Offset attribute value specified in a GradientStop
+            element relates to the 0 and 1 offsets defined by the start point and end point. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.LinearGradientBrush.GradientStops" -->
+        <member name="T:PdfSharp.Xps.XpsModel.Template">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Template.Temp">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.DocumentStructure">
+            <summary>
+            The root element of the DocumentStructure part.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.DocumentStructure.Outline">
+            <summary>
+            Contains a structured document outline that provides a list of links into the document
+            contents or external sites.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Font">
+            <summary>
+            Represents a font or font subset.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Font.Name">
+            <summary>
+            Gets or sets the name of the font.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Visual">
+            <summary>
+            Represents the content of a VisualBrush.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.Visual.Content">
+            <summary>
+            A collection of Path, Glyphs, and Canvas objects.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:PdfSharp.Xps.XpsModel.PathGeometry" -->
+        <member name="M:PdfSharp.Xps.XpsModel.PathGeometry.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all figures of the path.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.PathGeometry.Figures">
+            <summary>
+            Describes the geometry of the path.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PathGeometry.FillRule">
+            <summary>
+            Specifies how the intersecting areas of geometric shapes are combined to form a region.
+            Valid values are EvenOdd and NonZero. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PathGeometry.Transform">
+            <summary>
+            Specifies the local matrix transformation that is applied to all child and descendant elements 
+            of the path geometry before it is used for filling, clipping, or stroking.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PathGeometry.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M4.2]. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PathFigure">
+            <summary>
+            Specifies a set of one or more segment elements defining a closed region.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PathFigure.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all segments of the figure.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.PathFigure.IsClosed" -->
+        <member name="P:PdfSharp.Xps.XpsModel.PathFigure.StartPoint">
+            <summary>
+            Specifies the starting point for the first segment of the path figure.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PathFigure.IsFilled">
+            <summary>
+            Specifies whether the path figure is used in computing the area of the containing path geometry.
+            Can be true or false. When set to false, the path figure is considered only for stroking. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ImageBrush">
+            <summary>
+            Fills a region with an image.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.Opacity">
+            <summary>
+            Defines the uniform transparency of the brush fill. Values range from 0 (fully transparent)
+            to 1 (fully opaque), inclusive. Values outside of this range are invalid.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of
+            a resource dictionary [M6.2]. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.Transform">
+            <summary>
+            Describes the matrix transformation applied to the coordinate space of the brush.
+            The Transform property is concatenated with the current effective render transform to yield
+            an effective render transform local to the brush. The viewport for the brush is transformed
+            using the local effective render transform. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.Viewbox">
+            <summary>
+            Specifies the position and dimensions of the brush's source content. Specifies four
+            comma-separated real numbers (x, y, Width, Height), where width and height are
+            non-negative. The dimensions specified are relative to the image’s physical dimensions
+            expressed in units of 1/96". The corners of the viewbox are mapped to the corners of the
+            viewport, thereby providing the default clipping and transform for the brush’s source content.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.Viewport">
+            <summary>
+            Specifies the region in the containing coordinate space of the prime brush tile that is
+            (possibly repeatedly) applied to fill the region to which the brush is applied. Specifies four
+            comma-separated real numbers (x, y, Width, Height), where width and height are non-negative.
+            The alignment of the brush pattern is controlled by adjusting the x and y values.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.TileMode">
+            <summary>
+            Specifies how contents will be tiled in the filled region. Valid values are None,
+            Tile, FlipX, FlipY, and FlipXY. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.ViewboxUnits">
+            <summary>
+            Specifies the relationship of the viewbox coordinates to the containing coordinate space. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.ViewportUnits">
+            <summary>
+            Specifies the relationship of the viewport coordinates to the containing coordinate space.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ImageBrush.ImageSource">
+            <summary>
+            Specifies the URI of an image resource or a combination of the URI of an image resource a
+            color profile resource. See the Color chapter for important details. The URI MUST refer to
+            parts in the package [M2.1]. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.PointStopCollection">
+            <summary>
+            Represents a collection of Point objecs.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.PointStopCollection.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all points of the collection.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.SpotLocation">
+            <summary>
+            Specifies where a consumer should place a signature spot.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SpotLocation.PageURI">
+            <summary>
+            Specifies the page on which the signature spot should be displayed.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SpotLocation.StartX">
+            <summary>
+            Specifies the x coordinate of the origin point (upper-left corner) on the page where
+            the signature spot should be displayed.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SpotLocation.StartY">
+            <summary>
+            Specifies the y coordinate of the origin point (upper-left corner) on the page where
+            the signature spot should be displayed.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.RenderingComplexity.SolidColorsOnly">
+            <summary>
+            All alpha values 100%, opacity 100%, no OpacityMask
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.RenderingComplexity.ObjectOpacity">
+            <summary>
+            All alpha values 100%, opacity less than 100%, no OpacityMask
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.RenderingComplexity.AlphaTransparancy">
+            <summary>
+            At least one alpha values less than 100%, opacity less than or equal 100%, no OpacityMask
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.Rendering.RenderingComplexity.OpacityMask">
+            <summary>
+            ???
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.Rendering.TilingPatternBuilder">
+            <summary>
+            Constructs a PdfTilingPattern from ImageBrush or VisualBrush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.TilingPatternBuilder.#ctor(PdfSharp.Xps.Rendering.DocumentRenderingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.Rendering.TilingPatternBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.TilingPatternBuilder.BuildFromImageBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.ImageBrush,PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Builds a tiling pattern from an image brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.TilingPatternBuilder.BuildFromVisualBrush(PdfSharp.Xps.Rendering.DocumentRenderingContext,PdfSharp.Xps.XpsModel.VisualBrush,PdfSharp.Drawing.XMatrix)">
+            <summary>
+            Builds a PdfTilingPattern pattern from a visual brush.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.TilingPatternBuilder.BuildForm(PdfSharp.Xps.XpsModel.ImageBrush)">
+            <summary>
+            Builds a PdfFormXObject from the specified brush. 
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.TilingPatternBuilder.BuildForm(PdfSharp.Xps.XpsModel.VisualBrush)">
+            <summary>
+            Builds a PdfFormXObject from the specified brush. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.OutlineEntry">
+            <summary>
+            Represents an index to a specific location in the document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.OutlineEntry.OutlineLevel">
+            <summary>
+            A description of the level where the outline entry exists in the hierarchy.
+            A value of 1 is the root.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.OutlineEntry.OutlineTarget">
+            <summary>
+            The URI to which the outline entry is linked.
+            This may be a URI to a named element within the document or an external URI,
+            such as a website. It can be used as a hyperlink destination.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.OutlineEntry.Description">
+            <summary>
+            The friendly text associated with this outline entry.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.OutlineEntry.lang">
+            <summary>
+            This attribute specifies the default language used for any child element contained
+            within the current element or nested child elements. The language is specified
+            according to IETF RFC 3066.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:PdfSharp.Xps.XpsModel.PageContent" -->
+        <member name="P:PdfSharp.Xps.XpsModel.PageContent.Source">
+            <summary>
+            Specifies a URI that refers to the page content, held in a distinct part within the package.
+            The content identified MUST be a FixedPage part within the XPS Document [M3.5].
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PageContent.Width">
+            <summary>
+            Typical width of pages contained in the page content.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.PageContent.Height">
+            <summary>
+            Typical height of pages contained in the page content.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.PageContent.LinkTargets" -->
+        <member name="T:PdfSharp.Xps.XpsModel.SignatureDefinition">
+            <summary>
+            A single signature definition.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SignatureDefinition.SpotID">
+            <summary>
+            A globally unique identifier for this signature spot.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SignatureDefinition.SignerName">
+            <summary>
+            A string representing the identity of the individual who is requested to sign the XPS Document,
+            or the name of the individual who has signed the XPS Document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.SignatureDefinition.lang">
+            <summary>
+            Specifies the language used for the current element and its descendants.
+            The language is specified according to RFC 3066.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.FixedPayload">
+            <summary>
+            The container of fixed documents.
+            The current implementation assumes only one fixed payload per XPS document.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.FixedPayload.GetDocument(System.Int32)">
+            <summary>
+            Gets the document with the specified index.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.FixedPayload.GetFontData(System.String)">
+            <summary>
+            Gets the font data from the resource package part.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.FixedPayload.GetImageData(System.String)">
+            <summary>
+            Gets the bitmap image data from the resource package part.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.FixedPayload.fdseq">
+            <summary>
+            Root of all documents in this payload.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPayload.XpsDocument">
+            <summary>
+            Gets the XPS document that owns this payload.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPayload.DocumentCount">
+            <summary>
+            Gets the number of fixed documents in this payload.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPayload.Package">
+            <summary>
+            Gets the underlying ZIP package.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ArcSegment">
+            <summary>
+            Represents an elliptical arc between two points.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.ArcSegment.GetBoundingBox">
+            <summary>
+            Gets the smallest rectangle that completely contains all points of the segments.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.Point">
+            <summary>
+            Specifies the endpoint of the elliptical arc.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.Size">
+            <summary>
+            Specifies the x and y radius of the elliptical arc as an x,y pair. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.RotationAngle">
+            <summary>
+            Indicates how the ellipse is rotated relative to the current coordinate system. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.IsLargeArc">
+            <summary>
+            Determines whether the arc is drawn with a sweep of 180 or greater. Can be true or false. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.SweepDirection">
+            <summary>
+            Specifies the direction in which the arc is drawn. Valid values are Clockwise and Counterclockwise.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ArcSegment.IsStroked">
+            <summary>
+            Specifies whether the stroke for this segment of the path is drawn. Can be true or false. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ResourceDictionary">
+            <summary>
+            Defines a set of reusable resource definitions that can be used as property values in the fixed page markup.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ResourceDictionary.Source">
+            <summary>
+            Specifies the URI of a part containing markup for a resource dictionary.
+            The URI MUST refer to a part in the package [M2.1]. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ResourceDictionary.ResourceParent">
+            <summary>
+            Gets or sets the parent ResourceDictionary of this element.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ResourceDictionary.Item(System.String)">
+            <summary>
+            Gets the XpsElement with the specified key, or null, if no such value exists.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.DocumentOutline">
+            <summary>
+            Specifies a list of meaningful indices into the XPS Document, similar to a table of contents,
+            or to external URIs, such as web addresses.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.DocumentOutline.lang">
+            <summary>
+            This attribute specifies the default language used for any child element contained within
+            the current element or nested child elements. The language is specified according
+            to IETF RFC 3066.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.FixedDocumentSequence">
+            <summary>
+            Specifies a sequence of fixed documents.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.FixedDocumentSequence.DocumentReferences">
+            <summary>
+            A collection of document references.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.TableCellStructure">
+            <summary>
+            Contains the elements that occupy a single cell of a table.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.TableCellStructure.RowSpan">
+            <summary>
+            Indicates the number of rows this cell spans, or merges into a single cell.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.TableCellStructure.ColumnSpan">
+            <summary>
+            Indicates the number of columns this cell spans, or merges into a single cell.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Path">
+            <summary>
+            Defines a single graphical effect to be rendered to the page. It paints a geometry with a brush and draws a stroke around it.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Path.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.Path"/> class.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Data">
+            <summary>
+            Describes the geometry of the path. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Fill">
+            <summary>
+            Describes the brush used to paint the geometry specified by the Data property of the path. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Path.RenderTransform" -->
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Clip">
+            <summary>
+            Limits the rendered region of the element.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Opacity">
+            <summary>
+            Defines the uniform transparency of the path element. Values range from 0 (fully transparent) to 
+            1 (fully opaque), inclusive. Values outside of this range are invalid. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.OpacityMask">
+            <summary>
+            Specifies a mask of alpha values that is applied to the path in the same fashion as the Opacity
+            attribute, but allowing different alpha values for different areas of 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Stroke">
+            <summary>
+            Specifes the brush used to draw the stroke.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeDashArray">
+            <summary>
+             Specifies the length of dashes and gaps of the outline stroke. These values are specified as 
+             multiples of the stroke thickness as a space-separated list with an even number of 
+             non-negative values. When a stroke is drawn, the dashes and gaps specified by these values
+             are repeated to cover the length of the stroke. If this attribute is omitted, the stroke is drawn
+             solid, without any gaps. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeDashCap">
+            <summary>
+            Specifies how the ends of each dash are drawn. Valid values are Flat, Round, Square, and Triangle. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeDashOffset">
+            <summary>
+            Adjusts the start point for repeating the dash array pattern. If this value is omitted, the dash 
+            array aligns with the origin of the stroke. Values are specified as multiples of the stroke thickness. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeEndLineCap">
+            <summary>
+            Defines the shape of the end of the last dash in a stroke. Valid values are Flat, Square, Round,
+            and Triangle. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeStartLineCap">
+            <summary>
+            Defines the shape of the beginning of the first dash in a stroke. Valid values are Flat, Square,
+            Round, and Triangle. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeLineJoin">
+            <summary>
+            Specifies how a stroke is drawn at a corner of a path. Valid values are Miter, Bevel, and Round.
+            If Miter is selected, the value of StrokeMiterLimit is used in drawing the stroke. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.StrokeMiterLimit">
+            <summary>
+            The ratio between the maximum miter length and half of the stroke thickness. This value is
+            significant only if the StrokeLineJoin attribute specifies Miter. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Path.StrokeThickness" -->
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Name">
+            <summary>
+            Contains a string value that identifies the current element as a named, addressable point in
+            the document for the purpose of hyperlinking.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.FixedPage_NavigateUri">
+            <summary>
+            Associates a hyperlink URI with the element. Can be a relative reference or a URI that addresses
+            a resource that is internal to or external to the package. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.lang">
+            <summary>
+            Specifies the default language used for the current element and for any child or descendant elements.
+            The language is specified according to RFC 3066. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Path.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the 
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of 
+            a resource dictionary [M5.3]. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Path.AutomationProperties_Name" -->
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Path.AutomationProperties_HelpText" -->
+        <member name="P:PdfSharp.Xps.XpsModel.Path.SnapsToDevicePixels">
+            <summary>
+            On Anti-aliasing consumers controls if control points snap to the nearest device pixels. Valid values are ‘false’ and ‘true’. Consumers MAY ignore this attribute [O4.1]. 
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.FixedPage">
+            <summary>
+            Contains markup that describes the rendering of a single page of content.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.FixedPage.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.FixedPage"/> class.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.FixedPage.Content">
+            <summary>
+            A collection of Path, Glyphs, and Canvas objects.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.UriString">
+            <summary>
+            Gets the path to this page.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.Document">
+            <summary>
+            Gets or sets the owning document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.Name">
+            <summary>
+            Contains a string value that identifies the current element as a named, addressable
+            point in the document for the purpose of hyperlinking. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.Width">
+            <summary>
+            Width of the page, expressed as a real number in units of the effective coordinate space.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.PointWidth">
+            <summary>
+            Gets the width of the page in point (1/72 of an inch).
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.Height">
+            <summary>
+            Height of the page, expressed as a real number in units of the effective coordinate space.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.PointHeight">
+            <summary>
+            Gets the height of the page in point (1/72 of an inch).
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.ContentBox">
+            <summary>
+            Specifies the area of the page containing imageable content that is to be fit within the 
+            imageable area when printing or viewing. Contains a list of four coordinate values
+            (ContentOriginX, ContentOriginY, ContentWidth, ContentHeight), expressed as comma-separated
+            real numbers. Specifying a value is RECOMMENDED [S3.1]. If omitted, the default value
+            is (0,0,Width,Height). 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.BleedBox">
+            <summary>
+            Specifies the area including crop marks that extends outside of the physical page.
+            Contains a list of four coordinate values (BleedOriginX, BleedOriginY, BleedWidth, BleedHeight),
+            expressed as comma-separated real numbers. If omitted, the default value is (0,0,Width,Height). 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.FixedPage.Lang">
+            <summary>
+            Specifies the default language used for the current element and for any child or descendant
+            elements. The language is specified according to RFC 3066. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.FixedPage.Resources" -->
+        <member name="T:PdfSharp.Xps.XpsModel.XpsElementCollection">
+            <summary>
+            Represents a collection of XpsElement objecs.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.XpsElementCollection`1">
+            <summary>
+            Represents a collection of XpsElement objecs.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Discard">
+            <summary>
+            Identifies a resource that can be safely discarded by a resource-constrained consumer.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Discard.SentinelPage">
+            <summary>
+            The first fixed page that no longer needs the identified resource in order to be processed.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Discard.Target">
+            <summary>
+            The resource that can be safely discarded.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ListStructure">
+            <summary>
+            Contains a collection of items that are group together in a list.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ParagraphStructure">
+            <summary>
+            Contains the named elements that constitute a single paragraph.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.ParserHelper.ParseDouble(System.String)">
+            <summary>
+            Parses a double value element.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Parsing.ParserHelper.ParseEnum``1(System.String)">
+            <summary>
+            Parses an enum value element.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.SectionStructure">
+            <summary>
+            Provides an arbitrary grouping of content structural markup elements.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.Rendering.XPImageBrush.#ctor(PdfSharp.Xps.XpsModel.ImageBrush)">
+            <summary>
+            Initializes a new instance of the <see cref="!:XPObjectBase"/> class.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsRenderer">
+            <summary>
+            Provides functionality to convert WPF graphic to PDF files.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsRenderer.RenderPage_Test01(PdfSharp.Pdf.PdfPage,System.String)">
+            <summary>
+            A first hack to do the job...
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsRenderer.GetPartAsString(System.IO.Packaging.ZipPackage,System.Uri)">
+            <summary>
+            Gets the specified part as string. Returns an empty string if the part not exists.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsRenderer.GetPartAsXmlReader(System.IO.Packaging.ZipPackage,System.Uri)">
+            <summary>
+            Gets an XML reader for the specified part, or null, if the part not exists.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.XpsDocument">
+            <summary>
+            Represents an XpsDocument that can be converted to PDF by PDFsharp.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.XpsDocument"/> class from a stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.XpsDocument"/> class from a path.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.Open(System.IO.Stream)">
+            <summary>
+            Opens an XPS document from the specifed stream.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.Open(System.String)">
+            <summary>
+            Opens an XPS document from the specifed path.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.Initialize">
+            <summary>
+            Initializes the primary fixed payload.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.Close">
+            <summary>
+            Closes this instance and the underlying ZIP package.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.GetDocument">
+            <summary>
+            Gets the first document document from the fixed document sequence.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.XpsDocument.GetDocument(System.Int32)">
+            <summary>
+            Gets the document with the specified index.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.XpsDocument.DocumentCount">
+            <summary>
+            Gets the number of fixed documents.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.XpsDocument.Documents">
+            <summary>
+            Gets a read-only collection of the fixed documents of this XPS document.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.XpsDocument.Package">
+            <summary>
+            Gets the underlying ZIP package.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.XpsDocument.Parts">
+            <summary>
+            Gets the underlying ZIP package parts collection.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:PdfSharp.Xps.XpsModel.Canvas" -->
+        <member name="M:PdfSharp.Xps.XpsModel.Canvas.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.Canvas"/> class.
+            </summary>
+        </member>
+        <member name="F:PdfSharp.Xps.XpsModel.Canvas.Content">
+            <summary>
+            A collection of Path, Glyphs, and Canvas objects.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.RenderTransform">
+            <summary>
+            Establishes a new coordinate frame for the child and descendant elements of the canvas,
+            such as another canvas. Also affects clip and opacity mask. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.Clip">
+            <summary>
+            Limits the rendered region of the element. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.Opacity">
+            <summary>
+            Defines the uniform transparency of the canvas. Values range from 0 (fully transparent) to
+            1 (fully opaque), inclusive. Values outside of this range are invalid. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.OpacityMask">
+            <summary>
+            Specifies a mask of alpha values that is applied to the canvas in the same fashion as the
+            Opacity attribute, but allowing different alpha values for different areas of the element. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.Name">
+            <summary>
+            Contains a string value that identifies the current element as a named, addressable point
+            in the document for the purpose of hyperlinking. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.RenderOptions_EdgeMode">
+            <summary>
+            Controls how edges of paths within the canvas are rendered. The only valid value is Aliased.
+            Omitting this attribute causes the edges to be rendered in the consumer's default manner. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.FixedPage_NavigateUri">
+            <summary>
+            Associates a hyperlink URI with the element. May be a relative reference or a URI that
+            addresses a resource that is internal to or external to the package. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.lang">
+            <summary>
+            Specifies the default language used for the current element and for any child or descendant elements.
+            The language is specified according to RFC 3066. 
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Canvas.Key">
+            <summary>
+            Specifies a name for a resource in a resource dictionary. x:Key MUST be present when the 
+            current element is defined in a resource dictionary. x:Key MUST NOT be specified outside of 
+            a resource dictionary [M5.3]. 
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Canvas.AutomationProperties_Name" -->
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Canvas.AutomationProperties_HelpText" -->
+        <!-- Badly formed XML comment ignored for member "P:PdfSharp.Xps.XpsModel.Canvas.Resources" -->
+        <member name="T:PdfSharp.Xps.XpsModel.Size">
+            <summary>
+            Represents the width and height of an object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Size.#ctor(System.Double,System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:PdfSharp.Xps.XpsModel.Size"/> struct.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Size.op_Implicit(PdfSharp.Xps.XpsModel.Size)~PdfSharp.Drawing.XSize">
+            <summary>
+            Performs an implicit conversion from <see cref="T:PdfSharp.Xps.XpsModel.Size"/> to <see cref="T:PdfSharp.Drawing.XSize"/>.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Size.Parse(System.String)">
+            <summary>
+            Parses the specified value.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Size.Width">
+            <summary>
+            Gets or sets the width.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.Size.Height">
+            <summary>
+            Gets or sets the height.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.Rect">
+            <summary>
+            Represents the width and height of an object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Xps.XpsModel.Rect.Parse(System.String)">
+            <summary>
+            Parses the specified value.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.ListItemStructure">
+            <summary>
+            Describes a single structural block. These structural blocks are grouped together in a list.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Xps.XpsModel.ListItemStructure.Marker">
+            <summary>
+            The named element that represents the marker for this list items, such as a bullet,
+            number, or image.
+            </summary>
+        </member>
+        <member name="T:PdfSharp.Xps.XpsModel.TableRowStructure">
+            <summary>
+            Contains the set of table cells that make up a row of a table.
+            </summary>
+        </member>
+    </members>
+</doc>
