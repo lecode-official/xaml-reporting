@@ -1,10 +1,4 @@
 ﻿
-#region Using Directives
-
-using System;
-
-#endregion
-
 namespace System.Windows.Documents.Reporting
 {
     /// <summary>

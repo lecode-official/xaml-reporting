@@ -10,8 +10,6 @@
             <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}">
                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Path=FrontPageText}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" />
-                    <Border Background="Green" Width="2cm" Height="2cm" />
-                    <Image Source="C:\Users\david\Desktop\Sample.jpg" Width="3cm" Height="2cm" />
                     <TextBlock Text="{Binding Path=PageNumber, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
                 </StackPanel>
             </Grid>

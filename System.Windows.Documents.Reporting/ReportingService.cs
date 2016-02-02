@@ -58,18 +58,22 @@ namespace System.Windows.Documents.Reporting
         #endregion
 
         #region Private Methods
-        
+
         /// <summary>
-        /// Exports a fixed document to an document stream.
+        /// Exports a document to XPS.
         /// </summary>
-        /// <param name="fixedDocument">The document that is to be exported.</param>
+        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters = null) where T : Document
         {
+            // Creates a new task completion source, because the XPS document must always be rendered in an STA thread (which is not possible to do, when only calling Task.Run, therefore a new thread is created by hand)
             TaskCompletionSource<bool> exportTaskCompletionSource = new TaskCompletionSource<bool>();
 
+            // The stream comes from a different thread, therefore it must be made thread safe
             Stream threadSafeStream = Stream.Synchronized(outputStream);
 
+            // Creates a new thread in which the XPS document is rendered
             Thread thread = new Thread(new ThreadStart(async () =>
             {
                 // Renders the document
@@ -88,30 +92,48 @@ namespace System.Windows.Documents.Reporting
                     }
                 }
 
+                // Since the rendering of the XPS document has finished, the task completion source is resolved
                 exportTaskCompletionSource.TrySetResult(true);
             }));
 
+            // Makes the thread a background thread (otherwise it would not be cancelled, when the application is quit)
             thread.IsBackground = true;
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
 
+            // Makes the thread an STA thread, which is needed for rendering the XPS document (especially when using the library in a console application)
+            thread.SetApartmentState(ApartmentState.STA);
+
+            // Starts the thread and awaits the rendering of the XPS document
+            thread.Start();
             await exportTaskCompletionSource.Task;
         }
 
+        /// <summary>
+        /// Exports a document to PDF.
+        /// </summary>
+        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <param name="outputStream">The stream to which the file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         private async Task ExportToPdfAsync<T>(Stream outputStream, object parameters = null) where T : Document
         {
+            // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
+                // Renders the fixed document
                 await this.ExportToXpsAsync<T>(memoryStream, parameters);
 
+                // Creates a new PDF document and an loads the XPS document, which was just rendered, so it can be converted to the PDF document
                 PdfDocument pdfDocument = new PdfDocument();
                 PdfSharp.Xps.XpsModel.XpsDocument xpsDocument = PdfSharp.Xps.XpsModel.XpsDocument.Open(memoryStream);
+
+                // Convers the XPS document to a PDF document, page by page
                 XpsConverter xpsConverter = new XpsConverter(pdfDocument, xpsDocument);
                 for (int currentPageIndex = 0; currentPageIndex < xpsDocument.GetDocument().PageCount; currentPageIndex++)
                 {
                     PdfPage pdfPage = xpsConverter.CreatePage(currentPageIndex);
                     xpsConverter.RenderPage(pdfPage, currentPageIndex);
                 }
+
+                // Saves the rendered PDF document to the actual output stream
                 pdfDocument.Save(outputStream, false);
             }
         }
@@ -181,7 +203,13 @@ namespace System.Windows.Documents.Reporting
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
                 await this.ExportAsync(table, format, fileStream);
         }
-        
+
+        /// <summary>
+        /// Renders the specified document.
+        /// </summary>
+        /// <typeparam name="T">The type of document that is to be rendered.</typeparam>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
         public async Task<FixedDocument> RenderAsync<T>(object parameters = null) where T : Document
         {
             // Determines the type of the view model, which can be done via attribute or convention
@@ -245,8 +273,10 @@ namespace System.Windows.Documents.Reporting
             T document = null;
             try
             {
+                // Lets the kernel instantiate the document, so that all dependencies can be injected
                 document = this.kernel.Get<T>();
 
+                // Since document is a framework element it must be properly initialized
                 if (!document.IsInitialized)
                 {
                     MethodInfo initializeComponentMethod = document.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
@@ -259,9 +289,17 @@ namespace System.Windows.Documents.Reporting
                 throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeInstantiatedExceptionMessage, e);
             }
             
+            // Renders the document and returns it
             return await document.RenderAsync(viewModel);
         }
 
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         public async Task ExportAsync<T>(DocumentFormat documentFormat, Stream outputStream, object parameters = null) where T : Document
         {
             switch (documentFormat)
@@ -275,6 +313,13 @@ namespace System.Windows.Documents.Reporting
             }
         }
 
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         public async Task ExportAsync<T>(DocumentFormat documentFormat, string fileName, object parameters = null) where T : Document
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))

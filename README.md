@@ -5,3 +5,6 @@ The XAML Reporting engine is a tool, which offers reporting tools based on XAML 
 ## Acknowledgements
 
 This project was conceived and first implemented by [Lukas Rögner}(https://github.com/lukasroegner).
+
+The PDF export functionality of the XAML Reporting engine was implemented using [PDFSharp](http://pdfsharp.net/). The functionality used was still in beta and unfortunately not included in later builds, therefore we added the library statically to the project, instead of
+integrating it using NuGet. [PDFSharp](http://pdfsharp.net/) is open source under the MIT license, you can read the license file [here](https://github.com/lecode-official/xaml-reporting/blob/master/System.Windows.Documents.Reporting/Libraries/LICENSE).
