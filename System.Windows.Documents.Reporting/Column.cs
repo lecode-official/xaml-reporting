@@ -1,7 +1,5 @@
-﻿
-#region Using Directives
+﻿#region Using Directives
 
-using System;
 
 #endregion
 
