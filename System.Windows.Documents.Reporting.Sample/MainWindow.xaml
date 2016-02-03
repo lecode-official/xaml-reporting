@@ -10,11 +10,13 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <DocumentViewer Document="{Binding Path=FixedDocument}" Grid.Row="0" />
 
         <TextBox Text="{Binding Path=FileName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" />
         <Button Command="{Binding Path=ExportToXpsCommand}" Grid.Row="2">Export</Button>
+        <Button Command="{Binding Path=ExportTableCommand}" Grid.Row="3">Export table</Button>
     </Grid>
 </Window>
