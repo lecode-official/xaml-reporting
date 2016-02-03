@@ -2,6 +2,9 @@
 #region Using Directives
 
 using Ninject;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using PdfSharp.Pdf;
 using PdfSharp.Xps;
 using System.Collections.Generic;
@@ -141,38 +144,117 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Exports a list of items with the specified columns to a file.
         /// </summary>
-        /// <param name="table">The table which is to be exported.</param>
-        /// <param name="outputStream">The stream to which the XPS file is written.</param>
-        private async Task ExportToCsvAsync<T>(Table<T> table, Stream outputStream) where T : class
+        /// <param name="tables">The tables which are to be exported.</param>
+        /// <param name="outputStream">The stream to which the CSV file is written.</param>
+        private async Task ExportToCsvAsync<T>(IEnumerable<Table<T>> tables, Stream outputStream) where T : class
         {
-            // Initializes the rows
-            List<string> rows = new List<string>();
+            // Initializes the tables
+            List<string> tableList = new List<string>();
 
-            // Adds the header row if requested
-            if (table.IncludeHeader)
+            // Adds all tables as new paragraphs
+            foreach (Table<T> table in tables)
             {
-                rows.Add(string.Join(";", table.Columns
-                    .Select(column => column.Header ?? string.Empty)
-                    .Select(column => column.Replace("\"", "\\\""))
-                    .Select(column => string.Concat("\"", column, "\""))
-                    .ToList()));
-            }
+                // Initializes the rows
+                List<string> rows = new List<string>();
 
-            // Adds the rows
-            foreach(T row in table.Rows)
-            {
-                rows.Add(string.Join(";", table.Columns
-                    .Select(column => column.Formatter(row))
-                    .Select(column => column.Replace("\"", "\\\""))
-                    .Select(column => string.Concat("\"", column, "\""))
-                    .ToList()));
+                // Adds the header row if requested
+                if (table.IncludeHeader)
+                {
+                    rows.Add(string.Join(";", table.Columns
+                        .Select(column => column.Header ?? string.Empty)
+                        .Select(column => column.Replace("\"", "\\\""))
+                        .Select(column => string.Concat("\"", column, "\""))
+                        .ToList()));
+                }
+
+                // Adds the rows
+                foreach (T row in table.Rows)
+                {
+                    rows.Add(string.Join(";", table.Columns
+                        .Select(column => column.Formatter(row))
+                        .Select(column => column.Replace("\"", "\\\""))
+                        .Select(column => string.Concat("\"", column, "\""))
+                        .ToList()));
+                }
+
+                // Adds the name of the table if more than one table is to be exported
+                if (tables.Count() > 1)
+                    tableList.Add(string.Concat(string.IsNullOrWhiteSpace(table.Name) ? string.Empty : table.Name, Environment.NewLine, string.Join(Environment.NewLine, rows)));
+                else
+                    tableList.Add(string.Join(Environment.NewLine, rows));
             }
 
             // Saves the output in a stream
-            byte[] bytes = Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, rows));
+            byte[] bytes = Encoding.UTF8.GetBytes(string.Join(string.Concat(Environment.NewLine, Environment.NewLine), tableList));
             await outputStream.WriteAsync(bytes, 0, bytes.Count());
         }
-        
+
+        /// <summary>
+        /// Exports a list of items with the specified columns to a file.
+        /// </summary>
+        /// <param name="tables">The tables which are to be exported.</param>
+        /// <param name="outputStream">The stream to which the XLS(X) file is written.</param>
+        /// <param name="useOpenXmlFormat">A value that determines whether the OpenXML format should be generated.</param>
+        private async Task ExportToXlsAsync<T>(IEnumerable<Table<T>> tables, Stream outputStream, bool useOpenXmlFormat) where T : class
+        {
+            // Creates a new workbook instance based on the requested XLS format
+            IWorkbook workbook = useOpenXmlFormat ? new XSSFWorkbook() as IWorkbook : new HSSFWorkbook() as IWorkbook;
+
+            // Adds all tables as new sheets
+            foreach(Table<T> table in tables)
+            {
+                // Creates a new sheet
+                ISheet sheet = workbook.CreateSheet(string.IsNullOrWhiteSpace(table.Name) ? null : table.Name);
+
+                // Adds the header row if requested
+                if (table.IncludeHeader)
+                {
+                    // Creates a new header row
+                    IRow row = sheet.CreateRow(0);
+
+                    // Cycles over all columns of the table and adds the corresponding header cells
+                    for (int i = 0; i < table.Columns.Count; i++)
+                    {
+                        // Creates a new cell
+                        ICell cell = row.CreateCell(i);
+
+                        // Sets the value of the call by using the header of the column
+                        if (!string.IsNullOrWhiteSpace(table.Columns.ElementAt(i).Header))
+                            cell.SetCellValue(table.Columns.ElementAt(i).Header);
+                    }
+                }
+
+                // Adds the rows
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    // Creates a new row
+                    IRow row = sheet.CreateRow(i + (table.IncludeHeader ? 1 : 0));
+
+                    // Cycles over all columns of the table and adds the corresponding cells
+                    for (int j = 0; j < table.Columns.Count; j++)
+                    {
+                        // Creates a new cell
+                        ICell cell = row.CreateCell(j);
+
+                        // Sets the value of the cell by using the formatter defined in the column
+                        if (!string.IsNullOrWhiteSpace(table.Columns.ElementAt(j).Formatter(table.Rows.ElementAt(i))))
+                            cell.SetCellValue(table.Columns.ElementAt(j).Formatter(table.Rows.ElementAt(i)));
+                    }
+                }
+                
+                // Auto sizes all columns of the sheet
+                for (int i = 0; i < table.Columns.Count; i++)
+                    sheet.AutoSizeColumn(i);
+            }
+            
+            // Sets the first table as selected sheet
+            if (tables.Any())
+                workbook.SetActiveSheet(0);
+
+            // Saves the output in a stream
+            await Task.Run(() => workbook.Write(outputStream));
+        }
+
         #endregion
 
         #region Public Methods
@@ -182,15 +264,8 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <param name="table">The table which is to be exported.</param>
         /// <param name="format">The output format.</param>
-        /// <param name="outputStream">The stream to which the XPS file is written.</param>
-        public Task ExportAsync<T>(Table<T> table, TableFormat format, Stream outputStream) where T : class
-        {
-            switch (format)
-            {
-                default:
-                    return this.ExportToCsvAsync(table, outputStream);
-            }
-        }
+        /// <param name="outputStream">The stream to which the output file is written.</param>
+        public Task ExportAsync<T>(Table<T> table, TableFormat format, Stream outputStream) where T : class => this.ExportAsync(new List<Table<T>> { table }, format, outputStream);
 
         /// <summary>
         /// Exports a list of items with the specified columns to a file.
@@ -198,10 +273,38 @@ namespace System.Windows.Documents.Reporting
         /// <param name="table">The table which is to be exported.</param>
         /// <param name="format">The output format.</param>
         /// <param name="fileName">The name of the output file.</param>
-        public async Task ExportAsync<T>(Table<T> table, TableFormat format, string fileName) where T : class
+        public Task ExportAsync<T>(Table<T> table, TableFormat format, string fileName) where T : class => this.ExportAsync(new List<Table<T>> { table }, format, fileName);
+
+        /// <summary>
+        /// Exports a list of items with the specified columns to a file.
+        /// </summary>
+        /// <param name="tables">The tables which is to be exported.</param>
+        /// <param name="format">The output format.</param>
+        /// <param name="outputStream">The stream to which the output file is written.</param>
+        public async Task ExportAsync<T>(IEnumerable<Table<T>> tables, TableFormat format, Stream outputStream) where T : class
+        {
+            switch (format)
+            {
+                case TableFormat.Csv:
+                    await this.ExportToCsvAsync(tables, outputStream);
+                    break;
+                case TableFormat.Xls:
+                case TableFormat.Xlsx:
+                    await this.ExportToXlsAsync(tables, outputStream, format == TableFormat.Xlsx);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Exports a list of items with the specified columns to a file.
+        /// </summary>
+        /// <param name="tables">The table which is to be exported.</param>
+        /// <param name="format">The output format.</param>
+        /// <param name="fileName">The name of the output file.</param>
+        public async Task ExportAsync<T>(IEnumerable<Table<T>> tables, TableFormat format, string fileName) where T : class
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
-                await this.ExportAsync(table, format, fileStream);
+                await this.ExportAsync(tables, format, fileStream);
         }
 
         /// <summary>
