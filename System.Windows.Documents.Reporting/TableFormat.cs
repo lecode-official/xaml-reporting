@@ -9,6 +9,16 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// A comma separated list.
         /// </summary>
-        Csv
+        Csv,
+
+        /// <summary>
+        /// The old Microsoft Excel workbook format.
+        /// </summary>
+        Xls,
+
+        /// <summary>
+        /// The Microsoft Excel OpenXML format.
+        /// </summary>
+        Xlsx
     }
 }
