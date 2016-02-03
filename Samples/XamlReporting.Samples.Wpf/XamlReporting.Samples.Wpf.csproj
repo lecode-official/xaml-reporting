@@ -7,8 +7,8 @@
     <ProjectGuid>{82801FD1-A4C5-475E-A169-62F3FD3305E6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Windows.Documents.Reporting.Sample</RootNamespace>
-    <AssemblyName>System.Windows.Documents.Reporting.Sample</AssemblyName>
+    <RootNamespace>XamlReporting.Samples.Wpf</RootNamespace>
+    <AssemblyName>XamlReporting.Samples.Wpf</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -166,7 +166,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj">
+    <ProjectReference Include="..\..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj">
       <Project>{e4b8a5c6-f483-490c-af3d-3345083ab7dc}</Project>
       <Name>System.Windows.Documents.Reporting</Name>
     </ProjectReference>

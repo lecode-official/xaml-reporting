@@ -1,7 +1,7 @@
-﻿<mvvm:MvvmApplication x:Class="System.Windows.Documents.Reporting.Sample.App"
+﻿<mvvm:MvvmApplication x:Class="XamlReporting.Samples.Wpf.App"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:local="clr-namespace:System.Windows.Documents.Reporting.Sample"
+                      xmlns:local="clr-namespace:XamlReporting.Samples.Wpf"
                       xmlns:mvvm="clr-namespace:System.Windows.Mvvm.Application;assembly=System.Windows.Mvvm.Application">
     <mvvm:MvvmApplication.Resources>
 

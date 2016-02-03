@@ -1,9 +1,11 @@
 ﻿
 using Ninject;
+using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Documents.Reporting;
 
-namespace System.Windows.Documents.Reporting.ConsoleSample
+namespace XamlReporting.Samples.Console
 {
     public static class Program
     {
