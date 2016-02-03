@@ -1,11 +1,14 @@
 ﻿using ReactiveUI;
+using System;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows.Documents;
+using System.Windows.Documents.Reporting;
 using System.Windows.Mvvm.Reactive;
 using System.Windows.Mvvm.Services.Navigation;
 
-namespace System.Windows.Documents.Reporting.Sample
+namespace XamlReporting.Samples.Wpf
 {
     public class MainWindowViewModel : ReactiveViewModel
     {

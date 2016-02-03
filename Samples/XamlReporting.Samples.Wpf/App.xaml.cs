@@ -1,9 +1,10 @@
 ﻿using Ninject;
 using System.Threading.Tasks;
+using System.Windows.Documents.Reporting;
 using System.Windows.Mvvm.Application;
 using System.Windows.Mvvm.Services.Navigation;
 
-namespace System.Windows.Documents.Reporting.Sample
+namespace XamlReporting.Samples.Wpf
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"

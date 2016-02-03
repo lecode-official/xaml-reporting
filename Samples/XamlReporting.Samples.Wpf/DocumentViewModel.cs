@@ -1,9 +1,9 @@
 ﻿
-namespace System.Windows.Documents.Reporting.ConsoleSample
+namespace XamlReporting.Samples.Wpf
 {
     public class DocumentViewModel
     {
-        public string FrontPageText { get; } = "Hello from the console!";
+        public string FrontPageText { get; } = "Hello, World!";
 
         public string PageHeader { get; } = "Much Header";
 

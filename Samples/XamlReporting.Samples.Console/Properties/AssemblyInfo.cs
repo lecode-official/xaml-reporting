@@ -11,7 +11,7 @@ using System.Windows;
 
 #region General Assembly Information
 
-[assembly: AssemblyTitle("XAML Reporting Sample")]
+[assembly: AssemblyTitle("XAML Reporting Console Sample")]
 [assembly: AssemblyDescription("A sample application, which showcases the possibilities of the XAML Reporting engine.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
@@ -21,7 +21,7 @@ using System.Windows;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(false)]
-[assembly: Guid("7473938E-35B2-4D86-9E76-EE71B0B33875")]
+[assembly: Guid("74be5657-e0a3-4c92-9af9-a9496f52405b")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 #endregion

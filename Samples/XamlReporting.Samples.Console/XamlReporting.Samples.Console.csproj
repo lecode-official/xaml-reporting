@@ -7,8 +7,8 @@
     <ProjectGuid>{74BE5657-E0A3-4C92-9AF9-A9496F52405B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Windows.Documents.Reporting.ConsoleSample</RootNamespace>
-    <AssemblyName>System.Windows.Documents.Reporting.ConsoleSample</AssemblyName>
+    <RootNamespace>XamlReporting.Samples.Console</RootNamespace>
+    <AssemblyName>XamlReporting.Samples.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,7 +62,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj">
+    <ProjectReference Include="..\..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj">
       <Project>{e4b8a5c6-f483-490c-af3d-3345083ab7dc}</Project>
       <Name>System.Windows.Documents.Reporting</Name>
     </ProjectReference>
