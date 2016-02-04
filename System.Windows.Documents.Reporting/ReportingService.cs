@@ -1,14 +1,13 @@
 ﻿
 #region Using Directives
 
-using Ninject;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using PdfSharp.Pdf;
 using PdfSharp.Xps;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.InversionOfControl.Abstractions;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -33,15 +32,15 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Initializes a new <see cref="ReportingService"/> instance.
         /// </summary>
-        /// <param name="kernel">The Ninject kernel, which is used to instantiate the documents and their corresponding view models.</param>
-        public ReportingService(IKernel kernel)
+        /// <param name="iocContainer">The IOC container which is used to instantiate the documents and their corresponding view models.</param>
+        public ReportingService(IReadOnlyIocContainer iocContainer)
         {
             // Validates the arguments
-            if (kernel == null)
-                throw new ArgumentNullException("kernel");
+            if (iocContainer == null)
+                throw new ArgumentNullException("iocContainer");
 
-            // Stores the Ninject kernel for later use
-            this.kernel = kernel;
+            // Stores the IOC container for later use
+            this.iocContainer = iocContainer;
         }
 
         #endregion
@@ -49,9 +48,9 @@ namespace System.Windows.Documents.Reporting
         #region Private Fields
 
         /// <summary>
-        /// Contains the Ninjet kernel, which is used to instantiate views and view models.
+        /// Contains the IOC container which is used to instantiate the documents and their corresponding view models.
         /// </summary>
-        private IKernel kernel;
+        private IReadOnlyIocContainer iocContainer;
 
         /// <summary>
         /// Contains all cached types of the assembly of a view that has been created.
@@ -317,81 +316,53 @@ namespace System.Windows.Documents.Reporting
         {
             // Determines the type of the view model, which can be done via attribute or convention
             Type viewModelType = null;
-            object viewModel = null;
             ViewModelAttribute viewModelAttribute = typeof(T).GetCustomAttributes<ViewModelAttribute>().FirstOrDefault();
             if (viewModelAttribute != null)
+            {
                 viewModelType = viewModelAttribute.ViewModelType;
-            else if (this.assemblyTypes == null)
-                this.assemblyTypes = typeof(T).Assembly.GetTypes();
-            viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == string.Concat(typeof(T).Name, "ViewModel"));
-
-            // Checks if the document has a view model attribute, if so then the type specified in the attribute is used to instantiate a new view model for the document
+            }
+            else
+            {
+                this.assemblyTypes = this.assemblyTypes ?? typeof(T).Assembly.GetTypes();
+                string viewModelName = this.ViewModelNamingConvention(typeof(T).Name);
+                viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
+            }
+            
+            // Instantiates the new view model
+            object viewModel = null;
             if (viewModelType != null)
             {
-                // Safely instantiates the corresponding view model for the document
-                object temporaryViewModel = null;
                 try
                 {
-                    try
-                    {
-                        // Creates the view model via dependency injection
-                        temporaryViewModel = this.kernel.Get(viewModelType);
-                    }
-                    catch (ActivationException e)
-                    {
-                        throw new InvalidOperationException(Resources.Localization.ReportingService.ViewModelCouldNotBeInstantiatedExceptionMessage, e);
-                    }
-
-                    // Checks if the user provided any custom parameters
-                    if (parameters != null)
-                    {
-                        // Cycles through all properties of the parameters
-                        foreach (PropertyDescriptor parameter in TypeDescriptor.GetProperties(parameters))
-                        {
-                            // Gets the information about the parameter in the view model
-                            PropertyInfo parameterPropertyInfo = temporaryViewModel.GetType().GetProperty(parameter.Name);
-
-                            // Checks if the property was found, the types match and if the setter is implemented, if not then the value cannot be assigned and we turn to the next parameter
-                            if (parameterPropertyInfo == null || !parameterPropertyInfo.CanWrite || parameter.GetValue(parameters) == null)
-                                continue;
-
-                            // Sets the value of the parameter property in the view model to the value provided in the parameters
-                            parameterPropertyInfo.SetValue(temporaryViewModel, parameter.GetValue(parameters));
-                        }
-                    }
-
-                    // Converts the view model to the right base class and swaps the temporary view model with the final one
-                    viewModel = temporaryViewModel;
-                    temporaryViewModel = null;
+                    // Creates the view model via dependency injection
+                    viewModel = this.iocContainer.GetInstance(viewModelType).Inject(parameters);
                 }
-                finally
+                catch (Exception e)
                 {
-                    // Checks if the temporary view model is not null, this only happens if an error occurred, therefore the view model is safely disposed of
-                    if (temporaryViewModel != null && temporaryViewModel is IDisposable)
-                        (temporaryViewModel as IDisposable).Dispose();
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.ViewModelCouldNotBeInstantiatedExceptionMessage, e);
                 }
             }
 
             // Instantiates the new document
-            T document = null;
+            T document;
             try
             {
                 // Lets the kernel instantiate the document, so that all dependencies can be injected
-                document = this.kernel.Get<T>();
-
-                // Since document is a framework element it must be properly initialized
-                if (!document.IsInitialized)
-                {
-                    MethodInfo initializeComponentMethod = document.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
-                    if (initializeComponentMethod != null)
-                        initializeComponentMethod.Invoke(document, new object[0]);
-                }
+                document = this.iocContainer.GetInstance<T>();
             }
-            catch (ActivationException e)
+            catch (Exception e)
             {
                 throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeInstantiatedExceptionMessage, e);
             }
-            
+
+            // Since document is a framework element it must be properly initialized
+            if (!document.IsInitialized)
+            {
+                MethodInfo initializeComponentMethod = document.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
+                if (initializeComponentMethod != null)
+                    initializeComponentMethod.Invoke(document, new object[0]);
+            }
+
             // Renders the document and returns it
             return await document.RenderAsync(viewModel);
         }
@@ -428,6 +399,15 @@ namespace System.Windows.Documents.Reporting
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
                 await this.ExportAsync<T>(documentFormat, fileStream, parameters);
         }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the naming convention for view models. The function gets the name of the document type and returns the name of the corresponding view model. This function is used for convention-based view model activation. The default implementation adds "ViewModel" to the name of the document.
+        /// </summary>
+        public Func<string, string> ViewModelNamingConvention { get; set; } = documentName => string.Concat(documentName, "ViewModel");
 
         #endregion
     }

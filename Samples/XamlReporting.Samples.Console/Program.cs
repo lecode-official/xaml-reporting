@@ -1,9 +1,14 @@
 ﻿
-using Ninject;
+#region Using Directives
+
 using System;
+using System.InversionOfControl.Abstractions;
+using System.InversionOfControl.Abstractions.SimpleIoc;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Documents.Reporting;
+
+#endregion
 
 namespace XamlReporting.Samples.Console
 {
@@ -22,9 +27,9 @@ namespace XamlReporting.Samples.Console
 
         static async Task MainAsync(string fileName)
         {
-            IKernel kernel = new StandardKernel();
+            IIocContainer iocContainer = new SimpleIocContainer();
 
-            ReportingService reportingService = new ReportingService(kernel);
+            ReportingService reportingService = new ReportingService(iocContainer);
 
             await reportingService.ExportAsync<Document>(DocumentFormat.Xps, fileName);
         }
