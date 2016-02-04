@@ -37,7 +37,7 @@ namespace System.Windows.Documents.Reporting
         {
             // Validates the arguments
             if (iocContainer == null)
-                throw new ArgumentNullException("iocContainer");
+                throw new ArgumentNullException(nameof(iocContainer));
 
             // Stores the IOC container for later use
             this.iocContainer = iocContainer;
