@@ -18,6 +18,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlReporting.Samples.Conso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlReporting.Samples.Wpf", "Samples\XamlReporting.Samples.Wpf\XamlReporting.Samples.Wpf.csproj", "{82801FD1-A4C5-475E-A169-62F3FD3305E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{14770785-096A-45A8-8051-F732ECA51556}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{84F0F72A-EF56-4F93-9CEB-1C60152F1ED4}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Image\Banner.png = Documentation\Image\Banner.png
+		Documentation\Image\Logo.fw.png = Documentation\Image\Logo.fw.png
+		Documentation\Image\Logo.ico = Documentation\Image\Logo.ico
+		Documentation\Image\Logo1024x1024.png = Documentation\Image\Logo1024x1024.png
+		Documentation\Image\Logo128x128.png = Documentation\Image\Logo128x128.png
+		Documentation\Image\Logo256x256.png = Documentation\Image\Logo256x256.png
+		Documentation\Image\Logo32x32.png = Documentation\Image\Logo32x32.png
+		Documentation\Image\Logo512x512.png = Documentation\Image\Logo512x512.png
+		Documentation\Image\Logo64x64.png = Documentation\Image\Logo64x64.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,5 +58,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{74BE5657-E0A3-4C92-9AF9-A9496F52405B} = {DC346831-38C2-4E4A-8833-10F15873C70B}
 		{82801FD1-A4C5-475E-A169-62F3FD3305E6} = {DC346831-38C2-4E4A-8833-10F15873C70B}
+		{84F0F72A-EF56-4F93-9CEB-1C60152F1ED4} = {14770785-096A-45A8-8051-F732ECA51556}
 	EndGlobalSection
 EndGlobal
