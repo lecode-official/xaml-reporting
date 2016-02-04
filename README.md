@@ -1,6 +1,6 @@
 # XAML Reporting
 
-![XAML Reporting Logo](https://github.com/lecode-official/xaml-reporting/blob/master/Documentation/Image/Banner.png "XAML Reporting Logo")
+![XAML Reporting Logo](https://github.com/lecode-official/xaml-reporting/blob/master/Documentation/Images/Banner.png "XAML Reporting Logo")
 
 The XAML Reporting engine is a tool, which offers reporting tools based on XAML and has the functionality to export to XPS, XLS(X), CSV and PDF.
 
