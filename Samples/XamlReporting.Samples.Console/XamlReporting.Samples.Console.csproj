@@ -33,15 +33,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.InversionOfControl, Version=0.1.4.26474, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.0.1.4\lib\portable-net45+win\System.InversionOfControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.0.27157, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.InversionOfControl.Abstractions.SimpleIoc, Version=0.1.0.28257, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.SimpleIoc.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.SimpleIoc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
