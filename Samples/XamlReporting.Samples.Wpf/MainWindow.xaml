@@ -1,22 +1,42 @@
-﻿<Window x:Class="XamlReporting.Samples.Wpf.MainWindow"
+﻿
+<Window x:Class="XamlReporting.Samples.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XamlReporting.Samples.Wpf"
-        mc:Ignorable="d" Title="MainWindow" Width="1920" Height="1080">
-    <Grid>
+        mc:Ignorable="d" Title="XAML Reporting WPF Sample" WindowState="Maximized">
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <DocumentViewer Document="{Binding Path=FixedDocument}" Grid.Row="0" />
 
-        <TextBox Text="{Binding Path=FileName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" />
-        <Button Command="{Binding Path=ExportToXpsCommand}" Grid.Row="2">Export</Button>
-        <Button Command="{Binding Path=ExportTableCommand}" Grid.Row="3">Export table</Button>
+        <Grid Grid.Row="1" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">Report file name:</TextBlock>
+            <TextBox Text="{Binding Path=ReportFileName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
+            <Button Command="{Binding Path=ExportReportCommand}" Grid.Column="2" Padding="5,2">Export report</Button>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">Table file name:</TextBlock>
+            <TextBox Text="{Binding Path=TableFileName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
+            <Button Command="{Binding Path=ExportTableCommand}" Grid.Column="2" Padding="5,2">Export table</Button>
+        </Grid>
     </Grid>
 </Window>

@@ -47,10 +47,6 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ReactiveUI, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Net45\ReactiveUI.dll</HintPath>
       <Private>True</Private>
@@ -62,6 +58,18 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.InversionOfControl, Version=0.1.4.26474, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.0.1.4\lib\portable-net45+win\System.InversionOfControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.0.27157, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.InversionOfControl.Abstractions.SimpleIoc, Version=0.1.0.28257, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.SimpleIoc.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.SimpleIoc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
       <Private>True</Private>
@@ -82,44 +90,36 @@
       <HintPath>..\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Application, Version=0.1.8.33930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Application.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Application, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Configuration, Version=0.1.8.33930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Configuration.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Configuration, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Reactive, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Reactive.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Reactive, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Reactive.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Application, Version=0.1.8.33930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Services.Application.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Application, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Services.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Dialog, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Services.Dialog.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Dialog, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Services.Dialog.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Navigation, Version=0.1.8.33930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Services.Navigation.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Navigation, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Services.Navigation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.OperatingSystem, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.Services.OperatingSystem.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.OperatingSystem, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.Services.OperatingSystem.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.UI.Controls, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.UI.Controls.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows.Mvvm.UI.Markup, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.UI.Markup.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows.Mvvm.UI.ValueConverters, Version=0.1.8.33931, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Windows.Mvvm.0.1.8\lib\net452\System.Windows.Mvvm.UI.ValueConverters.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.UI, Version=0.2.0.36627, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.2.0\lib\net452\System.Windows.Mvvm.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -170,6 +170,9 @@
       <Project>{e4b8a5c6-f483-490c-af3d-3345083ab7dc}</Project>
       <Name>System.Windows.Documents.Reporting</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
