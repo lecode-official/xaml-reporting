@@ -4,10 +4,19 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                     xmlns:local="clr-namespace:XamlReporting.Samples.Console"
                     xmlns:reporting="clr-namespace:System.Windows.Documents.Reporting;assembly=System.Windows.Documents.Reporting">
+    
     <reporting:PagePart>
-        <FixedPage Width="29.7cm" Height="21cm">
+        <FixedPage Width="21cm" Height="29.7cm">
             <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}">
-                <TextBlock Text="{Binding Path=FrontPageText}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" />
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Path=Title}" HorizontalAlignment="Center" FontSize="42" />
+                    <TextBlock HorizontalAlignment="Center" FontSize="14">
+                        <Run>by</Run>
+                        <Run Text="{Binding Path=Author, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Text="{Binding Path=Abstract}" HorizontalAlignment="Center" FontSize="16" MaxWidth="8cm" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
+                    <Image Source="/XamlReporting.Samples.Console;component/Image.png" Margin="0,1cm,0,0" Width="256" Height="256" />
+                </StackPanel>
             </Grid>
         </FixedPage>
     </reporting:PagePart>
@@ -26,11 +35,20 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding Path=PageHeader}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
+                            <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="16">
+                                <Run>&#8212;</Run>
+                                <Run Text="{Binding Path=Title, Mode=OneWay}" />
+                                <Run>&#8212;</Run>
+                            </TextBlock>
 
                             <ContentPresenter Grid.Row="1" />
 
-                            <TextBlock Text="{Binding Path=PageFooter}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
+                            <TextBlock Grid.Row="2" HorizontalAlignment="Center" FontSize="16">
+                                <Run>Seite</Run>
+                                <Run Text="{Binding Path=PageNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                                <Run>von</Run>
+                                <Run Text="{Binding Path=TotalNumberOfPages, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                            </TextBlock>
                         </Grid>
                     </Grid>
                 </FixedPage>
@@ -38,10 +56,6 @@
         </reporting:FlowPart.PageTemplate>
 
         <FlowDocument>
-            <Paragraph>
-                <Run Text="{Binding Path=IntroductoryText, Mode=OneWay}" />
-            </Paragraph>
-
             <Paragraph>
                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
                 Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
