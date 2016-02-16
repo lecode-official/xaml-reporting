@@ -6,7 +6,7 @@ The XAML Reporting engine is a tool, which offers reporting tools based on XAML 
 
 ## Acknowledgements
 
-This project was conceived and first implemented by [Lukas Rögner](https://github.com/lukasroegner).
+This project was conceived and first implemented by [Lukas RÃ¶gner](https://github.com/lukasroegner).
 
 The PDF export functionality of the XAML Reporting engine was implemented using [PDFSharp](http://pdfsharp.net/). The functionality used was still in beta and
 unfortunately not included in later builds, therefore we added the library statically to the project, instead of integrating it using NuGet.
@@ -25,7 +25,7 @@ PM> Install-Package System.Windows.Documents.Reporting
 ```
 
 If you want to you can download and manually build the solution. The project was built using Visual Studio 2015. Basically any version of Visual Studio 2015 will
-suffice, no extra plugins or tools are needed (except for the `System.InversionOfControl.Nuget` project, which needs the
+suffice, no extra plugins or tools are needed (except for the `System.Windows.Documents.Reporting.nuproj` project, which needs the
 [NuBuild Project System](https://visualstudiogallery.msdn.microsoft.com/3efbfdea-7d51-4d45-a954-74a2df51c5d0) Visual Studio extension for building the NuGet
 package). Just clone the Git repository, open the solution in Visual Studio, and build the solution.
 
