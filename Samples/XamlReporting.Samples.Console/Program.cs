@@ -48,10 +48,10 @@ namespace XamlReporting.Samples.Console
             DocumentFormat documentFormat = Path.GetExtension(fileName).ToUpperInvariant() == ".XPS" ? DocumentFormat.Xps : DocumentFormat.Pdf;
             await reportingService.ExportAsync<Document>(documentFormat, fileName, string.IsNullOrWhiteSpace(documentAuthor) ? null : new { Author = documentAuthor });
             System.Console.WriteLine("Finished generating document");
-
-            // Waits for a keystroke before the application is quit
-            System.Console.WriteLine("Press any key to exit...");
-            System.Console.ReadLine();
+            
+            // Waits for a key stroke, before the application is quit
+            System.Console.WriteLine("Press any key to quit...");
+            System.Console.ReadKey();
         }
 
         #endregion
