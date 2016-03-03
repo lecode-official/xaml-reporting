@@ -61,6 +61,33 @@ namespace System.Windows.Documents.Reporting.Resources.Localization {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be exported. ähnelt.
+        /// </summary>
+        internal static string DocumentCouldNotBeExportedExceptionMessage {
+            get {
+                return ResourceManager.GetString("DocumentCouldNotBeExportedExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be exported to PDF. ähnelt.
+        /// </summary>
+        internal static string DocumentCouldNotBeExportedToPdfExceptionMessage {
+            get {
+                return ResourceManager.GetString("DocumentCouldNotBeExportedToPdfExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be exported to XPS. ähnelt.
+        /// </summary>
+        internal static string DocumentCouldNotBeExportedToXpsExceptionMessage {
+            get {
+                return ResourceManager.GetString("DocumentCouldNotBeExportedToXpsExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be instantiated. ähnelt.
         /// </summary>
         internal static string DocumentCouldNotBeInstantiatedExceptionMessage {
@@ -70,11 +97,47 @@ namespace System.Windows.Documents.Reporting.Resources.Localization {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be loaded from the XAML file, make sure, that the root element of the XAML file is of type Document. ähnelt.
+        /// </summary>
+        internal static string DocumentCouldNotBeLoadedExceptionMessage {
+            get {
+                return ResourceManager.GetString("DocumentCouldNotBeLoadedExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be rendered. ähnelt.
+        /// </summary>
+        internal static string DocumentCouldNotBeRenderedExceptionMessage {
+            get {
+                return ResourceManager.GetString("DocumentCouldNotBeRenderedExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The view model of the view could not be instantiated. ähnelt.
         /// </summary>
         internal static string ViewModelCouldNotBeInstantiatedExceptionMessage {
             get {
                 return ResourceManager.GetString("ViewModelCouldNotBeInstantiatedExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The XAML file from which the document is to be loaded could not be found. ähnelt.
+        /// </summary>
+        internal static string XamlFileCouldNotBeFoundExceptionMessage {
+            get {
+                return ResourceManager.GetString("XamlFileCouldNotBeFoundExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The XAML file from which the document is to be loaded could not be loaded. ähnelt.
+        /// </summary>
+        internal static string XamlFileCouldNotBeLoadedExceptionMessage {
+            get {
+                return ResourceManager.GetString("XamlFileCouldNotBeLoadedExceptionMessage", resourceCulture);
             }
         }
     }
