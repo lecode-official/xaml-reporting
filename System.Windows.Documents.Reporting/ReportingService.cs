@@ -53,9 +53,18 @@ namespace System.Windows.Documents.Reporting
         private IReadOnlyIocContainer iocContainer;
 
         /// <summary>
-        /// Contains all cached types of the assembly of a view that has been created.
+        /// Contains all cached types of the assembly. The types are used when activating a view model convention-based.
         /// </summary>
         private Type[] assemblyTypes = null;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the naming convention for view models. The function gets the name of the document type and returns the name of the corresponding view model. This function is used for convention-based view model activation. The default implementation adds "ViewModel" to the name of the document.
+        /// </summary>
+        public Func<string, string> ViewModelNamingConvention { get; set; } = documentName => string.Concat(documentName, "ViewModel");
 
         #endregion
 
@@ -334,7 +343,7 @@ namespace System.Windows.Documents.Reporting
             {
                 try
                 {
-                    // Creates the view model via dependency injection
+                    // Lets the IOC container instantiate the view model, so that all dependencies can be injected
                     viewModel = this.iocContainer.GetInstance(viewModelType).Inject(parameters);
                 }
                 catch (Exception e)
@@ -347,7 +356,7 @@ namespace System.Windows.Documents.Reporting
             T document;
             try
             {
-                // Lets the kernel instantiate the document, so that all dependencies can be injected
+                // Lets the IOC container instantiate the document, so that all dependencies can be injected
                 document = this.iocContainer.GetInstance<T>();
             }
             catch (Exception e)
@@ -399,15 +408,6 @@ namespace System.Windows.Documents.Reporting
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
                 await this.ExportAsync<T>(documentFormat, fileStream, parameters);
         }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the naming convention for view models. The function gets the name of the document type and returns the name of the corresponding view model. This function is used for convention-based view model activation. The default implementation adds "ViewModel" to the name of the document.
-        /// </summary>
-        public Func<string, string> ViewModelNamingConvention { get; set; } = documentName => string.Concat(documentName, "ViewModel");
 
         #endregion
     }
