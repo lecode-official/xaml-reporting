@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>4a4767eb-5b59-4230-b843-aba2c0e0dc7e</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NuProjPath Condition=" '$(NuProjPath)' == '' ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
+  </PropertyGroup>
+  <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
+  <PropertyGroup Label="Configuration">
+    <Id>System.Windows.Documents.Reporting</Id>
+    <Version>0.1.2</Version>
+    <Title>XAML Reporting</Title>
+    <Authors>David Neumann &amp; Lukas Rögner</Authors>
+    <Owners>David Neumann &amp; Lukas Rögner</Owners>
+    <Summary>A light-weight reporting engine, which utilizes XAML to render reports.</Summary>
+    <Description>The XAML Reporting engine is a tool, which offers reporting tools based on XAML and has the functionality to export to XPS, XLS(X), CSV and PDF.</Description>
+    <ReleaseNotes>Made it possible to render XAML documents from file instead of compiled XAML classes.</ReleaseNotes>
+    <ProjectUrl>https://github.com/lecode-official/xaml-reporting</ProjectUrl>
+    <LicenseUrl>https://raw.githubusercontent.com/lecode-official/xaml-reporting/master/LICENSE</LicenseUrl>
+    <Copyright>Copyright 2016 © David Neumann &amp; Lukas Rögner</Copyright>
+    <Tags>XAML, Reporting, Documents, Tables, XLS, CSV, XPS, PDF, XLSX</Tags>
+    <IconUrl>https://raw.githubusercontent.com/lecode-official/xaml-reporting/master/Documentation/Images/Logo128x128.png</IconUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj" />
+  </ItemGroup>
+  <Import Project="$(NuProjPath)\NuProj.targets" />
+</Project>
