@@ -150,7 +150,7 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters = null) where T : Document => this.ExportToXps(await this.RenderAsync<T>(parameters), outputStream);
+        private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters) where T : Document => this.ExportToXps(await this.RenderAsync<T>(parameters), outputStream);
 
         /// <summary>
         /// Exports a document to XPS.
@@ -158,7 +158,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to XPS, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync(string fileName, Stream outputStream, object parameters = null) => this.ExportToXps(await this.RenderAsync(fileName, parameters), outputStream);
+        private async Task ExportToXpsAsync(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderAsync(fileName, parameters), outputStream);
 
         /// <summary>
         /// Exports the specified rendered fixed document to XPS.
@@ -195,7 +195,7 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync<T>(Stream outputStream, object parameters = null) where T : Document
+        private async Task ExportToPdfAsync<T>(Stream outputStream, object parameters) where T : Document
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
@@ -211,7 +211,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to PDF, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync(string fileName, Stream outputStream, object parameters = null)
+        private async Task ExportToPdfAsync(string fileName, Stream outputStream, object parameters)
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
