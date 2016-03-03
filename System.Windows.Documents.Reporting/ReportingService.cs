@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 
@@ -59,7 +60,89 @@ namespace System.Windows.Documents.Reporting
 
         #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the naming convention for view models. The function gets the name of the document type and returns the name of the corresponding view model. This function is used for convention-based view model activation. The default implementation adds "ViewModel" to the name of the document.
+        /// </summary>
+        public Func<string, string> ViewModelNamingConvention { get; set; } = documentName => string.Concat(documentName, "ViewModel");
+
+        #endregion
+
         #region Private Methods
+
+        /// <summary>
+        /// Executes the specified method in an STA thread.
+        /// </summary>
+        /// <typeparam name="T">The type of the result that is being returned.</typeparam>
+        /// <param name="method">The method that is to be executed in an STA thread.</param>
+        /// <returns>Returns the result of the method execution.</returns>
+        private async Task<T> ExecuteInStaThreadAsync<T>(Func<Task<T>> method)
+        {
+            // Checks if the execution is already taking place on a STA thread, if so then the method is executed and nothing is done
+            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                return await method();
+
+            // Creates a new STA thread in which the method is executed
+            TaskCompletionSource<T> taskCompletionSource = new TaskCompletionSource<T>();
+            Thread thread = new Thread(new ThreadStart(async () =>
+            {
+                try
+                {
+                    taskCompletionSource.TrySetResult(await method());
+                }
+                catch (Exception e)
+                {
+                    taskCompletionSource.TrySetException(e);
+                }
+            }));
+            
+            // Makes the thread a background thread (otherwise it would not be cancelled, when the application is quit)
+            thread.IsBackground = true;
+
+            // Makes the thread an STA thread
+            thread.SetApartmentState(ApartmentState.STA);
+
+            // Starts the thread and returns the result
+            thread.Start();
+            return await taskCompletionSource.Task;
+        }
+
+        /// <summary>
+        /// Renders the specified document.
+        /// </summary>
+        /// <param name="document">The document that is to be rendered.</param>
+        /// <param name="viewModelType">The type of the view model that is to be instantiated and used for the rendering.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <returns>Returns the rendered document.</returns>
+        private async Task<FixedDocument> RenderAsync(Document document, Type viewModelType, object parameters)
+        {
+            // Instantiates the new view model
+            object viewModel = null;
+            if (viewModelType != null)
+            {
+                try
+                {
+                    // Creates the view model via dependency injection
+                    viewModel = this.iocContainer.GetInstance(viewModelType).Inject(parameters);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.ViewModelCouldNotBeInstantiatedExceptionMessage, e);
+                }
+            }
+            
+            // Since document is a framework element it must be properly initialized
+            if (!document.IsInitialized)
+            {
+                MethodInfo initializeComponentMethod = document.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
+                if (initializeComponentMethod != null)
+                    initializeComponentMethod.Invoke(document, new object[0]);
+            }
+
+            // Renders the document and returns it
+            return await document.RenderAsync(viewModel);
+        }
 
         /// <summary>
         /// Exports a document to XPS.
@@ -67,22 +150,28 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters = null) where T : Document
+        private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters = null) where T : Document => this.ExportToXps(await this.RenderAsync<T>(parameters), outputStream);
+
+        /// <summary>
+        /// Exports a document to XPS.
+        /// </summary>
+        /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to XPS, should be loaded.</param>
+        /// <param name="outputStream">The stream to which the file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        private async Task ExportToXpsAsync(string fileName, Stream outputStream, object parameters = null) => this.ExportToXps(await this.RenderAsync(fileName, parameters), outputStream);
+
+        /// <summary>
+        /// Exports the specified rendered fixed document to XPS.
+        /// </summary>
+        /// <param name="fixedDocument">The fixed document that is to be exported to XPS.</param>
+        /// <param name="outputStream">The stream to which the file is written.</param>
+        private void ExportToXps(FixedDocument fixedDocument, Stream outputStream)
         {
-            // Creates a new task completion source, because the XPS document must always be rendered in an STA thread (which is not possible to do, when only calling Task.Run, therefore a new thread is created by hand)
-            TaskCompletionSource<bool> exportTaskCompletionSource = new TaskCompletionSource<bool>();
-
-            // The stream comes from a different thread, therefore it must be made thread safe
-            Stream threadSafeStream = Stream.Synchronized(outputStream);
-
-            // Creates a new thread in which the XPS document is rendered
-            Thread thread = new Thread(new ThreadStart(async () =>
+            // Tries to render the document and package it in an XPS document
+            try
             {
-                // Renders the document
-                FixedDocument fixedDocument = await this.RenderAsync<T>(parameters);
-
                 // Opens a new package and a document
-                using (Package package = Package.Open(threadSafeStream, FileMode.Create))
+                using (Package package = Package.Open(outputStream, FileMode.Create))
                 {
                     using (XpsDocument xpsDocument = new XpsDocument(package, CompressionOption.Normal))
                     {
@@ -93,20 +182,11 @@ namespace System.Windows.Documents.Reporting
                         xpsWriter.Write(fixedDocument.DocumentPaginator);
                     }
                 }
-
-                // Since the rendering of the XPS document has finished, the task completion source is resolved
-                exportTaskCompletionSource.TrySetResult(true);
-            }));
-
-            // Makes the thread a background thread (otherwise it would not be cancelled, when the application is quit)
-            thread.IsBackground = true;
-
-            // Makes the thread an STA thread, which is needed for rendering the XPS document (especially when using the library in a console application)
-            thread.SetApartmentState(ApartmentState.STA);
-
-            // Starts the thread and awaits the rendering of the XPS document
-            thread.Start();
-            await exportTaskCompletionSource.Task;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedToXpsExceptionMessage, e);
+            }
         }
 
         /// <summary>
@@ -120,12 +200,40 @@ namespace System.Windows.Documents.Reporting
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                // Renders the fixed document
                 await this.ExportToXpsAsync<T>(memoryStream, parameters);
+                this.ExportToPdf(memoryStream, outputStream);
+            }
+        }
 
+        /// <summary>
+        /// Exports a document to PDF.
+        /// </summary>
+        /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to PDF, should be loaded.</param>
+        /// <param name="outputStream">The stream to which the file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        private async Task ExportToPdfAsync(string fileName, Stream outputStream, object parameters = null)
+        {
+            // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                await this.ExportToXpsAsync(fileName, memoryStream, parameters);
+                this.ExportToPdf(memoryStream, outputStream);
+            }
+        }
+
+        /// <summary>
+        /// Exports the specified rendered fixed document to PDF.
+        /// </summary>
+        /// <param name="inputStream">The input stream that contains the XPS document (there is no direct way to export a fixed document to PDF, so an XPS document is created first and then converted to PDF).</param>
+        /// <param name="outputStream">The stream to which the file is written.</param>
+        private void ExportToPdf(Stream inputStream, Stream outputStream)
+        {
+            // Tries to export the XPS document stored in the input stream to PDF
+            try
+            {
                 // Creates a new PDF document and an loads the XPS document, which was just rendered, so it can be converted to the PDF document
                 PdfDocument pdfDocument = new PdfDocument();
-                PdfSharp.Xps.XpsModel.XpsDocument xpsDocument = PdfSharp.Xps.XpsModel.XpsDocument.Open(memoryStream);
+                PdfSharp.Xps.XpsModel.XpsDocument xpsDocument = PdfSharp.Xps.XpsModel.XpsDocument.Open(inputStream);
 
                 // Convers the XPS document to a PDF document, page by page
                 XpsConverter xpsConverter = new XpsConverter(pdfDocument, xpsDocument);
@@ -137,6 +245,10 @@ namespace System.Windows.Documents.Reporting
 
                 // Saves the rendered PDF document to the actual output stream
                 pdfDocument.Save(outputStream, false);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedToPdfExceptionMessage, e);
             }
         }
 
@@ -328,21 +440,6 @@ namespace System.Windows.Documents.Reporting
                 viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
             }
             
-            // Instantiates the new view model
-            object viewModel = null;
-            if (viewModelType != null)
-            {
-                try
-                {
-                    // Creates the view model via dependency injection
-                    viewModel = this.iocContainer.GetInstance(viewModelType).Inject(parameters);
-                }
-                catch (Exception e)
-                {
-                    throw new InvalidOperationException(Resources.Localization.ReportingService.ViewModelCouldNotBeInstantiatedExceptionMessage, e);
-                }
-            }
-
             // Instantiates the new document
             T document;
             try
@@ -355,16 +452,64 @@ namespace System.Windows.Documents.Reporting
                 throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeInstantiatedExceptionMessage, e);
             }
 
-            // Since document is a framework element it must be properly initialized
-            if (!document.IsInitialized)
+            // Renders the XAML document
+            try
             {
-                MethodInfo initializeComponentMethod = document.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
-                if (initializeComponentMethod != null)
-                    initializeComponentMethod.Invoke(document, new object[0]);
+                return await this.ExecuteInStaThreadAsync(() => this.RenderAsync(document, viewModelType, parameters));
             }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+            }
+        }
 
-            // Renders the document and returns it
-            return await document.RenderAsync(viewModel);
+        /// <summary>
+        /// Loads the specified XAML file and renders it.
+        /// </summary>
+        /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
+        public async Task<FixedDocument> RenderAsync(string fileName, object parameters = null)
+        {
+            // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
+            if (!File.Exists(fileName))
+                throw new FileNotFoundException(Resources.Localization.ReportingService.XamlFileCouldNotBeFoundExceptionMessage, fileName);
+
+            // Since the XAML file has no actual class behind it, the only way to instantiate a view model is to derive the view model class name from the XAML file name
+            this.assemblyTypes = this.assemblyTypes ?? Assembly.GetEntryAssembly().GetTypes();
+            string viewModelName = this.ViewModelNamingConvention(Path.GetFileNameWithoutExtension(fileName));
+            Type viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
+
+            // Tries to load the XAML file and instantiates a document for it
+            Document document = null;
+            try
+            {
+                // Executes the rendering on an STA thread
+                return await this.ExecuteInStaThreadAsync(async () =>
+                {
+                    // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
+                    try
+                    {
+                        using (StreamReader streamReader = new StreamReader(fileName))
+                            document = XamlReader.Load(streamReader.BaseStream) as Document;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
+                    }
+
+                    // Checks if the document could not be loaded, if so then an exception is thrown
+                    if (document == null)
+                        throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
+
+                    // Renders the document and returns it
+                    return await this.RenderAsync(document, viewModelType, parameters);
+                });
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+            }
         }
 
         /// <summary>
@@ -376,14 +521,66 @@ namespace System.Windows.Documents.Reporting
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         public async Task ExportAsync<T>(DocumentFormat documentFormat, Stream outputStream, object parameters = null) where T : Document
         {
-            switch (documentFormat)
+            // Tries to export the document, if it could not be exported, then an exception is thrown
+            try
             {
-                case DocumentFormat.Xps:
-                    await this.ExportToXpsAsync<T>(outputStream, parameters);
-                    break;
-                case DocumentFormat.Pdf:
-                    await this.ExportToPdfAsync<T>(outputStream, parameters);
-                    break;
+                // Executes the exporting on an STA thread
+                await this.ExecuteInStaThreadAsync<bool>(async () =>
+                {
+                    // Checks which document type is to be exported and exports the document accordingly
+                    switch (documentFormat)
+                    {
+                        case DocumentFormat.Xps:
+                            await this.ExportToXpsAsync<T>(outputStream, parameters);
+                            break;
+                        case DocumentFormat.Pdf:
+                            await this.ExportToPdfAsync<T>(outputStream, parameters);
+                            break;
+                    }
+
+                    // Since everything went alright, true is returned
+                    return true;
+                });
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedExceptionMessage, e);
+            }
+        }
+
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        public async Task ExportAsync(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters = null)
+        {
+            // Tries to export the document, if it could not be exported, then an exception is thrown
+            try
+            {
+                // Executes the exporting on an STA thread
+                await this.ExecuteInStaThreadAsync<bool>(async () =>
+                {
+                    // Checks which document type is to be exported and exports the document accordingly
+                    switch (documentFormat)
+                    {
+                        case DocumentFormat.Xps:
+                            await this.ExportToXpsAsync(fileName, outputStream, parameters);
+                            break;
+                        case DocumentFormat.Pdf:
+                            await this.ExportToPdfAsync(fileName, outputStream, parameters);
+                            break;
+                    }
+
+                    // Since everything went alright, true is returned
+                    return true;
+                });
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedExceptionMessage, e);
             }
         }
 
@@ -400,14 +597,18 @@ namespace System.Windows.Documents.Reporting
                 await this.ExportAsync<T>(documentFormat, fileStream, parameters);
         }
 
-        #endregion
-
-        #region Public Properties
-
         /// <summary>
-        /// Gets or sets the naming convention for view models. The function gets the name of the document type and returns the name of the corresponding view model. This function is used for convention-based view model activation. The default implementation adds "ViewModel" to the name of the document.
+        /// Renders and exports the specified document to the specified document format.
         /// </summary>
-        public Func<string, string> ViewModelNamingConvention { get; set; } = documentName => string.Concat(documentName, "ViewModel");
+        /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        public async Task ExportAsync(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters = null)
+        {
+            using (FileStream fileStream = new FileStream(outputFileName, FileMode.Create))
+                await this.ExportAsync(fileName, documentFormat, fileStream, parameters);
+        }
 
         #endregion
     }

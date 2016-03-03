@@ -117,10 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DocumentCouldNotBeExportedExceptionMessage" xml:space="preserve">
+    <value>The document could not be exported.</value>
+  </data>
+  <data name="DocumentCouldNotBeExportedToPdfExceptionMessage" xml:space="preserve">
+    <value>The document could not be exported to PDF.</value>
+  </data>
+  <data name="DocumentCouldNotBeExportedToXpsExceptionMessage" xml:space="preserve">
+    <value>The document could not be exported to XPS.</value>
+  </data>
   <data name="DocumentCouldNotBeInstantiatedExceptionMessage" xml:space="preserve">
     <value>The document could not be instantiated.</value>
   </data>
+  <data name="DocumentCouldNotBeLoadedExceptionMessage" xml:space="preserve">
+    <value>The document could not be loaded from the XAML file, make sure, that the root element of the XAML file is of type Document.</value>
+  </data>
+  <data name="DocumentCouldNotBeRenderedExceptionMessage" xml:space="preserve">
+    <value>The document could not be rendered.</value>
+  </data>
   <data name="ViewModelCouldNotBeInstantiatedExceptionMessage" xml:space="preserve">
     <value>The view model of the view could not be instantiated.</value>
+  </data>
+  <data name="XamlFileCouldNotBeFoundExceptionMessage" xml:space="preserve">
+    <value>The XAML file from which the document is to be loaded could not be found.</value>
+  </data>
+  <data name="XamlFileCouldNotBeLoadedExceptionMessage" xml:space="preserve">
+    <value>The XAML file from which the document is to be loaded could not be loaded.</value>
   </data>
 </root>
