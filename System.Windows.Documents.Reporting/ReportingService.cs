@@ -54,7 +54,7 @@ namespace System.Windows.Documents.Reporting
         private IReadOnlyIocContainer iocContainer;
 
         /// <summary>
-        /// Contains all cached types of the assembly of a view that has been created.
+        /// Contains all cached types of the assembly. The types are used when activating a view model convention-based.
         /// </summary>
         private Type[] assemblyTypes = null;
 
@@ -477,27 +477,27 @@ namespace System.Windows.Documents.Reporting
             // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
             if (!File.Exists(fileName))
                 throw new FileNotFoundException(Resources.Localization.ReportingService.XamlFileCouldNotBeFoundExceptionMessage, fileName);
-            
+
             // Tries to load the XAML file and instantiates a document for it
             Document document = null;
             try
             {
-                // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
-                try
-                {
-                    using (StreamReader streamReader = new StreamReader(fileName))
-                        document = XamlReader.Load(streamReader.BaseStream) as Document;
-                }
-                catch (Exception e)
-                {
-                    throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
-                }
+                    // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
+                    try
+                    {
+                        using (StreamReader streamReader = new StreamReader(fileName))
+                            document = XamlReader.Load(streamReader.BaseStream) as Document;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
+                    }
 
-                // Checks if the document could not be loaded, if so then an exception is thrown
-                if (document == null)
-                    throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
+                    // Checks if the document could not be loaded, if so then an exception is thrown
+                    if (document == null)
+                        throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
 
-                // Renders the document and returns it
+                    // Renders the document and returns it
                 return await this.RenderAsync(document, typeof(TViewModel), parameters);
             }
             catch (Exception e)
