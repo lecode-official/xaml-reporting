@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net45": {
+      "bin": {
+        "assembly": "../../System.Windows.Documents.Reporting/Libraries/PdfSharp.Xps.dll"
+      },
+      "dependencies": {
+        "PdfSharp-WPF": "1.0.0-*"
+      }
+    }
+  }
+}
