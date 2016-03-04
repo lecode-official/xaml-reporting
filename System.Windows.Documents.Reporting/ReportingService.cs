@@ -485,8 +485,8 @@ namespace System.Windows.Documents.Reporting
                     // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
                     try
                     {
-                        using (StreamReader streamReader = new StreamReader(fileName, Encoding.Unicode))
-                            document = XamlReader.Load(streamReader.BaseStream, new ParserContext(new Xml.XmlParserContext(null, null, null, Xml.XmlSpace.Preserve, Encoding.Unicode))) as Document;
+                        using (FileStream memoryStream = new FileStream(fileName, FileMode.Open))
+                            document = XamlReader.Load(memoryStream, new ParserContext(new Xml.XmlParserContext(null, null, null, Xml.XmlSpace.Default, Encoding.Unicode))) as Document;
                     }
                     catch (Exception e)
                     {
