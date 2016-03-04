@@ -75,7 +75,7 @@ namespace XamlReporting.Samples.AspDotNet
         {
             // Adds middleware for interacting with the IIS HttpPlatformHandler reverse proxy module, this will handle forwarded Windows Authentication, request scheme, remote IPs, etc.
             applicationBuilder.UseIISPlatformHandler();
-
+            
             // Maps the /xps path to the creation of the PDF document
             applicationBuilder.Map("/xps", builder =>
             {
@@ -117,6 +117,9 @@ namespace XamlReporting.Samples.AspDotNet
                     }
                 });
             });
+
+            // Prints out an informational message when the user navigates to the default route
+            applicationBuilder.Run(async context => await context.Response.WriteAsync("Please navigate to '/xps' or '/pdf' to generate the XPS or PDF version of the report respectively."));
         }
 
         #endregion
