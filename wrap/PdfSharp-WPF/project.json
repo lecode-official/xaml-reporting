@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net45": {
+      "bin": {
+        "assembly": "../../System.Windows.Documents.Reporting/Libraries/PdfSharp-WPF.dll"
+      }
+    },
+    "dnx451": {
+      "bin": {
+        "assembly": "../../artifacts/bin/XamlReporting.Samples.AspDotNet/PdfSharp-WPF.dll"
+      }
+    }
+  }
+}
