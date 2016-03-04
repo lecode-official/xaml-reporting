@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0-*",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+    "System.InversionOfControl.Abstractions.SimpleIoc": "0.1.0"
+  },
+
+  "commands": {
+    "web": "Microsoft.AspNet.Server.Kestrel"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+        "System.Windows.Documents.Reporting": "1.0.0-*"
+      },
+      "frameworkAssemblies": {
+        "PresentationCore": "4.0.0.0",
+        "PresentationFramework": "4.0.0.0",
+        "ReachFramework": "4.0.0.0",
+        "System.Windows": "4.0.0.0",
+        "System.Xaml": "4.0.0.0",
+        "System.XML": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0",
+        "WindowsBase": "4.0.0.0"
+      }
+    }
+  },
+
+  "exclude": [
+    "wwwroot",
+    "node_modules"
+  ],
+  "publishExclude": [
+    "**.user",
+    "**.vspscc"
+  ]
+}

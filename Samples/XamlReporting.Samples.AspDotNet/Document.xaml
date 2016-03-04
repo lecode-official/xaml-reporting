@@ -1,0 +1,80 @@
+﻿<reporting:Document xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                    xmlns:local="clr-namespace:XamlReporting.Samples.Console"
+                    xmlns:reporting="clr-namespace:System.Windows.Documents.Reporting;assembly=System.Windows.Documents.Reporting">
+    
+    <reporting:PagePart>
+        <FixedPage Width="21cm" Height="29.7cm">
+            <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Path=Title}" HorizontalAlignment="Center" FontSize="42" />
+                    <TextBlock HorizontalAlignment="Center" FontSize="14">
+                        <Run>by</Run>
+                        <Run Text="{Binding Path=Author, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Text="{Binding Path=Abstract}" HorizontalAlignment="Center" FontSize="16" MaxWidth="8cm" TextWrapping="WrapWithOverflow" TextAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </FixedPage>
+    </reporting:PagePart>
+
+    <reporting:FlowPart>
+        <reporting:FlowPart.PageTemplate>
+            <DataTemplate>
+                <FixedPage Width="21cm" Height="29.7cm">
+                    <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}">
+
+                        <Grid Margin="1.5cm">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="16">
+                                <Run>&#8212;</Run>
+                                <Run Text="{Binding Path=Title, Mode=OneWay}" />
+                                <Run>&#8212;</Run>
+                            </TextBlock>
+
+                            <ContentPresenter Grid.Row="1" />
+
+                            <TextBlock Grid.Row="2" HorizontalAlignment="Center" FontSize="16">
+                                <Run>Seite</Run>
+                                <Run Text="{Binding Path=PageNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                                <Run>von</Run>
+                                <Run Text="{Binding Path=TotalNumberOfPages, Mode=OneWay, RelativeSource={RelativeSource AncestorType=FixedPage, Mode=FindAncestor}}" />
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+                </FixedPage>
+            </DataTemplate>
+        </reporting:FlowPart.PageTemplate>
+
+        <FlowDocument>
+            <Paragraph>
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+                clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+                praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci
+                tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+                praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit.
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+                clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+                praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci
+                tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+                praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit.
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+                sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            </Paragraph>
+        </FlowDocument>
+    </reporting:FlowPart>
+</reporting:Document>

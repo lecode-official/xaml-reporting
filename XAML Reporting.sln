@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{F613AC10
 EndProject
 Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "System.Windows.Documents.Reporting", "NuGet\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.nuproj", "{4A4767EB-5B59-4230-B843-ABA2C0E0DC7E}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "XamlReporting.Samples.AspDotNet", "Samples\XamlReporting.Samples.AspDotNet\XamlReporting.Samples.AspDotNet.xproj", "{892009B1-A380-4877-A7F9-ED273F3ED145}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{4A4767EB-5B59-4230-B843-ABA2C0E0DC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A4767EB-5B59-4230-B843-ABA2C0E0DC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A4767EB-5B59-4230-B843-ABA2C0E0DC7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{892009B1-A380-4877-A7F9-ED273F3ED145}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{892009B1-A380-4877-A7F9-ED273F3ED145}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{892009B1-A380-4877-A7F9-ED273F3ED145}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{892009B1-A380-4877-A7F9-ED273F3ED145}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,5 +75,6 @@ Global
 		{14770785-096A-45A8-8051-F732ECA51556} = {57C347B3-6782-4A69-A938-3BF115091078}
 		{84F0F72A-EF56-4F93-9CEB-1C60152F1ED4} = {14770785-096A-45A8-8051-F732ECA51556}
 		{4A4767EB-5B59-4230-B843-ABA2C0E0DC7E} = {F613AC10-FC49-4F9C-8149-5EF4B9681456}
+		{892009B1-A380-4877-A7F9-ED273F3ED145} = {DC346831-38C2-4E4A-8833-10F15873C70B}
 	EndGlobalSection
 EndGlobal
