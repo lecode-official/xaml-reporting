@@ -19,13 +19,13 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>System.Windows.Documents.Reporting</Id>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <Title>XAML Reporting</Title>
     <Authors>David Neumann &amp; Lukas Rögner</Authors>
     <Owners>David Neumann &amp; Lukas Rögner</Owners>
     <Summary>A light-weight reporting engine, which utilizes XAML to render reports.</Summary>
     <Description>The XAML Reporting engine is a tool, which offers reporting tools based on XAML and has the functionality to export to XPS, XLS(X), CSV and PDF.</Description>
-    <ReleaseNotes>Made it possible to specify the view model directly when rendering from a XAML file. This is helpful because the view model resolution algorithm did not work on ASP.NET 5 and .NET portable libraries. Also fixed some threading problems.</ReleaseNotes>
+    <ReleaseNotes>Fixed an encoding problem, which caused special characters in the XAML document to throw an exception during rendering. Now the Unicode encoding is used by default.</ReleaseNotes>
     <ProjectUrl>https://github.com/lecode-official/xaml-reporting</ProjectUrl>
     <LicenseUrl>https://raw.githubusercontent.com/lecode-official/xaml-reporting/master/LICENSE</LicenseUrl>
     <Copyright>Copyright 2016 © David Neumann &amp; Lukas Rögner</Copyright>
