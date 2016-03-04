@@ -77,14 +77,14 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of the result that is being returned.</typeparam>
         /// <param name="method">The method that is to be executed in an STA thread.</param>
         /// <returns>Returns the result of the method execution.</returns>
-        private async Task<T> ExecuteInStaThreadAsync<T>(Func<Task<T>> method)
+        private async Task<TDocument> ExecuteInStaThreadAsync<TDocument>(Func<Task<TDocument>> method)
         {
             // Checks if the execution is already taking place on a STA thread, if so then the method is executed and nothing is done
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
                 return await method();
 
             // Creates a new STA thread in which the method is executed
-            TaskCompletionSource<T> taskCompletionSource = new TaskCompletionSource<T>();
+            TaskCompletionSource<TDocument> taskCompletionSource = new TaskCompletionSource<TDocument>();
             Thread thread = new Thread(new ThreadStart(async () =>
             {
                 try
@@ -150,15 +150,16 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<T>(Stream outputStream, object parameters) where T : Document => this.ExportToXps(await this.RenderAsync<T>(parameters), outputStream);
+        private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document => this.ExportToXps(await this.RenderAsync<TDocument>(parameters), outputStream);
 
         /// <summary>
         /// Exports a document to XPS.
         /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to XPS, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderAsync(fileName, parameters), outputStream);
+        private async Task ExportToXpsAsync<TViewModel>(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderAsync<TViewModel>(fileName, parameters), outputStream);
 
         /// <summary>
         /// Exports the specified rendered fixed document to XPS.
@@ -195,12 +196,12 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync<T>(Stream outputStream, object parameters) where T : Document
+        private async Task ExportToPdfAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                await this.ExportToXpsAsync<T>(memoryStream, parameters);
+                await this.ExportToXpsAsync<TDocument>(memoryStream, parameters);
                 this.ExportToPdf(memoryStream, outputStream);
             }
         }
@@ -208,15 +209,16 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Exports a document to PDF.
         /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to PDF, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync(string fileName, Stream outputStream, object parameters)
+        private async Task ExportToPdfAsync<TViewModel>(string fileName, Stream outputStream, object parameters)
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                await this.ExportToXpsAsync(fileName, memoryStream, parameters);
+                await this.ExportToXpsAsync<TViewModel>(fileName, memoryStream, parameters);
                 this.ExportToPdf(memoryStream, outputStream);
             }
         }
@@ -257,13 +259,13 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <param name="tables">The tables which are to be exported.</param>
         /// <param name="outputStream">The stream to which the CSV file is written.</param>
-        private async Task ExportToCsvAsync<T>(IEnumerable<Table<T>> tables, Stream outputStream) where T : class
+        private async Task ExportToCsvAsync<TDocument>(IEnumerable<Table<TDocument>> tables, Stream outputStream) where TDocument : class
         {
             // Initializes the tables
             List<string> tableList = new List<string>();
 
             // Adds all tables as new paragraphs
-            foreach (Table<T> table in tables)
+            foreach (Table<TDocument> table in tables)
             {
                 // Initializes the rows
                 List<string> rows = new List<string>();
@@ -279,7 +281,7 @@ namespace System.Windows.Documents.Reporting
                 }
 
                 // Adds the rows
-                foreach (T row in table.Rows)
+                foreach (TDocument row in table.Rows)
                 {
                     rows.Add(string.Join(";", table.Columns
                         .Select(column => column.Formatter(row))
@@ -306,13 +308,13 @@ namespace System.Windows.Documents.Reporting
         /// <param name="tables">The tables which are to be exported.</param>
         /// <param name="outputStream">The stream to which the XLS(X) file is written.</param>
         /// <param name="useOpenXmlFormat">A value that determines whether the OpenXML format should be generated.</param>
-        private async Task ExportToXlsAsync<T>(IEnumerable<Table<T>> tables, Stream outputStream, bool useOpenXmlFormat) where T : class
+        private async Task ExportToXlsAsync<TDocument>(IEnumerable<Table<TDocument>> tables, Stream outputStream, bool useOpenXmlFormat) where TDocument : class
         {
             // Creates a new workbook instance based on the requested XLS format
             IWorkbook workbook = useOpenXmlFormat ? new XSSFWorkbook() as IWorkbook : new HSSFWorkbook() as IWorkbook;
 
             // Adds all tables as new sheets
-            foreach(Table<T> table in tables)
+            foreach(Table<TDocument> table in tables)
             {
                 // Creates a new sheet
                 ISheet sheet = workbook.CreateSheet(string.IsNullOrWhiteSpace(table.Name) ? null : table.Name);
@@ -376,7 +378,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="table">The table which is to be exported.</param>
         /// <param name="format">The output format.</param>
         /// <param name="outputStream">The stream to which the output file is written.</param>
-        public Task ExportAsync<T>(Table<T> table, TableFormat format, Stream outputStream) where T : class => this.ExportAsync(new List<Table<T>> { table }, format, outputStream);
+        public Task ExportAsync<TDocument>(Table<TDocument> table, TableFormat format, Stream outputStream) where TDocument : class => this.ExportAsync(new List<Table<TDocument>> { table }, format, outputStream);
 
         /// <summary>
         /// Exports a list of items with the specified columns to a file.
@@ -384,7 +386,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="table">The table which is to be exported.</param>
         /// <param name="format">The output format.</param>
         /// <param name="fileName">The name of the output file.</param>
-        public Task ExportAsync<T>(Table<T> table, TableFormat format, string fileName) where T : class => this.ExportAsync(new List<Table<T>> { table }, format, fileName);
+        public Task ExportAsync<TDocument>(Table<TDocument> table, TableFormat format, string fileName) where TDocument : class => this.ExportAsync(new List<Table<TDocument>> { table }, format, fileName);
 
         /// <summary>
         /// Exports a list of items with the specified columns to a file.
@@ -392,7 +394,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="tables">The tables which is to be exported.</param>
         /// <param name="format">The output format.</param>
         /// <param name="outputStream">The stream to which the output file is written.</param>
-        public async Task ExportAsync<T>(IEnumerable<Table<T>> tables, TableFormat format, Stream outputStream) where T : class
+        public async Task ExportAsync<TDocument>(IEnumerable<Table<TDocument>> tables, TableFormat format, Stream outputStream) where TDocument : class
         {
             switch (format)
             {
@@ -412,7 +414,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="tables">The table which is to be exported.</param>
         /// <param name="format">The output format.</param>
         /// <param name="fileName">The name of the output file.</param>
-        public async Task ExportAsync<T>(IEnumerable<Table<T>> tables, TableFormat format, string fileName) where T : class
+        public async Task ExportAsync<TDocument>(IEnumerable<Table<TDocument>> tables, TableFormat format, string fileName) where TDocument : class
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
                 await this.ExportAsync(tables, format, fileStream);
@@ -424,28 +426,28 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="T">The type of document that is to be rendered.</typeparam>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync<T>(object parameters = null) where T : Document
+        public async Task<FixedDocument> RenderAsync<TDocument>(object parameters = null) where TDocument : Document
         {
             // Determines the type of the view model, which can be done via attribute or convention
             Type viewModelType = null;
-            ViewModelAttribute viewModelAttribute = typeof(T).GetCustomAttributes<ViewModelAttribute>().FirstOrDefault();
+            ViewModelAttribute viewModelAttribute = typeof(TDocument).GetCustomAttributes<ViewModelAttribute>().FirstOrDefault();
             if (viewModelAttribute != null)
             {
                 viewModelType = viewModelAttribute.ViewModelType;
             }
             else
             {
-                this.assemblyTypes = this.assemblyTypes ?? typeof(T).Assembly.GetTypes();
-                string viewModelName = this.ViewModelNamingConvention(typeof(T).Name);
+                this.assemblyTypes = this.assemblyTypes ?? typeof(TDocument).Assembly.GetTypes();
+                string viewModelName = this.ViewModelNamingConvention(typeof(TDocument).Name);
                 viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
             }
             
             // Instantiates the new document
-            T document;
+            TDocument document;
             try
             {
                 // Lets the kernel instantiate the document, so that all dependencies can be injected
-                document = this.iocContainer.GetInstance<T>();
+                document = this.iocContainer.GetInstance<TDocument>();
             }
             catch (Exception e)
             {
@@ -466,20 +468,16 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Loads the specified XAML file and renders it.
         /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync(string fileName, object parameters = null)
+        public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters = null)
         {
             // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
             if (!File.Exists(fileName))
                 throw new FileNotFoundException(Resources.Localization.ReportingService.XamlFileCouldNotBeFoundExceptionMessage, fileName);
-
-            // Since the XAML file has no actual class behind it, the only way to instantiate a view model is to derive the view model class name from the XAML file name
-            this.assemblyTypes = this.assemblyTypes ?? Assembly.GetEntryAssembly().GetTypes();
-            string viewModelName = this.ViewModelNamingConvention(Path.GetFileNameWithoutExtension(fileName));
-            Type viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
-
+            
             // Tries to load the XAML file and instantiates a document for it
             Document document = null;
             try
@@ -503,7 +501,7 @@ namespace System.Windows.Documents.Reporting
                         throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
 
                     // Renders the document and returns it
-                    return await this.RenderAsync(document, viewModelType, parameters);
+                    return await this.RenderAsync(document, typeof(TViewModel), parameters);
                 });
             }
             catch (Exception e)
@@ -519,7 +517,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<T>(DocumentFormat documentFormat, Stream outputStream, object parameters = null) where T : Document
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, object parameters = null) where TDocument : Document
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -531,10 +529,10 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync<T>(outputStream, parameters);
+                            await this.ExportToXpsAsync<TDocument>(outputStream, parameters);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync<T>(outputStream, parameters);
+                            await this.ExportToPdfAsync<TDocument>(outputStream, parameters);
                             break;
                     }
 
@@ -551,11 +549,12 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
         /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters = null)
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters = null)
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -567,10 +566,10 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync(fileName, outputStream, parameters);
+                            await this.ExportToXpsAsync<TViewModel>(fileName, outputStream, parameters);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync(fileName, outputStream, parameters);
+                            await this.ExportToPdfAsync<TViewModel>(fileName, outputStream, parameters);
                             break;
                     }
 
@@ -591,23 +590,24 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<T>(DocumentFormat documentFormat, string fileName, object parameters = null) where T : Document
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, object parameters = null) where TDocument : Document
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
-                await this.ExportAsync<T>(documentFormat, fileStream, parameters);
+                await this.ExportAsync<TDocument>(documentFormat, fileStream, parameters);
         }
 
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
         /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters = null)
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters = null)
         {
             using (FileStream fileStream = new FileStream(outputFileName, FileMode.Create))
-                await this.ExportAsync(fileName, documentFormat, fileStream, parameters);
+                await this.ExportAsync<TViewModel>(fileName, documentFormat, fileStream, parameters);
         }
 
         #endregion
