@@ -5,11 +5,6 @@
       "bin": {
         "assembly": "../../System.Windows.Documents.Reporting/Libraries/PdfSharp-WPF.dll"
       }
-    },
-    "dnx451": {
-      "bin": {
-        "assembly": "../../artifacts/bin/XamlReporting.Samples.AspDotNet/PdfSharp-WPF.dll"
-      }
     }
   }
 }
