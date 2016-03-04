@@ -457,7 +457,7 @@ namespace System.Windows.Documents.Reporting
             // Renders the XAML document
             try
             {
-                return await this.ExecuteInStaThreadAsync(() => this.RenderAsync(document, viewModelType, parameters));
+                return await this.RenderAsync(document, viewModelType, parameters);
             }
             catch (Exception e)
             {
@@ -482,27 +482,23 @@ namespace System.Windows.Documents.Reporting
             Document document = null;
             try
             {
-                // Executes the rendering on an STA thread
-                return await this.ExecuteInStaThreadAsync(async () =>
+                // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
+                try
                 {
-                    // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
-                    try
-                    {
-                        using (StreamReader streamReader = new StreamReader(fileName))
-                            document = XamlReader.Load(streamReader.BaseStream) as Document;
-                    }
-                    catch (Exception e)
-                    {
-                        throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
-                    }
+                    using (StreamReader streamReader = new StreamReader(fileName))
+                        document = XamlReader.Load(streamReader.BaseStream) as Document;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
+                }
 
-                    // Checks if the document could not be loaded, if so then an exception is thrown
-                    if (document == null)
-                        throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
+                // Checks if the document could not be loaded, if so then an exception is thrown
+                if (document == null)
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
 
-                    // Renders the document and returns it
-                    return await this.RenderAsync(document, typeof(TViewModel), parameters);
-                });
+                // Renders the document and returns it
+                return await this.RenderAsync(document, typeof(TViewModel), parameters);
             }
             catch (Exception e)
             {
@@ -522,6 +518,9 @@ namespace System.Windows.Documents.Reporting
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
             {
+                // Creates a new synchronized stream to make the stream thread-safe
+                Stream threadSafeStream = Stream.Synchronized(new MemoryStream());
+
                 // Executes the exporting on an STA thread
                 await this.ExecuteInStaThreadAsync<bool>(async () =>
                 {
@@ -529,16 +528,20 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync<TDocument>(outputStream, parameters);
+                            await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync<TDocument>(outputStream, parameters);
+                            await this.ExportToPdfAsync<TDocument>(threadSafeStream, parameters);
                             break;
                     }
 
                     // Since everything went alright, true is returned
                     return true;
                 });
+
+                // Copies the contents of the synchronized stream into the output stream
+                threadSafeStream.Seek(0, SeekOrigin.Begin);
+                await threadSafeStream.CopyToAsync(outputStream);
             }
             catch (Exception e)
             {
@@ -559,6 +562,9 @@ namespace System.Windows.Documents.Reporting
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
             {
+                // Creates a new synchronized stream to make the stream thread-safe
+                Stream threadSafeStream = Stream.Synchronized(new MemoryStream());
+
                 // Executes the exporting on an STA thread
                 await this.ExecuteInStaThreadAsync<bool>(async () =>
                 {
@@ -566,16 +572,20 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync<TViewModel>(fileName, outputStream, parameters);
+                            await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync<TViewModel>(fileName, outputStream, parameters);
+                            await this.ExportToPdfAsync<TViewModel>(fileName, threadSafeStream, parameters);
                             break;
                     }
 
                     // Since everything went alright, true is returned
                     return true;
                 });
+
+                // Copies the contents of the synchronized stream into the output stream
+                threadSafeStream.Seek(0, SeekOrigin.Begin);
+                await threadSafeStream.CopyToAsync(outputStream);
             }
             catch (Exception e)
             {
