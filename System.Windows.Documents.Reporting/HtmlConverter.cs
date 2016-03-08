@@ -1,16 +1,16 @@
 ﻿
 #region Using Directives
 
+using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
-using System.Collections.Generic;
 
 #endregion
 
@@ -29,56 +29,52 @@ namespace System.Windows.Documents.Reporting
         /// <param name="htmlNode">The HTML node that is to be converted into a flow document element.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the conversion.</param>
         /// <returns>Returns the converted flow document element.</returns>
-        private static Task<TextElement> ConvertHtmlNodeAsync(INode htmlNode, CancellationToken cancellationToken)
+        private static TextElement ConvertHtmlNode(INode htmlNode)
         {
-            // Creates a new task, which runs in the background and converts the HTML element
-            return Task<TextElement>.Run(async () =>
+            // Checks if the HTML node is an HTML element, in that case the HTML element is parsed
+            IHtmlElement htmlElement = htmlNode as IHtmlElement;
+            if (htmlElement != null)
             {
-                // Checks if the HTML node is an HTML element, in that case the HTML element is parsed
-                IHtmlElement htmlElement = htmlNode as IHtmlElement;
-                if (htmlElement != null)
+                switch (htmlElement.NodeName.ToUpperInvariant())
                 {
-                    switch (htmlElement.NodeName.ToUpperInvariant())
-                    {
-                        case "BR":
-                            return new LineBreak();
-                        case "P":
-                            IEnumerable<Inline> paragraphContent = (await Task.WhenAll(htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNodeAsync(child, cancellationToken)))).OfType<Inline>();
-                            Paragraph paragraph = new Paragraph();
-                            paragraph.Inlines.AddRange(paragraphContent);
-                            return paragraph;
-                        case "SPAN":
-                            IEnumerable<Inline> spanContent = (await Task.WhenAll(htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNodeAsync(child, cancellationToken)))).OfType<Inline>();
-                            Span span = new Span();
-                            span.Inlines.AddRange(spanContent);
-                            return span;
-                        case "EM":
-                            IEnumerable<Inline> emphasisContent = (await Task.WhenAll(htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNodeAsync(child, cancellationToken)))).OfType<Inline>();
-                            Span emphasis = new Span();
-                            emphasis.FontStyle = FontStyles.Italic;
-                            emphasis.Inlines.AddRange(emphasisContent);
-                            return emphasis;
-                        case "STRONG":
-                            IEnumerable<Inline> strongContent = (await Task.WhenAll(htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNodeAsync(child, cancellationToken)))).OfType<Inline>();
-                            Span strong = new Span();
-                            strong.FontWeight = FontWeights.Bold;
-                            strong.Inlines.AddRange(strongContent);
-                            return strong;
-                        case "A":
-                            IEnumerable<Inline> hyperlinkContent = (await Task.WhenAll(htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNodeAsync(child, cancellationToken)))).OfType<Inline>();
-                            Hyperlink hyperlink = new Hyperlink();
-                            hyperlink.Inlines.AddRange(hyperlinkContent);
-                            string hyperReference = htmlElement.GetAttribute("href");
-                            Uri navigationUri;
-                            if (Uri.TryCreate(hyperReference, UriKind.RelativeOrAbsolute, out navigationUri))
-                                hyperlink.NavigateUri = navigationUri;
-                            return hyperlink;
-                    }
+                    case "BR":
+                        return new LineBreak();
+                    case "P":
+                        IEnumerable<Inline> paragraphContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Paragraph paragraph = new Paragraph();
+                        paragraph.Inlines.AddRange(paragraphContent);
+                        return paragraph;
+                    case "SPAN":
+                        IEnumerable<Inline> spanContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span span = new Span();
+                        span.Inlines.AddRange(spanContent);
+                        return span;
+                    case "EM":
+                        IEnumerable<Inline> emphasisContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span emphasis = new Span();
+                        emphasis.FontStyle = FontStyles.Italic;
+                        emphasis.Inlines.AddRange(emphasisContent);
+                        return emphasis;
+                    case "STRONG":
+                        IEnumerable<Inline> strongContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span strong = new Span();
+                        strong.FontWeight = FontWeights.Bold;
+                        strong.Inlines.AddRange(strongContent);
+                        return strong;
+                    case "A":
+                        IEnumerable<Inline> hyperlinkContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Hyperlink hyperlink = new Hyperlink();
+                        hyperlink.Inlines.AddRange(hyperlinkContent);
+                        string hyperReference = htmlElement.GetAttribute("href");
+                        Uri navigationUri;
+                        if (Uri.TryCreate(hyperReference, UriKind.RelativeOrAbsolute, out navigationUri))
+                            hyperlink.NavigateUri = navigationUri;
+                        return hyperlink;
                 }
+            }
 
-                // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
-                return new Run(htmlNode.TextContent) as TextElement;
-            }, cancellationToken);
+            // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
+            return new Run(htmlNode.TextContent) as TextElement;
         }
 
         #endregion
@@ -108,8 +104,10 @@ namespace System.Windows.Documents.Reporting
             // Creates a new flow document
             FlowDocument flowDocument = new FlowDocument();
 
-            // Converts the HTML to block items, which are added to the flow document
-            flowDocument.Blocks.AddRange(await Task.WhenAll(htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNodeAsync(childNode, cancellationToken))));
+            // Converts the HTML to block items, which are added to the flow document (elements that are not a block have to be wrapped in a paragraph, otherwise the flow document will not accept them as content)
+            IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode));
+            IEnumerable<Block> blockElements = textElements.Select(textElement => textElement is Block ? textElement as Block : new Paragraph(textElement as Inline));
+            flowDocument.Blocks.AddRange(blockElements);
 
             // Returns the created flow document
             return flowDocument;
@@ -194,7 +192,7 @@ namespace System.Windows.Documents.Reporting
         public static Task<FlowDocument> ConvertFromString(string html, CancellationToken cancellationToken)
         {
             // Converts the string into a memory stream, converts the HTML into a flow document, and returns it
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(html)))
+            using (MemoryStream memoryStream = new MemoryStream(html.Select(character => (byte)character).ToArray()))
                 return HtmlConverter.ConvertFromStream(memoryStream, cancellationToken);
         }
 
