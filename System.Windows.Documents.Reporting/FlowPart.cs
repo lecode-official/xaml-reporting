@@ -25,9 +25,25 @@ namespace System.Windows.Documents.Reporting
         public DataTemplate PageTemplate { get; set; }
 
         /// <summary>
+        /// Contains a dependency property, which contains the flowing content of the document. This content can be designed regardless of the document size. The content is automatically paginated during the rendering process, and wrapped in a page using the page template.
+        /// </summary>
+        public static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content", typeof(FlowDocument), typeof(FlowPart), new FrameworkPropertyMetadata(null));
+        
+        /// <summary>
         /// Gets or sets the flowing content of the document. This content can be designed regardless of the document size. The content is automatically paginated during the rendering process, and wrapped in a page using the page template.
         /// </summary>
-        public FlowDocument Content { get; set; }
+        public FlowDocument Content
+        {
+            get
+            {
+                return GetValue(FlowPart.ContentProperty) as FlowDocument;
+            }
+
+            set
+            {
+                SetValue(FlowPart.ContentProperty, value);
+            }
+        }
 
         #endregion
 

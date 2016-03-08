@@ -1,4 +1,6 @@
 ﻿
+using System.Windows.Documents;
+
 namespace XamlReporting.Samples.Wpf
 {
     /// <summary>
@@ -22,6 +24,11 @@ namespace XamlReporting.Samples.Wpf
         /// Gets or sets the name of the author.
         /// </summary>
         public string Author { get; set; } = "Jane Doe";
+
+        /// <summary>
+        /// Gets or sets a flow document, which is bound to the report.
+        /// </summary>
+        public FlowDocument FlowDocument { get; set; }
 
         #endregion
     }
