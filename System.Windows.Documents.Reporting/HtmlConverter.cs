@@ -213,7 +213,7 @@ namespace System.Windows.Documents.Reporting
         public static Task<FlowDocument> ConvertFromString(string html, CancellationToken cancellationToken)
         {
             // Converts the string into a memory stream, converts the HTML into a flow document, and returns it
-            using (MemoryStream memoryStream = new MemoryStream(html.Select(character => (byte)character).ToArray()))
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(html)))
                 return HtmlConverter.ConvertFromStream(memoryStream, cancellationToken);
         }
 
