@@ -66,6 +66,27 @@ namespace XamlReporting.Samples.Wpf
         }
 
         /// <summary>
+        /// Contains a flow document, which is bound to the report.
+        /// </summary>
+        private FlowDocument flowDocument;
+
+        /// <summary>
+        /// Gets a flow document, which is bound to the report.
+        /// </summary>
+        public FlowDocument FlowDocument
+        {
+            get
+            {
+                return this.flowDocument;
+            }
+
+            private set
+            {
+                this.RaiseAndSetIfChanged(ref this.flowDocument, value);
+            }
+        }
+
+        /// <summary>
         /// Contains the name of the file into which the report is being exported.
         /// </summary>
         private string reportFileName;
@@ -164,8 +185,8 @@ namespace XamlReporting.Samples.Wpf
         /// <param name="e">The event arguments, that contain more information about the navigation.</param>
         public override async Task OnNavigateToAsync(NavigationEventArgs e)
         {
-            FlowDocument flowDocument = await HtmlConverter.ConvertFromString(@"<!DOCTYPE html><html><head></head><body>Hallo Welt!<p>Dies ist ein<br/><br/><em><strong>Test</strong></em></p><a href='https://www.google.de'><em>Google</em></a>Ende!</body></html>");
-            this.FixedDocument = await this.reportingService.RenderAsync<Document>(new { FlowDocument = flowDocument });
+            this.FlowDocument = await HtmlConverter.ConvertFromString(@"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>");
+            this.FixedDocument = await this.reportingService.RenderAsync<Document>();
         }
 
         #endregion

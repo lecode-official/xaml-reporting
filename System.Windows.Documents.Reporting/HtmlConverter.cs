@@ -106,7 +106,28 @@ namespace System.Windows.Documents.Reporting
 
             // Converts the HTML to block items, which are added to the flow document (elements that are not a block have to be wrapped in a paragraph, otherwise the flow document will not accept them as content)
             IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode));
-            IEnumerable<Block> blockElements = textElements.Select(textElement => textElement is Block ? textElement as Block : new Paragraph(textElement as Inline));
+            List<Block> blockElements = new List<Block>();
+            Paragraph currentContainerParagraph = null;
+            foreach (TextElement textElement in textElements)
+            {
+                Block block = textElement as Block;
+                if (block != null)
+                {
+                    if (currentContainerParagraph != null)
+                    {
+                        blockElements.Add(currentContainerParagraph);
+                        currentContainerParagraph = null;
+                    }
+                    blockElements.Add(block);
+                }
+                else
+                {
+                    currentContainerParagraph = currentContainerParagraph ?? new Paragraph();
+                    currentContainerParagraph.Inlines.Add(textElement as Inline);
+                }
+            }
+            if (currentContainerParagraph != null)
+                blockElements.Add(currentContainerParagraph);
             flowDocument.Blocks.AddRange(blockElements);
 
             // Returns the created flow document
