@@ -98,7 +98,7 @@ namespace System.Windows.Documents.Reporting
             }
             catch (Exception exception)
             {
-                throw new InvalidOperationException("The HTML could not be parsed.", exception);
+                throw new InvalidOperationException(Resources.Localization.HtmlConverter.HtmlCouldNotBeParsedExceptionMessage, exception);
             }
 
             // Creates a new flow document
@@ -163,7 +163,7 @@ namespace System.Windows.Documents.Reporting
             }
             catch (Exception exception)
             {
-                throw new InvalidOperationException("The HTML page could not be loaded.", exception);
+                throw new InvalidOperationException(Resources.Localization.HtmlConverter.HtmlPageCouldNotBeLoadedExceptionMessage, exception);
             }
         }
 
@@ -187,7 +187,7 @@ namespace System.Windows.Documents.Reporting
         {
             // Checks if the file exists, if not then an exception is thrown
             if (!File.Exists(fileName))
-                throw new FileNotFoundException("The HTML file could not be found.", fileName);
+                throw new FileNotFoundException(Resources.Localization.HtmlConverter.HtmlFileCouldNotBeFoundExceptionMessage, fileName);
 
             // Loads the file, converts it into a flow document, and returns the converted flow document
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
