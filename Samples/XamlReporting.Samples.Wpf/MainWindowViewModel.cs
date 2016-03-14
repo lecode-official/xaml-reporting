@@ -185,7 +185,7 @@ namespace XamlReporting.Samples.Wpf
         /// <param name="e">The event arguments, that contain more information about the navigation.</param>
         public override async Task OnNavigateToAsync(NavigationEventArgs e)
         {
-            this.FlowDocument = await HtmlConverter.ConvertFromString(@"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>");
+            this.FlowDocument = new FlowDocument(await HtmlConverter.ConvertFromStringAsync(@"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>"));
             this.FixedDocument = await this.reportingService.RenderAsync<Document>();
         }
 

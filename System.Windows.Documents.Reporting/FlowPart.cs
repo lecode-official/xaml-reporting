@@ -23,27 +23,11 @@ namespace System.Windows.Documents.Reporting
         /// Gets or sets the page template, which is used during the rendering process to paginate the flow document. The page template can be used to render content that should be visible on all pages (e.g. headers, footers, page numbers, etc.).
         /// </summary>
         public DataTemplate PageTemplate { get; set; }
-
-        /// <summary>
-        /// Contains a dependency property, which contains the flowing content of the document. This content can be designed regardless of the document size. The content is automatically paginated during the rendering process, and wrapped in a page using the page template.
-        /// </summary>
-        public static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content", typeof(FlowDocument), typeof(FlowPart), new FrameworkPropertyMetadata(null));
         
         /// <summary>
         /// Gets or sets the flowing content of the document. This content can be designed regardless of the document size. The content is automatically paginated during the rendering process, and wrapped in a page using the page template.
         /// </summary>
-        public FlowDocument Content
-        {
-            get
-            {
-                return GetValue(FlowPart.ContentProperty) as FlowDocument;
-            }
-
-            set
-            {
-                SetValue(FlowPart.ContentProperty, value);
-            }
-        }
+        public FlowDocument Content { get; set; }
 
         #endregion
 

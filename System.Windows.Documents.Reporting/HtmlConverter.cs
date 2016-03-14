@@ -24,9 +24,9 @@ namespace System.Windows.Documents.Reporting
         #region Private Static Methods
 
         /// <summary>
-        /// Converts the specified HTML node into a flow document element.
+        /// Converts the specified HTML node into flow document content element.
         /// </summary>
-        /// <param name="htmlNode">The HTML node that is to be converted into a flow document element.</param>
+        /// <param name="htmlNode">The HTML node that is to be converted into flow document content element.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the conversion.</param>
         /// <returns>Returns the converted flow document element.</returns>
         private static TextElement ConvertHtmlNode(INode htmlNode)
@@ -82,13 +82,13 @@ namespace System.Windows.Documents.Reporting
         #region Public Static Methods
 
         /// <summary>
-        /// Converts the HTML in the specified stream into a flow document.
+        /// Converts the HTML in the specified stream into flow document content.
         /// </summary>
         /// <param name="stream">The stream that contains the HTML that is to be converted.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the parsing and converting of the HTML.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static async Task<FlowDocument> ConvertFromStream(Stream stream, CancellationToken cancellationToken)
+        /// <returns>Returns the converted flow document content.</returns>
+        public static async Task<Section> ConvertFromStreamAsync(Stream stream, CancellationToken cancellationToken)
         {
             // Tries to parse the HTML, if it could not be parsed, then an exception is thrown
             IHtmlDocument htmlDocument;
@@ -101,10 +101,10 @@ namespace System.Windows.Documents.Reporting
                 throw new InvalidOperationException(Resources.Localization.HtmlConverter.HtmlCouldNotBeParsedExceptionMessage, exception);
             }
 
-            // Creates a new flow document
-            FlowDocument flowDocument = new FlowDocument();
+            // Creates a new section, which holds the content of the 
+            Section flowDocumentContent = new Section();
 
-            // Converts the HTML to block items, which are added to the flow document (elements that are not a block have to be wrapped in a paragraph, otherwise the flow document will not accept them as content)
+            // Converts the HTML to block items, which are added to the section (elements that are not a block have to be wrapped in a paragraph, otherwise the section will not accept them as content)
             IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode));
             List<Block> blockElements = new List<Block>();
             Paragraph currentContainerParagraph = null;
@@ -128,28 +128,28 @@ namespace System.Windows.Documents.Reporting
             }
             if (currentContainerParagraph != null)
                 blockElements.Add(currentContainerParagraph);
-            flowDocument.Blocks.AddRange(blockElements);
+            flowDocumentContent.Blocks.AddRange(blockElements);
 
-            // Returns the created flow document
-            return flowDocument;
+            // Returns the created flow document content
+            return flowDocumentContent;
         }
 
         /// <summary>
-        /// Converts the HTML in the specified stream into a flow document.
+        /// Converts the HTML in the specified stream into flow document content.
         /// </summary>
         /// <param name="stream">The stream that contains the HTML that is to be converted.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromStream(Stream stream) => HtmlConverter.ConvertFromStream(stream, new CancellationTokenSource().Token);
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromStreamAsync(Stream stream) => HtmlConverter.ConvertFromStreamAsync(stream, new CancellationTokenSource().Token);
 
         /// <summary>
-        /// Downloads the HTML from the specified URI and converts it into a flow document.
+        /// Downloads the HTML from the specified URI and converts it into flow document content.
         /// </summary>
         /// <param name="uri">The URI from which the HTML is to be loaded.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the parsing and converting of the HTML.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be downloaded or parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static async Task<FlowDocument> ConvertFromUri(Uri uri, CancellationToken cancellationToken)
+        /// <returns>Returns the converted flow document content.</returns>
+        public static async Task<Section> ConvertFromUriAsync(Uri uri, CancellationToken cancellationToken)
         {
             // Tries to download the HTML from the specified URI, if it could not be loaded, then an exception is thrown
             try
@@ -158,7 +158,7 @@ namespace System.Windows.Documents.Reporting
                 {
                     HttpResponseMessage responseMessage = await httpClient.GetAsync(uri, cancellationToken);
                     responseMessage.EnsureSuccessStatusCode();
-                    return await HtmlConverter.ConvertFromStream(await responseMessage.Content.ReadAsStreamAsync(), cancellationToken);
+                    return await HtmlConverter.ConvertFromStreamAsync(await responseMessage.Content.ReadAsStreamAsync(), cancellationToken);
                 }
             }
             catch (Exception exception)
@@ -168,62 +168,62 @@ namespace System.Windows.Documents.Reporting
         }
 
         /// <summary>
-        /// Downloads the HTML from the specified URI and converts it into a flow document.
+        /// Downloads the HTML from the specified URI and converts it into flow document content.
         /// </summary>
         /// <param name="uri">The URI from which the HTML is to be loaded.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be downloaded or parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromUri(Uri uri) => HtmlConverter.ConvertFromUri(uri, new CancellationTokenSource().Token);
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromUriAsync(Uri uri) => HtmlConverter.ConvertFromUriAsync(uri, new CancellationTokenSource().Token);
 
         /// <summary>
-        /// Converts the specified HTML file into a flow document.
+        /// Converts the specified HTML file into flow document content.
         /// </summary>
-        /// <param name="fileName">The name of the HTML file, that is to be loaded and converted into a flow document.</param>
+        /// <param name="fileName">The name of the HTML file, that is to be loaded and converted into flow document content.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the parsing and converting of the HTML.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
         /// <exception cref="FileNotFoundException">If the specified file could not be found, then a <see cref="FileNotFoundException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromFile(string fileName, CancellationToken cancellationToken)
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromFileAsync(string fileName, CancellationToken cancellationToken)
         {
             // Checks if the file exists, if not then an exception is thrown
             if (!File.Exists(fileName))
                 throw new FileNotFoundException(Resources.Localization.HtmlConverter.HtmlFileCouldNotBeFoundExceptionMessage, fileName);
 
-            // Loads the file, converts it into a flow document, and returns the converted flow document
+            // Loads the file, converts it into flow document content, and returns the converted flow document
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-                return HtmlConverter.ConvertFromStream(fileStream, cancellationToken);
+                return HtmlConverter.ConvertFromStreamAsync(fileStream, cancellationToken);
         }
 
         /// <summary>
-        /// Converts the specified HTML file into a flow document.
+        /// Converts the specified HTML file into flow document content.
         /// </summary>
-        /// <param name="fileName">The name of the HTML file, that is to be loaded and converted into a flow document.</param>
+        /// <param name="fileName">The name of the HTML file, that is to be loaded and converted into flow document content.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
         /// <exception cref="FileNotFoundException">If the specified file could not be found, then a <see cref="FileNotFoundException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromFile(string fileName) => HtmlConverter.ConvertFromFile(fileName, new CancellationTokenSource().Token);
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromFileAsync(string fileName) => HtmlConverter.ConvertFromFileAsync(fileName, new CancellationTokenSource().Token);
 
         /// <summary>
-        /// Converts the specified HTML into a flow document.
+        /// Converts the specified HTML into flow document content.
         /// </summary>
-        /// <param name="html">The HTML string that is to be converted into a flow document.</param>
+        /// <param name="html">The HTML string that is to be converted into flow document content.</param>
         /// <param name="cancellationToken">The cancellation token, which can be used to cancel the parsing and converting of the HTML.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromString(string html, CancellationToken cancellationToken)
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromStringAsync(string html, CancellationToken cancellationToken)
         {
-            // Converts the string into a memory stream, converts the HTML into a flow document, and returns it
+            // Converts the string into a memory stream, converts the HTML into flow document content, and returns it
             using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(html)))
-                return HtmlConverter.ConvertFromStream(memoryStream, cancellationToken);
+                return HtmlConverter.ConvertFromStreamAsync(memoryStream, cancellationToken);
         }
 
         /// <summary>
-        /// Converts the specified HTML into a flow document.
+        /// Converts the specified HTML into flow document content.
         /// </summary>
-        /// <param name="html">The HTML string that is to be converted into a flow document.</param>
+        /// <param name="html">The HTML string that is to be converted into flow document content.</param>
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
-        /// <returns>Returns the converted flow document.</returns>
-        public static Task<FlowDocument> ConvertFromString(string html) => HtmlConverter.ConvertFromString(html, new CancellationTokenSource().Token);
+        /// <returns>Returns the converted flow document content.</returns>
+        public static Task<Section> ConvertFromStringAsync(string html) => HtmlConverter.ConvertFromStringAsync(html, new CancellationTokenSource().Token);
 
         #endregion
     }

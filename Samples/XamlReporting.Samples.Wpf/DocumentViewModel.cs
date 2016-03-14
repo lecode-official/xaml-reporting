@@ -24,7 +24,12 @@ namespace XamlReporting.Samples.Wpf
         /// Gets or sets the name of the author.
         /// </summary>
         public string Author { get; set; } = "Jane Doe";
-        
+
+        /// <summary>
+        /// Gets an HTML string, which is displayed in the document.
+        /// </summary>
+        public string Html { get; } = @"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>";
+
         #endregion
     }
 }
