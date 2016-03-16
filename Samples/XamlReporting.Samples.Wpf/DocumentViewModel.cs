@@ -28,7 +28,23 @@ namespace XamlReporting.Samples.Wpf
         /// <summary>
         /// Gets an HTML string, which is displayed in the document.
         /// </summary>
-        public string Html { get; } = @"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>";
+        public string Html { get; } = @"
+            <!DOCTYPE html>
+            <html>
+                <head></head>
+                <body>
+                    <h1>Heading 1</h1>
+                    Hello, World!
+                    <h2>Heading 2</h2>
+                    <p>
+                        This is a
+                        <br/><br/>
+                        <em><strong>test</strong></em>
+                    </p>
+                    <h3>Heading 3</h3>
+                    Check out <a href='https://www.google.de'><em>Google</em></a>
+                </body>
+            </html>";
 
         #endregion
     }

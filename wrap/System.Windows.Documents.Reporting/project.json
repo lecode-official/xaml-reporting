@@ -12,7 +12,8 @@
         "System.InversionOfControl.Abstractions": "0.1.0",
         "PdfSharp-WPF": "1.0.0-*",
         "PdfSharp.Xps": "1.0.0-*",
-        "AngleSharp": "0.9.4"
+        "AngleSharp": "0.9.4",
+        "ZetaProducerHtmlCompressor": "1.0.2.0"
       }
     }
   }
