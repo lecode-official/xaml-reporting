@@ -130,7 +130,8 @@ namespace System.Windows.Documents.Reporting
                 {
                     if (currentContainerParagraph != null)
                     {
-                        blockElements.Add(currentContainerParagraph);
+                        if (currentContainerParagraph.Inlines.Count > 1 || !currentContainerParagraph.Inlines.OfType<Run>().Any(run => string.IsNullOrWhiteSpace(run.Text)))
+                            blockElements.Add(currentContainerParagraph);
                         currentContainerParagraph = null;
                     }
                     blockElements.Add(block);
