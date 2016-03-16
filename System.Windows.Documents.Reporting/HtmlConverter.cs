@@ -88,7 +88,7 @@ namespace System.Windows.Documents.Reporting
             }
 
             // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
-            return new Run(htmlNode.TextContent);
+            return new Run(Regex.Replace(htmlNode.TextContent, "\\s+", " "));
         }
 
         #endregion
