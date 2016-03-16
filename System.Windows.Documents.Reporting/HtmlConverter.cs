@@ -23,6 +23,26 @@ namespace System.Windows.Documents.Reporting
     public class HtmlConverter
     {
         #region Private Static Methods
+        
+        private static List<Inline> GetRunsAndLineBreaks(InlineCollection inlineCollection)
+        {
+            List<Inline> runsAndLineBreaks = new List<Inline>();
+
+            foreach (Inline inline in inlineCollection)
+            {
+                Run run = inline as Run;
+                if (run != null)
+                    runsAndLineBreaks.Add(run);
+                LineBreak lineBreak = inline as LineBreak;
+                if (lineBreak != null)
+                    runsAndLineBreaks.Add(lineBreak);
+                Span span = inline as Span;
+                if (span != null)
+                    runsAndLineBreaks.AddRange(HtmlConverter.GetRunsAndLineBreaks(span.Inlines));
+            }
+
+            return runsAndLineBreaks;
+        }
 
         /// <summary>
         /// Converts the specified HTML node into flow document content element.
@@ -144,9 +164,49 @@ namespace System.Windows.Documents.Reporting
             }
             if (currentContainerParagraph != null)
                 blockElements.Add(currentContainerParagraph);
-            flowDocumentContent.Blocks.AddRange(blockElements);
+
+            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>())
+            {
+                List<Inline> runsAndLineBreaks = HtmlConverter.GetRunsAndLineBreaks(paragraph.Inlines);
+
+                while (runsAndLineBreaks.OfType<Run>().Any())
+                {
+                    List<Run> runs = runsAndLineBreaks.SkipWhile(inline => inline is LineBreak).TakeWhile(inline => inline is Run).OfType<Run>().ToList();
+
+                    foreach (Run run in runs)
+                    {
+                        if (run.PreviousInline is LineBreak)
+                            run.Text = run.Text.TrimStart();
+                        if (run.NextInline is LineBreak)
+                            run.Text = run.Text.TrimEnd();
+                    }
+
+                    for (int i = 0; i < runs.Count() - 1; i++)
+                    {
+                        if (runs[i].Text.EndsWith(" ") && runs[i + 1].Text.StartsWith(" "))
+                            runs[i].Text = runs[i].Text.TrimEnd();
+                    }
+
+                    foreach (Run run in runs)
+                    {
+                        run.Text = run.Text.TrimStart();
+                        if (!string.IsNullOrWhiteSpace(run.Text))
+                            break;
+                    }
+
+                    foreach (Run run in runs.Reverse<Run>())
+                    {
+                        run.Text = run.Text.TrimEnd();
+                        if (!string.IsNullOrWhiteSpace(run.Text))
+                            break;
+                    }
+
+                    runsAndLineBreaks.RemoveAll(inline => runs.Contains(inline as Run));
+                }
+            }
 
             // Returns the created flow document content
+            flowDocumentContent.Blocks.AddRange(blockElements);
             return flowDocumentContent;
         }
 
