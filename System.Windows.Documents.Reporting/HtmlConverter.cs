@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -70,11 +71,24 @@ namespace System.Windows.Documents.Reporting
                         if (Uri.TryCreate(hyperReference, UriKind.RelativeOrAbsolute, out navigationUri))
                             hyperlink.NavigateUri = navigationUri;
                         return hyperlink;
+                    case "H1":
+                    case "H2":
+                    case "H3":
+                    case "H4":
+                    case "H5":
+                    case "H6":
+                        IEnumerable<Inline> headingContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Paragraph heading = new Paragraph();
+                        double fontSize = new double[] { 24, 18, 13.5, 12, 10, 7.5 }[Convert.ToInt32(htmlElement.NodeName.Substring(1)) - 1];
+                        heading.FontSize = fontSize;
+                        heading.Inlines.AddRange(headingContent);
+                        heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
+                        return heading;
                 }
             }
 
             // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
-            return new Run(htmlNode.TextContent) as TextElement;
+            return new Run(htmlNode.TextContent);
         }
 
         #endregion
@@ -94,6 +108,7 @@ namespace System.Windows.Documents.Reporting
             IHtmlDocument htmlDocument;
             try
             {
+                HtmlParser htmlParser = new HtmlParser();
                 htmlDocument = await new HtmlParser().ParseAsync(stream);
             }
             catch (Exception exception)
@@ -105,7 +120,7 @@ namespace System.Windows.Documents.Reporting
             Section flowDocumentContent = new Section();
 
             // Converts the HTML to block items, which are added to the section (elements that are not a block have to be wrapped in a paragraph, otherwise the section will not accept them as content)
-            IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode));
+            IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode)).ToList();
             List<Block> blockElements = new List<Block>();
             Paragraph currentContainerParagraph = null;
             foreach (TextElement textElement in textElements)
