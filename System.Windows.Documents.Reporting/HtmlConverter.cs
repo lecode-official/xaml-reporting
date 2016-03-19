@@ -24,23 +24,37 @@ namespace System.Windows.Documents.Reporting
     {
         #region Private Static Methods
         
+        /// <summary>
+        /// Retrieves all the runs and line breaks inside an inline collection recursively. This is very useful for white-space character handling.
+        /// </summary>
+        /// <param name="inlineCollection">The inline collection from which the runs and line breaks are to be retrieved.</param>
+        /// <returns>Returns a list of runs and line breaks from the specified inline collection in the order that they appear within the inline collection.</returns>
         private static List<Inline> GetRunsAndLineBreaks(InlineCollection inlineCollection)
         {
+            // Creates a new list, which will contain the result
             List<Inline> runsAndLineBreaks = new List<Inline>();
 
+            // Cycles over all the inlines in the inline collection
             foreach (Inline inline in inlineCollection)
             {
+                // Checks if the current inline element is a run, if so then it is added to the result set
                 Run run = inline as Run;
                 if (run != null)
                     runsAndLineBreaks.Add(run);
+
+                // Checks if the current inline element is a line break, if so then it is added to the result set
                 LineBreak lineBreak = inline as LineBreak;
                 if (lineBreak != null)
                     runsAndLineBreaks.Add(lineBreak);
+
+                // Checks if the current inline element is a span, a span is the only inline element, which can itself contain inline elements, if the current
+                // inline element is a span, then the runs and line breaks that it contains are recursively retrieved and added to the result set
                 Span span = inline as Span;
                 if (span != null)
                     runsAndLineBreaks.AddRange(HtmlConverter.GetRunsAndLineBreaks(span.Inlines));
             }
 
+            // Returns the created list of runs and line breaks
             return runsAndLineBreaks;
         }
 
@@ -139,7 +153,8 @@ namespace System.Windows.Documents.Reporting
             // Creates a new section, which holds the content of the 
             Section flowDocumentContent = new Section();
 
-            // Converts the HTML to block items, which are added to the section (elements that are not a block have to be wrapped in a paragraph, otherwise the section will not accept them as content)
+            // Converts the HTML to block items, which are added to the section (elements that are not a block have to be wrapped in a paragraph, otherwise the
+            // section will not accept them as content)
             IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode)).ToList();
             List<Block> blockElements = new List<Block>();
             Paragraph currentContainerParagraph = null;
@@ -165,28 +180,30 @@ namespace System.Windows.Documents.Reporting
             if (currentContainerParagraph != null)
                 blockElements.Add(currentContainerParagraph);
 
+            // Cylces over each paragraph in the list of block elements and applies the rules for white-space character handling to it
             foreach (Paragraph paragraph in blockElements.OfType<Paragraph>())
             {
+                // Recursively retrieves all the runs and line breaks that are contained in the paragraph (runs and line breaks are the only inline elements that
+                // are relevant for white-space character handling, because runs are the only inline elements that can directly contain text, and therefore
+                // white-space characters, and all white space characters directly before and after line breaks must be ignored)
                 List<Inline> runsAndLineBreaks = HtmlConverter.GetRunsAndLineBreaks(paragraph.Inlines);
 
+                // Cycles over the list of retrieved runs and line breaks, till there are no more run left
                 while (runsAndLineBreaks.OfType<Run>().Any())
                 {
+                    // Retrieves all runs till the first line break appears
                     List<Run> runs = runsAndLineBreaks.SkipWhile(inline => inline is LineBreak).TakeWhile(inline => inline is Run).OfType<Run>().ToList();
-
-                    foreach (Run run in runs)
-                    {
-                        if (run.PreviousInline is LineBreak)
-                            run.Text = run.Text.TrimStart();
-                        if (run.NextInline is LineBreak)
-                            run.Text = run.Text.TrimEnd();
-                    }
-
+                    
+                    // Applies the first rule of white-space character handling: there must only be one white space between two inline elements
                     for (int i = 0; i < runs.Count() - 1; i++)
                     {
                         if (runs[i].Text.EndsWith(" ") && runs[i + 1].Text.StartsWith(" "))
                             runs[i].Text = runs[i].Text.TrimEnd();
                     }
 
+                    // Applies the second rule of white-space handling: the first non-empty run must not start with white-space characters (this is because it is
+                    // the run that has the first textual content within the paragraph, which is a block element, and block elements must never begin with a
+                    // white-space or it is the first run that has textual content after a line break and white-spaces after line breaks have to be ignored)
                     foreach (Run run in runs)
                     {
                         run.Text = run.Text.TrimStart();
@@ -194,6 +211,9 @@ namespace System.Windows.Documents.Reporting
                             break;
                     }
 
+                    // Applies the third rule of white-space handling: the last non-empty run must not end with white-space characters (this is because it is the
+                    // run that has the last textual content within the paragraph, which is a block element, and block elements must never end with a white-space,
+                    // or it is the last run before a line break and white-spaces before line-breaks have to be ignored)
                     foreach (Run run in runs.Reverse<Run>())
                     {
                         run.Text = run.Text.TrimEnd();
@@ -201,6 +221,7 @@ namespace System.Windows.Documents.Reporting
                             break;
                     }
 
+                    // Removes all the runs from the collection, because their white-spaces have already been handled
                     runsAndLineBreaks.RemoveAll(inline => runs.Contains(inline as Run));
                 }
             }
