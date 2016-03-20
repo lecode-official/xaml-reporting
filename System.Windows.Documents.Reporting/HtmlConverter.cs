@@ -84,18 +84,20 @@ namespace System.Windows.Documents.Reporting
                         Span span = new Span();
                         span.Inlines.AddRange(spanContent);
                         return span;
+                    case "I":
                     case "EM":
                         IEnumerable<Inline> emphasisContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
                         Span emphasis = new Span();
                         emphasis.FontStyle = FontStyles.Italic;
                         emphasis.Inlines.AddRange(emphasisContent);
                         return emphasis;
+                    case "B":
                     case "STRONG":
-                        IEnumerable<Inline> strongContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span strong = new Span();
-                        strong.FontWeight = FontWeights.Bold;
-                        strong.Inlines.AddRange(strongContent);
-                        return strong;
+                        IEnumerable<Inline> boldContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span bold = new Span();
+                        bold.FontWeight = FontWeights.Bold;
+                        bold.Inlines.AddRange(boldContent);
+                        return bold;
                     case "A":
                         IEnumerable<Inline> hyperlinkContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
                         Hyperlink hyperlink = new Hyperlink();
