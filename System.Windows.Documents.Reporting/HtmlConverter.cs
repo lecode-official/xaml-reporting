@@ -106,11 +106,18 @@ namespace System.Windows.Documents.Reporting
                         quotation.Inlines.Add(new Run("\""));
                         return quotation;
                     case "S":
+                    case "STRIKE":
                         IEnumerable<Inline> strikeThroughContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
                         Span strikeThrough = new Span();
                         strikeThrough.TextDecorations.Add(TextDecorations.Strikethrough);
                         strikeThrough.Inlines.AddRange(strikeThroughContent);
                         return strikeThrough;
+                    case "U":
+                        IEnumerable<Inline> underlineContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span underline = new Span();
+                        underline.TextDecorations.Add(TextDecorations.Underline);
+                        underline.Inlines.AddRange(underlineContent);
+                        return underline;
                     case "A":
                         IEnumerable<Inline> hyperlinkContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
                         Hyperlink hyperlink = new Hyperlink();
