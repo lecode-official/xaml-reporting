@@ -98,6 +98,19 @@ namespace System.Windows.Documents.Reporting
                         bold.FontWeight = FontWeights.Bold;
                         bold.Inlines.AddRange(boldContent);
                         return bold;
+                    case "Q":
+                        IEnumerable<Inline> quotationContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span quotation = new Span();
+                        quotation.Inlines.Add(new Run("\""));
+                        quotation.Inlines.AddRange(quotationContent);
+                        quotation.Inlines.Add(new Run("\""));
+                        return quotation;
+                    case "S":
+                        IEnumerable<Inline> strikeThroughContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+                        Span strikeThrough = new Span();
+                        strikeThrough.TextDecorations.Add(TextDecorations.Strikethrough);
+                        strikeThrough.Inlines.AddRange(strikeThroughContent);
+                        return strikeThrough;
                     case "A":
                         IEnumerable<Inline> hyperlinkContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
                         Hyperlink hyperlink = new Hyperlink();
