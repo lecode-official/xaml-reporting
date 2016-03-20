@@ -39,10 +39,12 @@ namespace XamlReporting.Samples.Wpf
                     <p>
                         This is a
                         <br/><br/>
-                        <em><strong>test</strong></em>
+                        <q><em><strong>quote</strong></em></q>
                     </p>
                     <h3>Heading 3</h3>
-                    Check out <a href='https://www.google.de'><em>Google</em></a>
+                    Check out
+                    <s><a href='https://www.yahoo.com'>Yahoo</a></s>
+                    <a href='https://www.bingc'><em>Google</em></a>
                 </body>
             </html>";
 
