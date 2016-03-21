@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -22,8 +23,43 @@ namespace System.Windows.Documents.Reporting
     /// </summary>
     public class HtmlConverter
     {
+        #region Private Static Fields
+
+        /// <summary>
+        /// Contains a dictionary, which maps the name of an HTML element to a method, which converts this HTML element to a flow document element.,
+        /// </summary>
+        private static Dictionary<string, Func<IHtmlElement, TextElement>> htmlElementConversionMap;
+
+        #endregion
+
         #region Private Static Methods
-        
+
+        /// <summary>
+        /// Initializes the dictionary, which maps the name of an HTML element to a method, which converts the HTML element to a flow document element.
+        /// </summary>
+        private static void InitializeHtmlElementConversionMap()
+        {
+            // Checks if the HTML element conversion map has already been initialized, if so then nothing needs to be done
+            if (HtmlConverter.htmlElementConversionMap != null)
+                return;
+
+            // Creates a new HTML element conversion map
+            HtmlConverter.htmlElementConversionMap = new Dictionary<string, Func<IHtmlElement, TextElement>>();
+
+            // Cycles over all static methods of the method and collects all the methods that are marked by the HTML element converter attribute
+            foreach (MethodInfo methodInfo in typeof(HtmlConverter).GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                // Gets all the HTML element converter attributes of the method, if it has none, then the next method is processed
+                IEnumerable<HtmlElementConverterAttribute> htmlConverterAttributes = methodInfo.GetCustomAttributes<HtmlElementConverterAttribute>();
+                if (!htmlConverterAttributes.Any())
+                    continue;
+
+                // Adds the conversion method to the HTML element conversion map
+                foreach (HtmlElementConverterAttribute htmlElementConverterAttribute in htmlConverterAttributes)
+                    HtmlConverter.htmlElementConversionMap.Add(htmlElementConverterAttribute.HtmlElementName, htmlElement => methodInfo.Invoke(null, new object[] { htmlElement }) as TextElement);
+            }
+        }
+
         /// <summary>
         /// Retrieves all the runs and line breaks inside an inline collection recursively. This is very useful for white-space character handling.
         /// </summary>
@@ -66,89 +102,179 @@ namespace System.Windows.Documents.Reporting
         /// <returns>Returns the converted flow document element.</returns>
         private static TextElement ConvertHtmlNode(INode htmlNode)
         {
+            // Initializes the HTML element conversion map if it has not yet been initialized
+            HtmlConverter.InitializeHtmlElementConversionMap();
+
             // Checks if the HTML node is an HTML element, in that case the HTML element is parsed
             IHtmlElement htmlElement = htmlNode as IHtmlElement;
-            if (htmlElement != null)
-            {
-                switch (htmlElement.NodeName.ToUpperInvariant())
-                {
-                    case "BR":
-                        return new LineBreak();
-                    case "P":
-                        IEnumerable<Inline> paragraphContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Paragraph paragraph = new Paragraph();
-                        paragraph.Inlines.AddRange(paragraphContent);
-                        return paragraph;
-                    case "SPAN":
-                        IEnumerable<Inline> spanContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span span = new Span();
-                        span.Inlines.AddRange(spanContent);
-                        return span;
-                    case "I":
-                    case "EM":
-                        IEnumerable<Inline> emphasisContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span emphasis = new Span();
-                        emphasis.FontStyle = FontStyles.Italic;
-                        emphasis.Inlines.AddRange(emphasisContent);
-                        return emphasis;
-                    case "B":
-                    case "STRONG":
-                        IEnumerable<Inline> boldContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span bold = new Span();
-                        bold.FontWeight = FontWeights.Bold;
-                        bold.Inlines.AddRange(boldContent);
-                        return bold;
-                    case "Q":
-                        IEnumerable<Inline> quotationContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span quotation = new Span();
-                        quotation.Inlines.Add(new Run("\""));
-                        quotation.Inlines.AddRange(quotationContent);
-                        quotation.Inlines.Add(new Run("\""));
-                        return quotation;
-                    case "S":
-                    case "STRIKE":
-                        IEnumerable<Inline> strikeThroughContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span strikeThrough = new Span();
-                        strikeThrough.TextDecorations.Add(TextDecorations.Strikethrough);
-                        strikeThrough.Inlines.AddRange(strikeThroughContent);
-                        return strikeThrough;
-                    case "U":
-                        IEnumerable<Inline> underlineContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Span underline = new Span();
-                        underline.TextDecorations.Add(TextDecorations.Underline);
-                        underline.Inlines.AddRange(underlineContent);
-                        return underline;
-                    case "A":
-                        IEnumerable<Inline> hyperlinkContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Hyperlink hyperlink = new Hyperlink();
-                        hyperlink.Inlines.AddRange(hyperlinkContent);
-                        string hyperReference = htmlElement.GetAttribute("href");
-                        Uri navigationUri;
-                        if (Uri.TryCreate(hyperReference, UriKind.RelativeOrAbsolute, out navigationUri))
-                            hyperlink.NavigateUri = navigationUri;
-                        return hyperlink;
-                    case "H1":
-                    case "H2":
-                    case "H3":
-                    case "H4":
-                    case "H5":
-                    case "H6":
-                        IEnumerable<Inline> headingContent = htmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-                        Paragraph heading = new Paragraph();
-                        double fontSize = new double[] { 24, 18, 13.5, 12, 10, 7.5 }[Convert.ToInt32(htmlElement.NodeName.Substring(1)) - 1];
-                        heading.FontSize = fontSize;
-                        heading.Inlines.AddRange(headingContent);
-                        heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
-                        return heading;
-                }
-            }
+            if (htmlElement != null && HtmlConverter.htmlElementConversionMap.ContainsKey(htmlElement.TagName))
+                return HtmlConverter.htmlElementConversionMap[htmlElement.TagName](htmlElement);
 
             // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
             return new Run(Regex.Replace(htmlNode.TextContent, "\\s+", " "));
         }
 
         #endregion
-        
+
+        #region Private Static Conversion Methods
+
+        /// <summary>
+        /// Converts the specified line break HTML element to a line break flow document element.
+        /// </summary>
+        /// <param name="lineBreakHtmlElement">The line break HTML element that is to be converted.</param>
+        /// <returns>Returns a line break flow document element.</returns>
+        [HtmlElementConverter("BR")]
+        private static TextElement ConvertLineBreakElement(IHtmlElement lineBreakHtmlElement) => new LineBreak();
+
+        /// <summary>
+        /// Converts the specified paragraph HTML element to a paragraph flow document element.
+        /// </summary>
+        /// <param name="paragraphHtmlElement">The paragraph HTML element that is to be converted.</param>
+        /// <returns>Returns a paragraph flow document element.</returns>
+        [HtmlElementConverter("P")]
+        private static TextElement ConvertParagraphElement(IHtmlElement paragraphHtmlElement)
+        {
+            IEnumerable<Inline> paragraphContent = paragraphHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Paragraph paragraph = new Paragraph();
+            paragraph.Inlines.AddRange(paragraphContent);
+            return paragraph;
+        }
+
+        /// <summary>
+        /// Converts the specified span HTML element to a span flow document element.
+        /// </summary>
+        /// <param name="spanHtmlElement">The span HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element.</returns>
+        [HtmlElementConverter("SPAN")]
+        private static TextElement ConvertSpanElement(IHtmlElement spanHtmlElement)
+        {
+            IEnumerable<Inline> spanContent = spanHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span span = new Span();
+            span.Inlines.AddRange(spanContent);
+            return span;
+        }
+
+        /// <summary>
+        /// Converts the specified emphasis (or italics) HTML element to a span flow document element, which has an italic font style.
+        /// </summary>
+        /// <param name="emphasisHtmlElement">The emphasis (or italics) HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which has an italic font style.</returns>
+        [HtmlElementConverter("I")]
+        [HtmlElementConverter("EM")]
+        private static TextElement ConvertEmphasisElement(IHtmlElement emphasisHtmlElement)
+        {
+            IEnumerable<Inline> emphasisContent = emphasisHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span emphasis = new Span();
+            emphasis.FontStyle = FontStyles.Italic;
+            emphasis.Inlines.AddRange(emphasisContent);
+            return emphasis;
+        }
+
+        /// <summary>
+        /// Converts the specified strong (or bold) HTML element to a span flow document element, which has a bold font style.
+        /// </summary>
+        /// <param name="strongHtmlElement">The strong (or bold) HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which has a bold font style.</returns>
+        [HtmlElementConverter("B")]
+        [HtmlElementConverter("STRONG")]
+        private static TextElement ConvertStrongElement(IHtmlElement strongHtmlElement)
+        {
+            IEnumerable<Inline> boldContent = strongHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span bold = new Span();
+            bold.FontWeight = FontWeights.Bold;
+            bold.Inlines.AddRange(boldContent);
+            return bold;
+        }
+
+        /// <summary>
+        /// Converts the specified quotatiopn HTML element to a span flow document element, which is wrapped in quotation marks.
+        /// </summary>
+        /// <param name="quotationHtmlElement">The quotation HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which is wrapped in quotation marks.</returns>
+        [HtmlElementConverter("Q")]
+        private static TextElement ConvertQuotationElement(IHtmlElement quotationHtmlElement)
+        {
+            IEnumerable<Inline> quotationContent = quotationHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span quotation = new Span();
+            quotation.Inlines.Add(new Run("\""));
+            quotation.Inlines.AddRange(quotationContent);
+            quotation.Inlines.Add(new Run("\""));
+            return quotation;
+        }
+
+        /// <summary>
+        /// Converts the specified strike-through HTML element to a span flow document element, which is striked through.
+        /// </summary>
+        /// <param name="strikeThroughHtmlElement">The strike-through HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which is striked through.</returns>
+        [HtmlElementConverter("S")]
+        [HtmlElementConverter("STRIKE")]
+        private static TextElement ConvertStrikeThroughElement(IHtmlElement strikeThroughHtmlElement)
+        {
+            IEnumerable<Inline> strikeThroughContent = strikeThroughHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span strikeThrough = new Span();
+            strikeThrough.TextDecorations.Add(TextDecorations.Strikethrough);
+            strikeThrough.Inlines.AddRange(strikeThroughContent);
+            return strikeThrough;
+        }
+
+        /// <summary>
+        /// Converts the specified underline HTML element to a span flow document element, which is underlined.
+        /// </summary>
+        /// <param name="underlineHtmlElement">The underline HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which is underlined.</returns>
+        [HtmlElementConverter("U")]
+        private static TextElement ConvertUnderlineElement(IHtmlElement underlineHtmlElement)
+        {
+            IEnumerable<Inline> underlineContent = underlineHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span underline = new Span();
+            underline.TextDecorations.Add(TextDecorations.Underline);
+            underline.Inlines.AddRange(underlineContent);
+            return underline;
+        }
+
+        /// <summary>
+        /// Converts the specified anchor HTML element to a hyperlink flow document element.
+        /// </summary>
+        /// <param name="anchorHtmlElement">The anchor HTML element that is to be converted.</param>
+        /// <returns>Returns a hyperlink flow document element.</returns>
+        [HtmlElementConverter("A")]
+        private static TextElement ConvertAnchorElement(IHtmlElement anchorHtmlElement)
+        {
+            IEnumerable<Inline> hyperlinkContent = anchorHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Hyperlink hyperlink = new Hyperlink();
+            hyperlink.Inlines.AddRange(hyperlinkContent);
+            string hyperReference = anchorHtmlElement.GetAttribute("href");
+            Uri navigationUri;
+            if (Uri.TryCreate(hyperReference, UriKind.RelativeOrAbsolute, out navigationUri))
+                hyperlink.NavigateUri = navigationUri;
+            return hyperlink;
+        }
+
+        /// <summary>
+        /// Converts the specified heading HTML element to a paragraph flow document element, which has the correct font size.
+        /// </summary>
+        /// <param name="headingHtmlElement">The heading HTML element that is to be converted.</param>
+        /// <returns>Returns a paragraph flow document element, which has the correct font size.</returns>
+        [HtmlElementConverter("H1")]
+        [HtmlElementConverter("H2")]
+        [HtmlElementConverter("H3")]
+        [HtmlElementConverter("H4")]
+        [HtmlElementConverter("H5")]
+        [HtmlElementConverter("H6")]
+        private static TextElement ConvertHeadingElement(IHtmlElement headingHtmlElement)
+        {
+            IEnumerable<Inline> headingContent = headingHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Paragraph heading = new Paragraph();
+            double fontSize = new double[] { 24, 18, 13.5, 12, 10, 7.5 }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1];
+            heading.FontSize = fontSize;
+            heading.Inlines.AddRange(headingContent);
+            heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
+            return heading;
+        }
+
+        #endregion
+
         #region Public Static Methods
 
         /// <summary>
@@ -343,6 +469,39 @@ namespace System.Windows.Documents.Reporting
         /// <exception cref="InvalidOperationException">If the HTML could not be parsed, then an <see cref="InvalidOperationException"/> exception is thrown.</exception>
         /// <returns>Returns the converted flow document content.</returns>
         public static Task<Section> ConvertFromStringAsync(string html) => HtmlConverter.ConvertFromStringAsync(html, new CancellationTokenSource().Token);
+
+        #endregion
+
+        #region Nested Types
+
+        /// <summary>
+        /// Represents an attribute, which marks a method as a converter for an HTML element.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+        private class HtmlElementConverterAttribute : Attribute
+        {
+            #region Constructors
+
+            /// <summary>
+            /// Initializes a new <see cref="HtmlElementConverterAttribute"/> instance.
+            /// </summary>
+            /// <param name="htmlElementName">The name of the HTML element that the method, which was marked with this attribute, is able to convert.</param>
+            public HtmlElementConverterAttribute(string htmlElementName)
+            {
+                this.HtmlElementName = htmlElementName;
+            }
+
+            #endregion
+
+            #region Public Properties
+
+            /// <summary>
+            /// Gets the name of the HTML element that the method, which was marked with this attribute, is able to convert.
+            /// </summary>
+            public string HtmlElementName { get; private set; }
+
+            #endregion
+        }
 
         #endregion
     }
