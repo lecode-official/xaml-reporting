@@ -64,28 +64,7 @@ namespace XamlReporting.Samples.Wpf
                 this.RaiseAndSetIfChanged(ref this.fixedDocument, value);
             }
         }
-
-        /// <summary>
-        /// Contains a flow document, which is bound to the report.
-        /// </summary>
-        private FlowDocument flowDocument;
-
-        /// <summary>
-        /// Gets a flow document, which is bound to the report.
-        /// </summary>
-        public FlowDocument FlowDocument
-        {
-            get
-            {
-                return this.flowDocument;
-            }
-
-            private set
-            {
-                this.RaiseAndSetIfChanged(ref this.flowDocument, value);
-            }
-        }
-
+        
         /// <summary>
         /// Contains the name of the file into which the report is being exported.
         /// </summary>
@@ -183,11 +162,7 @@ namespace XamlReporting.Samples.Wpf
         /// Is called when the user is navigated to the view corresponding to this view model. Renders the report for display.
         /// </summary>
         /// <param name="e">The event arguments, that contain more information about the navigation.</param>
-        public override async Task OnNavigateToAsync(NavigationEventArgs e)
-        {
-            this.FlowDocument = new FlowDocument(await HtmlConverter.ConvertFromStringAsync(@"<!DOCTYPE html><html><head></head><body>Hello, World!<p>This is a<br/><br/><em><strong>test</strong></em></p>Check out <a href='https://www.google.de'><em>Google</em></a></body></html>"));
-            this.FixedDocument = await this.reportingService.RenderAsync<Document>();
-        }
+        public override async Task OnNavigateToAsync(NavigationEventArgs e) => this.FixedDocument = await this.reportingService.RenderAsync<Document>();
 
         #endregion
     }

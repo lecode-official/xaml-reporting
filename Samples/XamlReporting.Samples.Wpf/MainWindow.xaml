@@ -13,17 +13,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <DocumentViewer Grid.Row="0" Document="{Binding Path=FixedDocument}" />
 
-            <DocumentViewer Grid.Column="0" Document="{Binding Path=FixedDocument}" />
-
-            <FlowDocumentReader Grid.Column="1" Document="{Binding Path=FlowDocument}" />
-        </Grid>
-        
         <Grid Grid.Row="1" Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
