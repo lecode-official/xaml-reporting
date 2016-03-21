@@ -76,19 +76,23 @@ namespace System.Windows.Documents.Reporting
         private static void ApplyWhiteSpaceHandling(IEnumerable<Block> blockElements)
         {
             // Cylces over each paragraph in the list of block elements and applies the rules for white-space character handling to it
-            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>().ToList())
+            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>().Where(p => p.Tag as string != "PreformattedText").ToList())
             {
                 // Recursively retrieves all the runs and line breaks that are contained in the paragraph (runs and line breaks are the only inline elements that
                 // are relevant for white-space character handling, because runs are the only inline elements that can directly contain text, and therefore
                 // white-space characters, and all white space characters directly before and after line breaks must be ignored)
                 List<Inline> runsAndLineBreaks = HtmlConverter.GetRunsAndLineBreaks(paragraph.Inlines);
 
+                // Replaces all white-space characters with white spaces and replaces multiple white spaces with one
+                foreach (Run run in runsAndLineBreaks.OfType<Run>())
+                    run.Text = Regex.Replace(run.Text, "\\s+", " ");
+
                 // Cycles over the list of retrieved runs and line breaks, till there are no more run left
                 while (runsAndLineBreaks.OfType<Run>().Any())
                 {
                     // Retrieves all runs till the first line break appears
                     List<Run> runs = runsAndLineBreaks.SkipWhile(inline => inline is LineBreak).TakeWhile(inline => inline is Run).OfType<Run>().ToList();
-
+                    
                     // Applies the first rule of white-space character handling: there must only be one white space between two inline elements
                     for (int i = 0; i < runs.Count() - 1; i++)
                     {
@@ -219,7 +223,7 @@ namespace System.Windows.Documents.Reporting
                 return HtmlConverter.htmlElementConversionMap[htmlElement.TagName.ToUpperInvariant()](htmlElement);
 
             // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
-            return new Run(Regex.Replace(htmlNode.TextContent, "\\s+", " "));
+            return new Run(htmlNode.TextContent);
         }
 
         #endregion
@@ -246,6 +250,21 @@ namespace System.Windows.Documents.Reporting
             Paragraph paragraph = new Paragraph();
             paragraph.Inlines.AddRange(paragraphContent);
             return paragraph;
+        }
+
+        /// <summary>
+        /// Converts the specified preformatted text HTML element to a paragraph flow document element, where the white-space character handling is skipped.
+        /// </summary>
+        /// <param name="paragraphHtmlElement">The preformatted text HTML element that is to be converted.</param>
+        /// <returns>Returns a paragraph flow document element, where the white-space character handling is skipped.</returns>
+        [HtmlElementConverter("PRE")]
+        private static TextElement ConvertPreformattedTextElement(IHtmlElement paragraphHtmlElement)
+        {
+            IEnumerable<Inline> preformattedTextContent = paragraphHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Paragraph preformattedText = new Paragraph();
+            preformattedText.Tag = "PreformattedText";
+            preformattedText.Inlines.AddRange(preformattedTextContent);
+            return preformattedText;
         }
 
         /// <summary>
