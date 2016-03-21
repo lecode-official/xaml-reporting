@@ -35,28 +35,55 @@ namespace System.Windows.Documents.Reporting
         #region Private Static Methods
 
         /// <summary>
-        /// Initializes the dictionary, which maps the name of an HTML element to a method, which converts the HTML element to a flow document element.
+        /// Applies the proper white-space character handling to the converted contents.
         /// </summary>
-        private static void InitializeHtmlElementConversionMap()
+        /// <param name="blockElements">The block elements to which white-space character handling is to be applied.</param>
+        private static void ApplyWhiteSpaceHandling(IEnumerable<Block> blockElements)
         {
-            // Checks if the HTML element conversion map has already been initialized, if so then nothing needs to be done
-            if (HtmlConverter.htmlElementConversionMap != null)
-                return;
-
-            // Creates a new HTML element conversion map
-            HtmlConverter.htmlElementConversionMap = new Dictionary<string, Func<IHtmlElement, TextElement>>();
-
-            // Cycles over all static methods of the method and collects all the methods that are marked by the HTML element converter attribute
-            foreach (MethodInfo methodInfo in typeof(HtmlConverter).GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+            // Cylces over each paragraph in the list of block elements and applies the rules for white-space character handling to it
+            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>())
             {
-                // Gets all the HTML element converter attributes of the method, if it has none, then the next method is processed
-                IEnumerable<HtmlElementConverterAttribute> htmlConverterAttributes = methodInfo.GetCustomAttributes<HtmlElementConverterAttribute>();
-                if (!htmlConverterAttributes.Any())
-                    continue;
+                // Recursively retrieves all the runs and line breaks that are contained in the paragraph (runs and line breaks are the only inline elements that
+                // are relevant for white-space character handling, because runs are the only inline elements that can directly contain text, and therefore
+                // white-space characters, and all white space characters directly before and after line breaks must be ignored)
+                List<Inline> runsAndLineBreaks = HtmlConverter.GetRunsAndLineBreaks(paragraph.Inlines);
 
-                // Adds the conversion method to the HTML element conversion map
-                foreach (HtmlElementConverterAttribute htmlElementConverterAttribute in htmlConverterAttributes)
-                    HtmlConverter.htmlElementConversionMap.Add(htmlElementConverterAttribute.HtmlElementName, htmlElement => methodInfo.Invoke(null, new object[] { htmlElement }) as TextElement);
+                // Cycles over the list of retrieved runs and line breaks, till there are no more run left
+                while (runsAndLineBreaks.OfType<Run>().Any())
+                {
+                    // Retrieves all runs till the first line break appears
+                    List<Run> runs = runsAndLineBreaks.SkipWhile(inline => inline is LineBreak).TakeWhile(inline => inline is Run).OfType<Run>().ToList();
+
+                    // Applies the first rule of white-space character handling: there must only be one white space between two inline elements
+                    for (int i = 0; i < runs.Count() - 1; i++)
+                    {
+                        if (runs[i].Text.EndsWith(" ") && runs[i + 1].Text.StartsWith(" "))
+                            runs[i].Text = runs[i].Text.TrimEnd();
+                    }
+
+                    // Applies the second rule of white-space handling: the first non-empty run must not start with white-space characters (this is because it is
+                    // the run that has the first textual content within the paragraph, which is a block element, and block elements must never begin with a
+                    // white-space or it is the first run that has textual content after a line break and white-spaces after line breaks have to be ignored)
+                    foreach (Run run in runs)
+                    {
+                        run.Text = run.Text.TrimStart();
+                        if (!string.IsNullOrWhiteSpace(run.Text))
+                            break;
+                    }
+
+                    // Applies the third rule of white-space handling: the last non-empty run must not end with white-space characters (this is because it is the
+                    // run that has the last textual content within the paragraph, which is a block element, and block elements must never end with a white-space,
+                    // or it is the last run before a line break and white-spaces before line-breaks have to be ignored)
+                    foreach (Run run in runs.Reverse<Run>())
+                    {
+                        run.Text = run.Text.TrimEnd();
+                        if (!string.IsNullOrWhiteSpace(run.Text))
+                            break;
+                    }
+
+                    // Removes all the runs from the collection, because their white-spaces have already been handled
+                    runsAndLineBreaks.RemoveAll(inline => runs.Contains(inline as Run));
+                }
             }
         }
 
@@ -92,6 +119,77 @@ namespace System.Windows.Documents.Reporting
 
             // Returns the created list of runs and line breaks
             return runsAndLineBreaks;
+        }
+
+        /// <summary>
+        /// Converts a list of text elements into a list of blocks by wrapping inline elements in block elements.
+        /// </summary>
+        /// <param name="textElements">The text elements that are to be converted into a list of block elements.</param>
+        /// <returns>Returns the converted list of block elements.</returns>
+        private static IEnumerable<Block> ConvertTextElementsToBlocks(IEnumerable<TextElement> textElements)
+        {
+            // Creates a new list for the result
+            List<Block> blockElements = new List<Block>();
+
+            // Cycles over all text elements in order to wrap the inline elements in block elements
+            Paragraph currentContainerParagraph = null;
+            foreach (TextElement textElement in textElements)
+            {
+                // Checks if the element is a block element or an inline element
+                Block block = textElement as Block;
+                if (block == null)
+                {
+                    // Since the element is an inline element, it is added to the paragraph, which wraps the inline elements in a block element
+                    currentContainerParagraph = currentContainerParagraph ?? new Paragraph();
+                    currentContainerParagraph.Inlines.Add(textElement as Inline);
+                }
+                else
+                {
+                    // Since the element is a block element, the previously wrapped inline elements are are added to the result set
+                    if (currentContainerParagraph != null)
+                    {
+                        if (currentContainerParagraph.Inlines.Count > 1 || !currentContainerParagraph.Inlines.OfType<Run>().Any(run => string.IsNullOrWhiteSpace(run.Text)))
+                            blockElements.Add(currentContainerParagraph);
+                        currentContainerParagraph = null;
+                    }
+
+                    // Adds the block element to the result set
+                    blockElements.Add(block);
+                }
+            }
+
+            // Checks if there are any wrapped inline elements left, if so they are also added to the result set
+            if (currentContainerParagraph != null)
+                blockElements.Add(currentContainerParagraph);
+
+            // Returns the result list of block elements
+            return blockElements;
+        }
+
+        /// <summary>
+        /// Initializes the dictionary, which maps the name of an HTML element to a method, which converts the HTML element to a flow document element.
+        /// </summary>
+        private static void InitializeHtmlElementConversionMap()
+        {
+            // Checks if the HTML element conversion map has already been initialized, if so then nothing needs to be done
+            if (HtmlConverter.htmlElementConversionMap != null)
+                return;
+
+            // Creates a new HTML element conversion map
+            HtmlConverter.htmlElementConversionMap = new Dictionary<string, Func<IHtmlElement, TextElement>>();
+
+            // Cycles over all static methods of the method and collects all the methods that are marked by the HTML element converter attribute
+            foreach (MethodInfo methodInfo in typeof(HtmlConverter).GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                // Gets all the HTML element converter attributes of the method, if it has none, then the next method is processed
+                IEnumerable<HtmlElementConverterAttribute> htmlConverterAttributes = methodInfo.GetCustomAttributes<HtmlElementConverterAttribute>();
+                if (!htmlConverterAttributes.Any())
+                    continue;
+
+                // Adds the conversion method to the HTML element conversion map
+                foreach (HtmlElementConverterAttribute htmlElementConverterAttribute in htmlConverterAttributes)
+                    HtmlConverter.htmlElementConversionMap.Add(htmlElementConverterAttribute.HtmlElementName, htmlElement => methodInfo.Invoke(null, new object[] { htmlElement }) as TextElement);
+            }
         }
 
         /// <summary>
@@ -138,6 +236,34 @@ namespace System.Windows.Documents.Reporting
             Paragraph paragraph = new Paragraph();
             paragraph.Inlines.AddRange(paragraphContent);
             return paragraph;
+        }
+
+        /// <summary>
+        /// Converts the specified section HTML element to a section flow document element.
+        /// </summary>
+        /// <param name="sectionHtmlElement">The section HTML element that is to be converted.</param>
+        /// <returns>Returns a section flow document element.</returns>
+        [HtmlElementConverter("SECTION")]
+        private static TextElement ConvertSectionElement(IHtmlElement sectionHtmlElement)
+        {
+            IEnumerable<Block> sectionContent = sectionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Block>();
+            Section section = new Section();
+            section.Blocks.AddRange(sectionContent);
+            return section;
+        }
+
+        /// <summary>
+        /// Converts the specified div HTML element to a section flow document element.
+        /// </summary>
+        /// <param name="divisionHtmlElement">The div HTML element that is to be converted.</param>
+        /// <returns>Returns a section flow document element.</returns>
+        [HtmlElementConverter("DIV")]
+        private static TextElement ConvertDivisionElement(IHtmlElement divisionHtmlElement)
+        {
+            IEnumerable<Block> divisionContent = divisionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Block>();
+            Section division = new Section();
+            division.Blocks.AddRange(divisionContent);
+            return division;
         }
 
         /// <summary>
@@ -343,83 +469,17 @@ namespace System.Windows.Documents.Reporting
                 throw new InvalidOperationException(Resources.Localization.HtmlConverter.HtmlCouldNotBeParsedExceptionMessage, exception);
             }
 
-            // Creates a new section, which holds the content of the 
-            Section flowDocumentContent = new Section();
-
-            // Converts the HTML to block items, which are added to the section (elements that are not a block have to be wrapped in a paragraph, otherwise the
-            // section will not accept them as content)
+            // Converts the HTML to block items
             IEnumerable<TextElement> textElements = htmlDocument.Body.ChildNodes.Select(childNode => HtmlConverter.ConvertHtmlNode(childNode)).ToList();
-            List<Block> blockElements = new List<Block>();
-            Paragraph currentContainerParagraph = null;
-            foreach (TextElement textElement in textElements)
-            {
-                Block block = textElement as Block;
-                if (block != null)
-                {
-                    if (currentContainerParagraph != null)
-                    {
-                        if (currentContainerParagraph.Inlines.Count > 1 || !currentContainerParagraph.Inlines.OfType<Run>().Any(run => string.IsNullOrWhiteSpace(run.Text)))
-                            blockElements.Add(currentContainerParagraph);
-                        currentContainerParagraph = null;
-                    }
-                    blockElements.Add(block);
-                }
-                else
-                {
-                    currentContainerParagraph = currentContainerParagraph ?? new Paragraph();
-                    currentContainerParagraph.Inlines.Add(textElement as Inline);
-                }
-            }
-            if (currentContainerParagraph != null)
-                blockElements.Add(currentContainerParagraph);
 
-            // Cylces over each paragraph in the list of block elements and applies the rules for white-space character handling to it
-            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>())
-            {
-                // Recursively retrieves all the runs and line breaks that are contained in the paragraph (runs and line breaks are the only inline elements that
-                // are relevant for white-space character handling, because runs are the only inline elements that can directly contain text, and therefore
-                // white-space characters, and all white space characters directly before and after line breaks must be ignored)
-                List<Inline> runsAndLineBreaks = HtmlConverter.GetRunsAndLineBreaks(paragraph.Inlines);
+            // Wraps the converted text elements in block elements if needed, because on the top level only block elements are allowed
+            IEnumerable<Block> blockElements = HtmlConverter.ConvertTextElementsToBlocks(textElements);
 
-                // Cycles over the list of retrieved runs and line breaks, till there are no more run left
-                while (runsAndLineBreaks.OfType<Run>().Any())
-                {
-                    // Retrieves all runs till the first line break appears
-                    List<Run> runs = runsAndLineBreaks.SkipWhile(inline => inline is LineBreak).TakeWhile(inline => inline is Run).OfType<Run>().ToList();
-                    
-                    // Applies the first rule of white-space character handling: there must only be one white space between two inline elements
-                    for (int i = 0; i < runs.Count() - 1; i++)
-                    {
-                        if (runs[i].Text.EndsWith(" ") && runs[i + 1].Text.StartsWith(" "))
-                            runs[i].Text = runs[i].Text.TrimEnd();
-                    }
+            // Applies the proper white-space handling to the content
+            HtmlConverter.ApplyWhiteSpaceHandling(blockElements);
 
-                    // Applies the second rule of white-space handling: the first non-empty run must not start with white-space characters (this is because it is
-                    // the run that has the first textual content within the paragraph, which is a block element, and block elements must never begin with a
-                    // white-space or it is the first run that has textual content after a line break and white-spaces after line breaks have to be ignored)
-                    foreach (Run run in runs)
-                    {
-                        run.Text = run.Text.TrimStart();
-                        if (!string.IsNullOrWhiteSpace(run.Text))
-                            break;
-                    }
-
-                    // Applies the third rule of white-space handling: the last non-empty run must not end with white-space characters (this is because it is the
-                    // run that has the last textual content within the paragraph, which is a block element, and block elements must never end with a white-space,
-                    // or it is the last run before a line break and white-spaces before line-breaks have to be ignored)
-                    foreach (Run run in runs.Reverse<Run>())
-                    {
-                        run.Text = run.Text.TrimEnd();
-                        if (!string.IsNullOrWhiteSpace(run.Text))
-                            break;
-                    }
-
-                    // Removes all the runs from the collection, because their white-spaces have already been handled
-                    runsAndLineBreaks.RemoveAll(inline => runs.Contains(inline as Run));
-                }
-            }
-
-            // Returns the created flow document content
+            // Wraps the converted content in a section and returns it, so that it can be added to a flow document
+            Section flowDocumentContent = new Section();
             flowDocumentContent.Blocks.AddRange(blockElements);
             return flowDocumentContent;
         }
