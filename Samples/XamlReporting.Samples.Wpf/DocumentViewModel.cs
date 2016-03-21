@@ -59,6 +59,12 @@ namespace XamlReporting.Samples.Wpf
                             Lorem ipsum dolor sit amet.
                         </em>
                     </blockquote>
+                    <hr/>
+                    <p>
+                        Lorem ipsum dolor sit amet sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                        aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+                        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    </p>
                     <h1>Heading 2</h1>
                     Lorem ipsum dolor sit amet, <s>consetetur</s> sadipscing elitr, sed diam nonumy eirmod tempor
                     invidunt<sup>1</sup> ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam

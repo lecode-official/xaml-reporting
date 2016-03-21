@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 #endregion
 
@@ -329,6 +330,29 @@ namespace System.Windows.Documents.Reporting
             small.FontSize = (double)new FontSizeConverter().ConvertFrom("10pt");
             small.Inlines.AddRange(smallContent);
             return small;
+        }
+
+        /// <summary>
+        /// Converts the specified horizontal ruler HTML element to a table flow document element, which simulates the horizontal line.
+        /// </summary>
+        /// <param name="smallHtmlElement">The horizontal ruler HTML element that is to be converted.</param>
+        /// <returns>Returns a table flow document element, which simulates the horizontal line.</returns>
+        [HtmlElementConverter("HR")]
+        private static TextElement ConvertHorizontalRulerElement(IHtmlElement smallHtmlElement)
+        {
+            Table horizontalRuler = new Table();
+            TableRowGroup tableRowGroup = new TableRowGroup();
+            horizontalRuler.RowGroups.Add(tableRowGroup);
+            TableRow tableRow = new TableRow();
+            tableRowGroup.Rows.Add(tableRow);
+            TableCell tableCell = new TableCell
+            {
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(0.0d, 1.0d, 0.0d, 0.0d),
+                FontSize = 0.1
+            };
+            tableRow.Cells.Add(tableCell);
+            return horizontalRuler;
         }
 
         /// <summary>
