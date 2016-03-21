@@ -34,17 +34,36 @@ namespace XamlReporting.Samples.Wpf
                 <head></head>
                 <body>
                     <h1>Heading 1</h1>
-                    Hello, World!
-                    <h2>Heading 2</h2>
                     <p>
-                        This is a
-                        <br/><br/>
-                        <q><em><strong>quote</strong></em></q>
+                        Lorem ipsum dolor sit amet sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                        <strong>aliquyam</strong> erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                        et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
                     </p>
-                    <h3>Heading 3</h3>
-                    Check out
-                    <s><a href='https://www.yahoo.com'>Yahoo</a></s>
-                    <a href='https://www.bingc'><em>Google</em></a>
+                    <h2>Heading 1.1</h2>
+                    <section>
+                        Lorem ipsum dolor sit amet sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                        <q>aliquyam erat, sed diam voluptua.</q> At vero eos et accusam et justo duo dolores et ea
+                        rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    </section>
+                    <h2>Heading 1.2</h2>
+                    <p>
+                        Lorem ipsum dolor sit <em>amet sed</em> diam nonumy eirmod tempor invidunt ut labore et dolore.
+                        <br/><br/>
+                        Stet clita kasd gubergren, no sea <u>takimata</u> sanctus est Lorem ipsum dolor sit amet.
+                    </p>
+                    <blockquote>
+                        <em>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+                            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                            Lorem ipsum dolor sit amet.
+                        </em>
+                    </blockquote>
+                    <h1>Heading 2</h1>
+                    Lorem ipsum dolor sit amet, <s>consetetur</s> sadipscing elitr, sed diam nonumy eirmod tempor
+                    invidunt<sup>*</sup> ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+                    et justo duo dolores<sub>123</sub> et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                    Lorem ipsum dolor sit amet: <a href='https://www.bingc'>Google</a>
                 </body>
             </html>";
 
