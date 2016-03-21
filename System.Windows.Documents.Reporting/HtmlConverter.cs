@@ -188,7 +188,7 @@ namespace System.Windows.Documents.Reporting
 
                 // Adds the conversion method to the HTML element conversion map
                 foreach (HtmlElementConverterAttribute htmlElementConverterAttribute in htmlConverterAttributes)
-                    HtmlConverter.htmlElementConversionMap.Add(htmlElementConverterAttribute.HtmlElementName, htmlElement => methodInfo.Invoke(null, new object[] { htmlElement }) as TextElement);
+                    HtmlConverter.htmlElementConversionMap.Add(htmlElementConverterAttribute.HtmlElementName.ToUpperInvariant(), htmlElement => methodInfo.Invoke(null, new object[] { htmlElement }) as TextElement);
             }
         }
 
@@ -205,8 +205,8 @@ namespace System.Windows.Documents.Reporting
 
             // Checks if the HTML node is an HTML element, in that case the HTML element is parsed
             IHtmlElement htmlElement = htmlNode as IHtmlElement;
-            if (htmlElement != null && HtmlConverter.htmlElementConversionMap.ContainsKey(htmlElement.TagName))
-                return HtmlConverter.htmlElementConversionMap[htmlElement.TagName](htmlElement);
+            if (htmlElement != null && HtmlConverter.htmlElementConversionMap.ContainsKey(htmlElement.TagName.ToUpperInvariant()))
+                return HtmlConverter.htmlElementConversionMap[htmlElement.TagName.ToUpperInvariant()](htmlElement);
 
             // Since the HTML node was either not an HTML element or the HTML element is not supported, the textual content of the HTML node is returned as a run element
             return new Run(Regex.Replace(htmlNode.TextContent, "\\s+", " "));
