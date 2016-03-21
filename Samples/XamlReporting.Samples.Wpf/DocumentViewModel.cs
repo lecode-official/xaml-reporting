@@ -61,8 +61,8 @@ namespace XamlReporting.Samples.Wpf
                     </blockquote>
                     <h1>Heading 2</h1>
                     Lorem ipsum dolor sit amet, <s>consetetur</s> sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt<sup>*</sup> ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-                    et justo duo dolores<sub>123</sub> et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                    invidunt<sup>1</sup> ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+                    et justo duo dolores<sub>2</sub> et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
                     Lorem ipsum dolor sit amet: <a href='https://www.google.de'>Google</a>
                 </body>
             </html>";
