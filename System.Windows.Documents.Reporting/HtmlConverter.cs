@@ -396,8 +396,7 @@ namespace System.Windows.Documents.Reporting
         {
             IEnumerable<Inline> headingContent = headingHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
             Paragraph heading = new Paragraph();
-            FontSizeConverter fontSizeConverter = new FontSizeConverter();
-            double fontSize = (double)fontSizeConverter.ConvertFrom(new string[] { "24pt", "18pt", "13.5pt", "12pt", "10pt", "7.5pt" }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1]);
+            double fontSize = (double)new FontSizeConverter().ConvertFrom(new string[] { "24pt", "18pt", "13.5pt", "12pt", "10pt", "7.5pt" }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1]);
             heading.FontSize = fontSize;
             heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
             heading.Inlines.AddRange(headingContent);
@@ -428,7 +427,7 @@ namespace System.Windows.Documents.Reporting
         private static TextElement ConvertSubscriptElement(IHtmlElement subscriptHtmlElement)
         {
             Run subscript = new Run(subscriptHtmlElement.TextContent);
-            subscript.FontSize = 14.0d;
+            subscript.FontSize = (double)new FontSizeConverter().ConvertFrom("8pt");
             subscript.BaselineAlignment = BaselineAlignment.Subscript;
             return subscript;
         }
@@ -442,7 +441,7 @@ namespace System.Windows.Documents.Reporting
         private static TextElement ConvertSuperscriptElement(IHtmlElement superscriptHtmlElement)
         {
             Run superscript = new Run(superscriptHtmlElement.TextContent);
-            superscript.FontSize = 14.0d;
+            superscript.FontSize = (double)new FontSizeConverter().ConvertFrom("8pt");
             superscript.BaselineAlignment = BaselineAlignment.Superscript;
             return superscript;
         }
