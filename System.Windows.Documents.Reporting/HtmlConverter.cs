@@ -415,32 +415,30 @@ namespace System.Windows.Documents.Reporting
         }
 
         /// <summary>
-        /// Converts the specified subscript HTML element to a span flow document element, which is in subscript.
+        /// Converts the specified subscript HTML element to a run flow document element, which is in subscript.
         /// </summary>
         /// <param name="subscriptHtmlElement">The subscript HTML element that is to be converted.</param>
-        /// <returns>Returns a span flow document element, which is in subscript.</returns>
+        /// <returns>Returns a run flow document element, which is in subscript.</returns>
         [HtmlElementConverter("SUB")]
         private static TextElement ConvertSubscriptElement(IHtmlElement subscriptHtmlElement)
         {
-            IEnumerable<Inline> subscriptContent = subscriptHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-            Span subscript = new Span();
-            subscript.Typography.Variants = FontVariants.Subscript;
-            subscript.Inlines.AddRange(subscriptContent);
+            Run subscript = new Run(subscriptHtmlElement.TextContent);
+            subscript.FontSize = 14.0d;
+            subscript.BaselineAlignment = BaselineAlignment.Subscript;
             return subscript;
         }
 
         /// <summary>
-        /// Converts the specified superscript HTML element to a span flow document element, which is in superscript.
+        /// Converts the specified superscript HTML element to a run flow document element, which is in superscript.
         /// </summary>
         /// <param name="superscriptHtmlElement">The superscript HTML element that is to be converted.</param>
-        /// <returns>Returns a span flow document element, which is in superscript.</returns>
+        /// <returns>Returns a run flow document element, which is in superscript.</returns>
         [HtmlElementConverter("SUP")]
         private static TextElement ConvertSuperscriptElement(IHtmlElement superscriptHtmlElement)
         {
-            IEnumerable<Inline> superscriptContent = superscriptHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
-            Span superscript = new Span();
-            superscript.Typography.Variants = FontVariants.Subscript;
-            superscript.Inlines.AddRange(superscriptContent);
+            Run superscript = new Run(superscriptHtmlElement.TextContent);
+            superscript.FontSize = 14.0d;
+            superscript.BaselineAlignment = BaselineAlignment.Superscript;
             return superscript;
         }
 
