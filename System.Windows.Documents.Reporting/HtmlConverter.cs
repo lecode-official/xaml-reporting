@@ -268,9 +268,54 @@ namespace System.Windows.Documents.Reporting
             Paragraph heading = new Paragraph();
             double fontSize = new double[] { 24, 18, 13.5, 12, 10, 7.5 }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1];
             heading.FontSize = fontSize;
-            heading.Inlines.AddRange(headingContent);
             heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
+            heading.Inlines.AddRange(headingContent);
             return heading;
+        }
+
+        /// <summary>
+        /// Converts the specified block quote HTML element to a paragraph flow document element, which is styled like a block quote.
+        /// </summary>
+        /// <param name="blockQuoteHtmlElement">The block quote HTML element that is to be converted.</param>
+        /// <returns>Returns a paragraph flow document element, which is styled like a block quote.</returns>
+        [HtmlElementConverter("BLOCKQUOTE")]
+        private static TextElement ConvertBlockQuoteElement(IHtmlElement blockQuoteHtmlElement)
+        {
+            IEnumerable<Inline> blockQuoteContent = blockQuoteHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Paragraph blockQuote = new Paragraph();
+            blockQuote.Margin = new Thickness(40.0d, double.NaN, 40.0d, double.NaN);
+            blockQuote.Inlines.AddRange(blockQuoteContent);
+            return blockQuote;
+        }
+
+        /// <summary>
+        /// Converts the specified subscript HTML element to a span flow document element, which is in subscript.
+        /// </summary>
+        /// <param name="subscriptHtmlElement">The subscript HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which is in subscript.</returns>
+        [HtmlElementConverter("SUB")]
+        private static TextElement ConvertSubscriptElement(IHtmlElement subscriptHtmlElement)
+        {
+            IEnumerable<Inline> subscriptContent = subscriptHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span subscript = new Span();
+            subscript.Typography.Variants = FontVariants.Subscript;
+            subscript.Inlines.AddRange(subscriptContent);
+            return subscript;
+        }
+
+        /// <summary>
+        /// Converts the specified superscript HTML element to a span flow document element, which is in superscript.
+        /// </summary>
+        /// <param name="superscriptHtmlElement">The superscript HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which is in superscript.</returns>
+        [HtmlElementConverter("SUP")]
+        private static TextElement ConvertSuperscriptElement(IHtmlElement superscriptHtmlElement)
+        {
+            IEnumerable<Inline> superscriptContent = superscriptHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span superscript = new Span();
+            superscript.Typography.Variants = FontVariants.Subscript;
+            superscript.Inlines.AddRange(superscriptContent);
+            return superscript;
         }
 
         #endregion
