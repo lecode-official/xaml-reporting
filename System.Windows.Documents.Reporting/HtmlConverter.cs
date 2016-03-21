@@ -35,13 +35,47 @@ namespace System.Windows.Documents.Reporting
         #region Private Static Methods
 
         /// <summary>
+        /// Retrieves all the runs and line breaks inside an inline collection recursively. This is very useful for white-space character handling.
+        /// </summary>
+        /// <param name="inlineCollection">The inline collection from which the runs and line breaks are to be retrieved.</param>
+        /// <returns>Returns a list of runs and line breaks from the specified inline collection in the order that they appear within the inline collection.</returns>
+        private static List<Inline> GetRunsAndLineBreaks(InlineCollection inlineCollection)
+        {
+            // Creates a new list, which will contain the result
+            List<Inline> runsAndLineBreaks = new List<Inline>();
+
+            // Cycles over all the inlines in the inline collection
+            foreach (Inline inline in inlineCollection)
+            {
+                // Checks if the current inline element is a run, if so then it is added to the result set
+                Run run = inline as Run;
+                if (run != null)
+                    runsAndLineBreaks.Add(run);
+
+                // Checks if the current inline element is a line break, if so then it is added to the result set
+                LineBreak lineBreak = inline as LineBreak;
+                if (lineBreak != null)
+                    runsAndLineBreaks.Add(lineBreak);
+
+                // Checks if the current inline element is a span, a span is the only inline element, which can itself contain inline elements, if the current
+                // inline element is a span, then the runs and line breaks that it contains are recursively retrieved and added to the result set
+                Span span = inline as Span;
+                if (span != null)
+                    runsAndLineBreaks.AddRange(HtmlConverter.GetRunsAndLineBreaks(span.Inlines));
+            }
+
+            // Returns the created list of runs and line breaks
+            return runsAndLineBreaks;
+        }
+
+        /// <summary>
         /// Applies the proper white-space character handling to the converted contents.
         /// </summary>
         /// <param name="blockElements">The block elements to which white-space character handling is to be applied.</param>
         private static void ApplyWhiteSpaceHandling(IEnumerable<Block> blockElements)
         {
             // Cylces over each paragraph in the list of block elements and applies the rules for white-space character handling to it
-            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>())
+            foreach (Paragraph paragraph in blockElements.OfType<Paragraph>().ToList())
             {
                 // Recursively retrieves all the runs and line breaks that are contained in the paragraph (runs and line breaks are the only inline elements that
                 // are relevant for white-space character handling, because runs are the only inline elements that can directly contain text, and therefore
@@ -85,40 +119,10 @@ namespace System.Windows.Documents.Reporting
                     runsAndLineBreaks.RemoveAll(inline => runs.Contains(inline as Run));
                 }
             }
-        }
 
-        /// <summary>
-        /// Retrieves all the runs and line breaks inside an inline collection recursively. This is very useful for white-space character handling.
-        /// </summary>
-        /// <param name="inlineCollection">The inline collection from which the runs and line breaks are to be retrieved.</param>
-        /// <returns>Returns a list of runs and line breaks from the specified inline collection in the order that they appear within the inline collection.</returns>
-        private static List<Inline> GetRunsAndLineBreaks(InlineCollection inlineCollection)
-        {
-            // Creates a new list, which will contain the result
-            List<Inline> runsAndLineBreaks = new List<Inline>();
-
-            // Cycles over all the inlines in the inline collection
-            foreach (Inline inline in inlineCollection)
-            {
-                // Checks if the current inline element is a run, if so then it is added to the result set
-                Run run = inline as Run;
-                if (run != null)
-                    runsAndLineBreaks.Add(run);
-
-                // Checks if the current inline element is a line break, if so then it is added to the result set
-                LineBreak lineBreak = inline as LineBreak;
-                if (lineBreak != null)
-                    runsAndLineBreaks.Add(lineBreak);
-
-                // Checks if the current inline element is a span, a span is the only inline element, which can itself contain inline elements, if the current
-                // inline element is a span, then the runs and line breaks that it contains are recursively retrieved and added to the result set
-                Span span = inline as Span;
-                if (span != null)
-                    runsAndLineBreaks.AddRange(HtmlConverter.GetRunsAndLineBreaks(span.Inlines));
-            }
-
-            // Returns the created list of runs and line breaks
-            return runsAndLineBreaks;
+            // Cycles over all sections in the list of block elements and recusively applies white-space character handling to them
+            foreach (Section section in blockElements.OfType<Section>().ToList())
+                HtmlConverter.ApplyWhiteSpaceHandling(section.Blocks);
         }
 
         /// <summary>
