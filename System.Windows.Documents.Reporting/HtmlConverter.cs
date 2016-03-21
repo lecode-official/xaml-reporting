@@ -246,7 +246,7 @@ namespace System.Windows.Documents.Reporting
         [HtmlElementConverter("SECTION")]
         private static TextElement ConvertSectionElement(IHtmlElement sectionHtmlElement)
         {
-            IEnumerable<Block> sectionContent = sectionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Block>();
+            IEnumerable<Block> sectionContent = HtmlConverter.ConvertTextElementsToBlocks(sectionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)));
             Section section = new Section();
             section.Blocks.AddRange(sectionContent);
             return section;
@@ -260,7 +260,7 @@ namespace System.Windows.Documents.Reporting
         [HtmlElementConverter("DIV")]
         private static TextElement ConvertDivisionElement(IHtmlElement divisionHtmlElement)
         {
-            IEnumerable<Block> divisionContent = divisionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Block>();
+            IEnumerable<Block> divisionContent = HtmlConverter.ConvertTextElementsToBlocks(divisionHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)));
             Section division = new Section();
             division.Blocks.AddRange(divisionContent);
             return division;
