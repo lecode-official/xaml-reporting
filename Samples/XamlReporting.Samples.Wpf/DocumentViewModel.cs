@@ -49,7 +49,7 @@ namespace XamlReporting.Samples.Wpf
                     <p>
                         Lorem ipsum dolor sit <em>amet sed</em> diam nonumy eirmod tempor invidunt ut labore et dolore.
                         <br/><br/>
-                        Stet clita kasd gubergren, no sea <u>takimata</u> sanctus est Lorem ipsum dolor sit amet.
+                        Stet clita kasd gubergren, no sea <u>takimata</u> sanctus est Lorem ipsum dolor sit <small>amet</small>.
                     </p>
                     <blockquote>
                         <em>

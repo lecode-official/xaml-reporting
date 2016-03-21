@@ -317,6 +317,21 @@ namespace System.Windows.Documents.Reporting
         }
 
         /// <summary>
+        /// Converts the specified small HTML element to a span flow document element, which has a smaller font size.
+        /// </summary>
+        /// <param name="smallHtmlElement">The small HTML element that is to be converted.</param>
+        /// <returns>Returns a span flow document element, which has a smaller font size.</returns>
+        [HtmlElementConverter("SMALL")]
+        private static TextElement ConvertSmallElement(IHtmlElement smallHtmlElement)
+        {
+            IEnumerable<Inline> smallContent = smallHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
+            Span small = new Span();
+            small.FontSize = (double)new FontSizeConverter().ConvertFrom("10pt");
+            small.Inlines.AddRange(smallContent);
+            return small;
+        }
+
+        /// <summary>
         /// Converts the specified quotatiopn HTML element to a span flow document element, which is wrapped in quotation marks.
         /// </summary>
         /// <param name="quotationHtmlElement">The quotation HTML element that is to be converted.</param>
