@@ -121,9 +121,14 @@ namespace System.Windows.Documents.Reporting
                 }
             }
 
-            // Cycles over all sections in the list of block elements and recusively applies white-space character handling to them
+            // Cycles over all sections and lists in the list of block elements and recusively applies white-space character handling to them
             foreach (Section section in blockElements.OfType<Section>().ToList())
                 HtmlConverter.ApplyWhiteSpaceHandling(section.Blocks);
+            foreach (List list in blockElements.OfType<List>().ToList())
+            {
+                foreach (ListItem listItem in list.ListItems.ToList())
+                    HtmlConverter.ApplyWhiteSpaceHandling(listItem.Blocks);
+            }
         }
 
         /// <summary>
@@ -483,6 +488,53 @@ namespace System.Windows.Documents.Reporting
             superscript.FontSize = (double)new FontSizeConverter().ConvertFrom("8pt");
             superscript.BaselineAlignment = BaselineAlignment.Superscript;
             return superscript;
+        }
+
+        /// <summary>
+        /// Converts the specified ordered or unordered list HTML element to a list flow document element.
+        /// </summary>
+        /// <param name="listHtmlElement">The ordered or unordered list HTML element that is to be converted.</param>
+        /// <returns>Returns a list flow document element.</returns>
+        [HtmlElementConverter("OL")]
+        [HtmlElementConverter("UL")]
+        private static TextElement ConvertListElement(IHtmlElement listHtmlElement)
+        {
+            IEnumerable<ListItem> listItems = listHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<ListItem>();
+            List list = new List();
+            list.MarkerStyle = listHtmlElement.TagName.ToUpperInvariant() == "UL" ? TextMarkerStyle.Circle : TextMarkerStyle.Decimal;
+            list.ListItems.AddRange(listItems);
+            return list;
+        }
+
+        /// <summary>
+        /// Converts the specified list item HTML element to a list item flow document element.
+        /// </summary>
+        /// <param name="listItemHtmlElement">The list item HTML element that is to be converted.</param>
+        /// <returns>Returns a list item flow document element.</returns>
+        [HtmlElementConverter("LI")]
+        private static TextElement ConvertListItemElement(IHtmlElement listItemHtmlElement)
+        {
+            // Gets the content of the list item
+            List<TextElement> listItemTextElementContent = listItemHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).ToList();
+
+            // There is a problem with the white-space character handling, when the last item of the list item content is an empty run, then there is too much
+            // space to the bottom, therefore it is removed
+            listItemTextElementContent.RemoveAll(textElement => textElement is Run && string.IsNullOrWhiteSpace((textElement as Run).Text));
+
+            // List items may only contain block elements, therefore all inline elements, which are content of the list item HTML element are wrapped in paragraphs
+            IEnumerable<Block> listItemContent = HtmlConverter.ConvertTextElementsToBlocks(listItemTextElementContent);
+
+            // Removes margins and paddings from any nested list, because otherwise there would be too much space between the nested list and its parent
+            foreach (List list in listItemContent.OfType<List>())
+            {
+                list.Margin = new Thickness(double.NaN, 5.0d, double.NaN, 5.0d);
+                list.Padding = new Thickness(25.0d, double.NaN, double.NaN, double.NaN);
+            }
+
+            // Creates the list item, adds the content to it, and returns it
+            ListItem listItem = new ListItem();
+            listItem.Blocks.AddRange(listItemContent);
+            return listItem;
         }
 
         #endregion

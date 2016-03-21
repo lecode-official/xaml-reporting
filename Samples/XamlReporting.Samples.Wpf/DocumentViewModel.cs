@@ -39,6 +39,18 @@ namespace XamlReporting.Samples.Wpf
                         <strong>aliquyam</strong> erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
                         et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
                     </p>
+                    <ol>
+                        <li>List item 1</li>
+                        <li>
+                            List item 2
+                            <ul>
+                                <li>List item 3</li>
+                                <li>List item 4</li>
+                                <li>List item 5</li>
+                            </ul>
+                        </li>
+                        <li>List item 6</li>
+                    </ol>
                     <h2>Heading 1.1</h2>
                     <section>
                         Lorem ipsum dolor sit amet sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
