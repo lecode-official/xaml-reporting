@@ -1,5 +1,9 @@
 ﻿
+#region Using Directives
+
 using System.Windows.Documents;
+
+#endregion
 
 namespace XamlReporting.Samples.Wpf
 {
