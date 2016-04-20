@@ -38,16 +38,16 @@
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.InversionOfControl, Version=0.1.4.26474, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.InversionOfControl.0.1.4\lib\portable-net45+win\System.InversionOfControl.dll</HintPath>
+    <Reference Include="System.InversionOfControl, Version=0.1.5.21446, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.0.1.5\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.0.27157, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.dll</HintPath>
+    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.2.21070, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.0.1.2\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.InversionOfControl.Abstractions.SimpleIoc, Version=0.1.0.28257, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.SimpleIoc.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.SimpleIoc.dll</HintPath>
+    <Reference Include="System.InversionOfControl.Abstractions.SimpleIoc, Version=0.1.2.21070, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.Abstractions.SimpleIoc.0.1.2\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.Abstractions.SimpleIoc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Windows" />
@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Packages.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\System.Windows.Documents.Reporting\System.Windows.Documents.Reporting.csproj">
