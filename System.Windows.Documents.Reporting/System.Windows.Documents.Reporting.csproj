@@ -32,8 +32,8 @@
     <DocumentationFile>bin\Release\System.Windows.Documents.Reporting.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AngleSharp, Version=0.9.4.42449, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
-      <HintPath>..\packages\AngleSharp.0.9.4\lib\net45\AngleSharp.dll</HintPath>
+    <Reference Include="AngleSharp, Version=0.9.5.41771, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngleSharp.0.9.5\lib\net45\AngleSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -71,8 +71,8 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.0.27157, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.InversionOfControl.Abstractions.0.1.0\lib\portable-net45+win\System.InversionOfControl.Abstractions.dll</HintPath>
+    <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.2.21070, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.InversionOfControl.Abstractions.0.1.2\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />

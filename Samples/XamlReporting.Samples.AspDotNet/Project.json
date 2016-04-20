@@ -7,7 +7,7 @@
   "dependencies": {
     "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "System.InversionOfControl.Abstractions.SimpleIoc": "0.1.0"
+    "System.InversionOfControl.Abstractions.SimpleIoc": "0.1.2"
   },
 
   "commands": {
