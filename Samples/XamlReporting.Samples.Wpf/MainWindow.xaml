@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DocumentViewer Grid.Row="0" Document="{Binding Path=FixedDocument}" />
+        <DocumentViewer Grid.Row="0" Document="{Binding Path=FixedDocument.Value}" />
 
         <Grid Grid.Row="1" Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
@@ -23,7 +23,7 @@
             </Grid.ColumnDefinitions>
             
             <TextBlock VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">Report file name:</TextBlock>
-            <TextBox Text="{Binding Path=ReportFileName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
+            <TextBox Text="{Binding Path=ReportFileName.Value, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
             <Button Command="{Binding Path=ExportReportCommand}" Grid.Column="2" Padding="5,2">Export report</Button>
         </Grid>
 
@@ -35,7 +35,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">Table file name:</TextBlock>
-            <TextBox Text="{Binding Path=TableFileName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
+            <TextBox Text="{Binding Path=TableFileName.Value, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Margin="0,0,5,0" />
             <Button Command="{Binding Path=ExportTableCommand}" Grid.Column="2" Padding="5,2">Export table</Button>
         </Grid>
     </Grid>
