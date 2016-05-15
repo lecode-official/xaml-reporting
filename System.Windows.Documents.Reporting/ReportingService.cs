@@ -74,7 +74,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Executes the specified method in an STA thread.
         /// </summary>
-        /// <typeparam name="T">The type of the result that is being returned.</typeparam>
+        /// <typeparam name="TDocument">The type of the result that is being returned.</typeparam>
         /// <param name="method">The method that is to be executed in an STA thread.</param>
         /// <returns>Returns the result of the method execution.</returns>
         private async Task<TDocument> ExecuteInStaThreadAsync<TDocument>(Func<Task<TDocument>> method)
@@ -147,7 +147,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Exports a document to XPS.
         /// </summary>
-        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document => this.ExportToXps(await this.RenderAsync<TDocument>(parameters), outputStream);
@@ -193,7 +193,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Exports a document to PDF.
         /// </summary>
-        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         private async Task ExportToPdfAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document
@@ -423,7 +423,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Renders the specified document.
         /// </summary>
-        /// <typeparam name="T">The type of document that is to be rendered.</typeparam>
+        /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered fixed document.</returns>
         public async Task<FixedDocument> RenderAsync<TDocument>(object parameters = null) where TDocument : Document
@@ -509,7 +509,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
         /// </summary>
-        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
@@ -596,7 +596,7 @@ namespace System.Windows.Documents.Reporting
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
         /// </summary>
-        /// <typeparam name="T">The type of document that is to be rendered and exported.</typeparam>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
