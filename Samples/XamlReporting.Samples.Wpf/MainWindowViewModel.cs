@@ -1,10 +1,8 @@
 ﻿
 #region Using Directives
 
-using ReactiveUI;
 using System;
 using System.IO;
-using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Documents.Reporting;
@@ -18,7 +16,7 @@ namespace XamlReporting.Samples.Wpf
     /// <summary>
     /// Represents the view model for the main window.
     /// </summary>
-    public class MainWindowViewModel : ReactiveViewModel
+    public class MainWindowViewModel : ViewModel
     {
         #region Constructors
 
@@ -43,79 +41,31 @@ namespace XamlReporting.Samples.Wpf
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Contains the fixed document, which represents the rendered report.
-        /// </summary>
-        private FixedDocument fixedDocument;
-
+        
         /// <summary>
         /// Gets the fixed document, which represents the rendered report.
         /// </summary>
-        public FixedDocument FixedDocument
-        {
-            get
-            {
-                return this.fixedDocument;
-            }
-
-            private set
-            {
-                this.RaiseAndSetIfChanged(ref this.fixedDocument, value);
-            }
-        }
-        
-        /// <summary>
-        /// Contains the name of the file into which the report is being exported.
-        /// </summary>
-        private string reportFileName;
+        public ReactiveProperty<FixedDocument> FixedDocument { get; } = new ReactiveProperty<FixedDocument>();
 
         /// <summary>
         /// Gets or sets the name of the file into which the report is being exported.
         /// </summary>
-        public string ReportFileName
-        {
-            get
-            {
-                return this.reportFileName;
-            }
-
-            set
-            {
-                this.RaiseAndSetIfChanged(ref this.reportFileName, value);
-            }
-        }
-
-        /// <summary>
-        /// Contains the name of the file into which the table is being exported.
-        /// </summary>
-        private string tableFileName;
+        public ReactiveProperty<string> ReportFileName { get; } = new ReactiveProperty<string>();
 
         /// <summary>
         /// Gets or sets the name of the file into which the table is being exported.
         /// </summary>
-        public string TableFileName
-        {
-            get
-            {
-                return this.tableFileName;
-            }
-
-            set
-            {
-                this.RaiseAndSetIfChanged(ref this.tableFileName, value);
-            }
-        }
+        public ReactiveProperty<string> TableFileName { get; } = new ReactiveProperty<string>();
 
         /// <summary>
         /// Gets a command, which exports the report.
         /// </summary>
-        public ReactiveCommand<Unit> ExportReportCommand { get; private set; }
+        public ReactiveCommand ExportReportCommand { get; private set; }
 
         /// <summary>
         /// Gets a command, which export a table.
         /// </summary>
-        public ReactiveCommand<Unit> ExportTableCommand { get; private set; }
+        public ReactiveCommand ExportTableCommand { get; private set; }
 
         #endregion
 
@@ -127,21 +77,21 @@ namespace XamlReporting.Samples.Wpf
         public override Task OnActivateAsync()
         {
             // Initializes the file names of the exports
-            this.ReportFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Report.pdf");
-            this.TableFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Table.xlsx");
+            this.ReportFileName.Value = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Report.pdf");
+            this.TableFileName.Value = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Table.xlsx");
 
             // Initializes the commmand, that renders and exports the reports
-            this.ExportReportCommand = ReactiveCommand.CreateAsyncTask(async x =>
+            this.ExportReportCommand = new ReactiveCommand(async () =>
             {
-                DocumentFormat documentFormat = Path.GetExtension(this.ReportFileName).ToUpperInvariant() == ".XPS" ? DocumentFormat.Xps : DocumentFormat.Pdf;
-                await this.reportingService.ExportAsync<Document>(documentFormat, this.ReportFileName);
+                DocumentFormat documentFormat = Path.GetExtension(this.ReportFileName.Value).ToUpperInvariant() == ".XPS" ? DocumentFormat.Xps : DocumentFormat.Pdf;
+                await this.reportingService.ExportAsync<Document>(documentFormat, this.ReportFileName.Value);
             });
 
             // Initializes the command, which exports a table
-            this.ExportTableCommand = ReactiveCommand.CreateAsyncTask(async x =>
+            this.ExportTableCommand = new ReactiveCommand(async () =>
             {
                 // Creates an overview table of the directories in the directory to which the table is to be exported
-                DirectoryInfo directoryInfo = new DirectoryInfo(Path.GetDirectoryName(this.TableFileName));
+                DirectoryInfo directoryInfo = new DirectoryInfo(Path.GetDirectoryName(this.TableFileName.Value));
                 Table<DirectoryInfo> table = new Table<DirectoryInfo>("Directories Overview");
                 foreach(DirectoryInfo subDirectoryInfo in directoryInfo.GetDirectories())
                     table.Rows.Add(subDirectoryInfo);
@@ -150,8 +100,8 @@ namespace XamlReporting.Samples.Wpf
                 table.Columns.Add(new Column<DirectoryInfo>("Last access time", y => y.LastAccessTime.ToString()));
 
                 // Determines the table format and export the table
-                TableFormat tableFormat = Path.GetExtension(this.TableFileName).ToUpperInvariant() == ".CSV" ? TableFormat.Csv : (Path.GetExtension(this.TableFileName).ToUpperInvariant() == ".XLS" ? TableFormat.Xls : TableFormat.Xlsx);
-                await this.reportingService.ExportAsync(table, tableFormat, this.TableFileName);
+                TableFormat tableFormat = Path.GetExtension(this.TableFileName.Value).ToUpperInvariant() == ".CSV" ? TableFormat.Csv : (Path.GetExtension(this.TableFileName.Value).ToUpperInvariant() == ".XLS" ? TableFormat.Xls : TableFormat.Xlsx);
+                await this.reportingService.ExportAsync(table, tableFormat, this.TableFileName.Value);
             });
 
             // Since no asynchronous operation is performed, an empty task is returned
@@ -162,7 +112,7 @@ namespace XamlReporting.Samples.Wpf
         /// Is called when the user is navigated to the view corresponding to this view model. Renders the report for display.
         /// </summary>
         /// <param name="e">The event arguments, that contain more information about the navigation.</param>
-        public override async Task OnNavigateToAsync(NavigationEventArgs e) => this.FixedDocument = await this.reportingService.RenderAsync<Document>();
+        public override async Task OnNavigateToAsync(NavigationEventArgs e) => this.FixedDocument.Value = await this.reportingService.RenderAsync<Document>();
 
         #endregion
     }
