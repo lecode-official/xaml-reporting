@@ -210,7 +210,6 @@ namespace System.Windows.Documents.Reporting
         /// Converts the specified HTML node into flow document content element.
         /// </summary>
         /// <param name="htmlNode">The HTML node that is to be converted into flow document content element.</param>
-        /// <param name="cancellationToken">The cancellation token, which can be used to cancel the conversion.</param>
         /// <returns>Returns the converted flow document element.</returns>
         private static TextElement ConvertHtmlNode(INode htmlNode)
         {

@@ -17,6 +17,9 @@ namespace System.Windows.Documents.Reporting
     {
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the content of the page part.
+        /// </summary>
         public FixedPage Page { get; set; }
 
         #endregion
