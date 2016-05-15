@@ -87,6 +87,7 @@
     <Compile Include="FlowPart.cs" />
     <Compile Include="HtmlConverter.cs" />
     <Compile Include="HtmlSection.cs" />
+    <Compile Include="InlineImage.cs" />
     <Compile Include="PagePart.cs" />
     <Compile Include="Resources\Localization\HtmlConverter.Designer.cs">
       <AutoGen>True</AutoGen>
