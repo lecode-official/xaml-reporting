@@ -458,7 +458,7 @@ namespace System.Windows.Documents.Reporting
         {
             IEnumerable<Inline> headingContent = headingHtmlElement.ChildNodes.Select(child => HtmlConverter.ConvertHtmlNode(child)).OfType<Inline>();
             Paragraph heading = new Paragraph();
-            double fontSize = (double)new FontSizeConverter().ConvertFrom(new string[] { "24pt", "18pt", "13.5pt", "12pt", "10pt", "7.5pt" }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1]);
+            double fontSize = (double)new FontSizeConverter().ConvertFromInvariantString(new string[] { "24pt", "18pt", "13.5pt", "12pt", "10pt", "7.5pt" }[Convert.ToInt32(headingHtmlElement.NodeName.Substring(1)) - 1]);
             heading.FontSize = fontSize;
             heading.Margin = new Thickness(double.NaN, double.NaN, double.NaN, 0.0d);
             heading.Inlines.AddRange(headingContent);
