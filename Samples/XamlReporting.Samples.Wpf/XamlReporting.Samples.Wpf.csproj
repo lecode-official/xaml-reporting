@@ -42,8 +42,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.InversionOfControl, Version=0.1.5.21446, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.InversionOfControl.0.1.5\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.dll</HintPath>
+    <Reference Include="System.InversionOfControl, Version=0.1.6.39558, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.InversionOfControl.0.1.6\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\System.InversionOfControl.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.InversionOfControl.Abstractions, Version=0.1.2.21070, Culture=neutral, processorArchitecture=MSIL">
@@ -74,36 +74,36 @@
       <HintPath>..\..\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Application, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Application.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Application, Version=0.3.5.27568, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Configuration, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Configuration.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Configuration, Version=0.3.5.27568, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Reactive, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Reactive.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Reactive, Version=0.3.5.27568, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Reactive.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Application, Version=0.3.4.23097, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Services.Application.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Application, Version=0.3.5.27568, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Services.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Dialog, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Services.Dialog.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Dialog, Version=0.3.5.27569, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Services.Dialog.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.Navigation, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Services.Navigation.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.Navigation, Version=0.3.5.27569, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Services.Navigation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.Services.OperatingSystem, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.Services.OperatingSystem.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.Services.OperatingSystem, Version=0.3.5.27569, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.Services.OperatingSystem.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Mvvm.UI, Version=0.3.4.23098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.4\lib\net452\System.Windows.Mvvm.UI.dll</HintPath>
+    <Reference Include="System.Windows.Mvvm.UI, Version=0.3.5.27569, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Windows.Mvvm.0.3.5\lib\net452\System.Windows.Mvvm.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
