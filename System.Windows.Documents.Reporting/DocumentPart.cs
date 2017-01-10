@@ -12,7 +12,7 @@ namespace System.Windows.Documents.Reporting
     /// <summary>
     /// Represents the abstract base class for all kinds of document parts. Document parts make up the content of a document.
     /// </summary>
-    public abstract class DocumentPart : FrameworkElement
+    public abstract class DocumentPart
     {
         #region Public Abstract Methods
 
