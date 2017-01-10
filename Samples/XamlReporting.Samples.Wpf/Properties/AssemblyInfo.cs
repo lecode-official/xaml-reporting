@@ -34,7 +34,7 @@ using System.Windows;
 
 #region Assembly Version Information
 
-[assembly: AssemblyVersion("0.2.2.*")]
-[assembly: AssemblyFileVersion("0.2.2.0")]
+[assembly: AssemblyVersion("0.3.0.*")]
+[assembly: AssemblyFileVersion("0.3.0.0")]
 
 #endregion
