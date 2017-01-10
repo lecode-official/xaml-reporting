@@ -592,6 +592,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
         /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
         public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
