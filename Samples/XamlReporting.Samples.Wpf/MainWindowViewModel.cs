@@ -112,7 +112,7 @@ namespace XamlReporting.Samples.Wpf
         /// Is called when the user is navigated to the view corresponding to this view model. Renders the report for display.
         /// </summary>
         /// <param name="e">The event arguments, that contain more information about the navigation.</param>
-        public override async Task OnNavigateToAsync(NavigationEventArgs e) => this.FixedDocument.Value = await this.reportingService.RenderAsync<Document>();
+        public override async Task OnNavigateToAsync(NavigationEventArgs e) => this.FixedDocument.Value = await this.reportingService.RenderFixedDocumentAsync<Document>();
 
         #endregion
     }

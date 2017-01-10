@@ -76,13 +76,10 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <typeparam name="TDocument">The type of the result that is being returned.</typeparam>
         /// <param name="method">The method that is to be executed in an STA thread.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the execution.</param>
         /// <returns>Returns the result of the method execution.</returns>
-        private async Task<TDocument> ExecuteInStaThreadAsync<TDocument>(Func<Task<TDocument>> method)
+        private async Task<TDocument> ExecuteInStaThreadAsync<TDocument>(Func<Task<TDocument>> method, CancellationToken cancellationToken)
         {
-            // Checks if the execution is already taking place on a STA thread, if so then the method is executed and nothing is done
-            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                return await method();
-
             // Creates a new STA thread in which the method is executed
             TaskCompletionSource<TDocument> taskCompletionSource = new TaskCompletionSource<TDocument>();
             Thread thread = new Thread(new ThreadStart(async () =>
@@ -103,9 +100,19 @@ namespace System.Windows.Documents.Reporting
             // Makes the thread an STA thread
             thread.SetApartmentState(ApartmentState.STA);
 
+            // Registers for the cancellation of the token
+            cancellationToken.Register(() => thread.Abort());
+
             // Starts the thread and returns the result
-            thread.Start();
-            return await taskCompletionSource.Task;
+            try
+            {
+                thread.Start();
+                return await taskCompletionSource.Task;
+            }
+            catch (ThreadAbortException)
+            {
+                throw new TaskCanceledException();
+            }
         }
 
         /// <summary>
@@ -115,7 +122,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="viewModelType">The type of the view model that is to be instantiated and used for the rendering.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered document.</returns>
-        private async Task<FixedDocument> RenderAsync(Document document, Type viewModelType, object parameters)
+        private async Task<FixedDocument> RenderFixedDocumentAsync(Document document, Type viewModelType, object parameters)
         {
             // Instantiates the new view model
             object viewModel = null;
@@ -145,12 +152,98 @@ namespace System.Windows.Documents.Reporting
         }
 
         /// <summary>
+        /// Renders the specified document.
+        /// </summary>
+        /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
+        private async Task<FixedDocument> RenderFixedDocumentAsync<TDocument>(object parameters = null) where TDocument : Document
+        {
+            // Determines the type of the view model, which can be done via attribute or convention
+            Type viewModelType = null;
+            ViewModelAttribute viewModelAttribute = typeof(TDocument).GetCustomAttributes<ViewModelAttribute>().FirstOrDefault();
+            if (viewModelAttribute != null)
+            {
+                viewModelType = viewModelAttribute.ViewModelType;
+            }
+            else
+            {
+                this.assemblyTypes = this.assemblyTypes ?? typeof(TDocument).Assembly.GetTypes();
+                string viewModelName = this.ViewModelNamingConvention(typeof(TDocument).Name);
+                viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
+            }
+
+            // Instantiates the new document
+            TDocument document;
+            try
+            {
+                // Lets the kernel instantiate the document, so that all dependencies can be injected
+                document = this.iocContainer.GetInstance<TDocument>();
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeInstantiatedExceptionMessage, e);
+            }
+
+            // Renders the XAML document
+            try
+            {
+                return await this.RenderFixedDocumentAsync(document, viewModelType, parameters);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+            }
+        }
+
+        /// <summary>
+        /// Loads the specified XAML file and renders it.
+        /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
+        /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
+        private async Task<FixedDocument> RenderFixedDocumentAsync<TViewModel>(string fileName, object parameters = null)
+        {
+            // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
+            if (!File.Exists(fileName))
+                throw new FileNotFoundException(Resources.Localization.ReportingService.XamlFileCouldNotBeFoundExceptionMessage, fileName);
+
+            // Tries to load the XAML file and instantiates a document for it
+            Document document = null;
+            try
+            {
+                // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
+                try
+                {
+                    using (FileStream memoryStream = new FileStream(fileName, FileMode.Open))
+                        document = XamlReader.Load(memoryStream, new ParserContext(new Xml.XmlParserContext(null, null, null, Xml.XmlSpace.Default, Encoding.Unicode))) as Document;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
+                }
+
+                // Checks if the document could not be loaded, if so then an exception is thrown
+                if (document == null)
+                    throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
+
+                // Renders the document and returns it
+                return await this.RenderFixedDocumentAsync(document, typeof(TViewModel), parameters);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+            }
+        }
+
+        /// <summary>
         /// Exports a document to XPS.
         /// </summary>
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document => this.ExportToXps(await this.RenderAsync<TDocument>(parameters), outputStream);
+        private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document => this.ExportToXps(await this.RenderFixedDocumentAsync<TDocument>(parameters), outputStream);
 
         /// <summary>
         /// Exports a document to XPS.
@@ -159,7 +252,7 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to XPS, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<TViewModel>(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderAsync<TViewModel>(fileName, parameters), outputStream);
+        private async Task ExportToXpsAsync<TViewModel>(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderFixedDocumentAsync<TViewModel>(fileName, parameters), outputStream);
 
         /// <summary>
         /// Exports the specified rendered fixed document to XPS.
@@ -424,44 +517,52 @@ namespace System.Windows.Documents.Reporting
         /// Renders the specified document.
         /// </summary>
         /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
-        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync<TDocument>(object parameters = null) where TDocument : Document
-        {
-            // Determines the type of the view model, which can be done via attribute or convention
-            Type viewModelType = null;
-            ViewModelAttribute viewModelAttribute = typeof(TDocument).GetCustomAttributes<ViewModelAttribute>().FirstOrDefault();
-            if (viewModelAttribute != null)
-            {
-                viewModelType = viewModelAttribute.ViewModelType;
-            }
-            else
-            {
-                this.assemblyTypes = this.assemblyTypes ?? typeof(TDocument).Assembly.GetTypes();
-                string viewModelName = this.ViewModelNamingConvention(typeof(TDocument).Name);
-                viewModelType = this.assemblyTypes.FirstOrDefault(type => type.Name == viewModelName);
-            }
-            
-            // Instantiates the new document
-            TDocument document;
-            try
-            {
-                // Lets the kernel instantiate the document, so that all dependencies can be injected
-                document = this.iocContainer.GetInstance<TDocument>();
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeInstantiatedExceptionMessage, e);
-            }
+        public Task<FixedDocument> RenderAsync<TDocument>(CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TDocument>(null, cancellationToken);
 
-            // Renders the XAML document
+        /// <summary>
+        /// Renders the specified document.
+        /// </summary>
+        /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
+        /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
+        public async Task<FixedDocument> RenderAsync<TDocument>(object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
+        {
+            // Tries to export the document, if it could not be exported, then an exception is thrown
             try
             {
-                return await this.RenderAsync(document, viewModelType, parameters);
+                // Creates a new synchronized stream to make the stream thread-safe
+                Stream threadSafeStream = Stream.Synchronized(new MemoryStream());
+
+                // Executes the exporting on an STA thread
+                await this.ExecuteInStaThreadAsync<bool>(async () =>
+                {
+                    // Exports the document to an in-memory stream
+                    await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters);
+
+                    // Since everything went alright, true is returned
+                    return true;
+                }, cancellationToken);
+
+                // Opens the exported XPS package
+                threadSafeStream.Seek(0, SeekOrigin.Begin);
+                Package package = Package.Open(threadSafeStream);
+                string packagePath = string.Format("memorystream://{0}.xps", Guid.NewGuid());
+                PackageStore.AddPackage(new Uri(packagePath), package);
+
+                // Gets the first fixed document from the document sequence of the XPS package                
+                XpsDocument xpsDocument = new XpsDocument(package, CompressionOption.NotCompressed, packagePath);
+                return xpsDocument.GetFixedDocumentSequence().References.First().GetDocument(false);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedExceptionMessage, e);
             }
         }
 
@@ -470,39 +571,52 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
+        /// <returns>Returns the rendered fixed document.</returns>
+        public Task<FixedDocument> RenderAsync<TViewModel>(string fileName, CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TViewModel>(fileName, null, cancellationToken);
+
+        /// <summary>
+        /// Loads the specified XAML file and renders it.
+        /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
+        /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters = null)
+        public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters, CancellationToken cancellationToken = default(CancellationToken))
         {
-            // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
-            if (!File.Exists(fileName))
-                throw new FileNotFoundException(Resources.Localization.ReportingService.XamlFileCouldNotBeFoundExceptionMessage, fileName);
-
-            // Tries to load the XAML file and instantiates a document for it
-            Document document = null;
+            // Tries to export the document, if it could not be exported, then an exception is thrown
             try
             {
-                    // Tries to load the XAML file, if it could not be loaded, then an exception is thrown
-                    try
-                    {
-                        using (FileStream memoryStream = new FileStream(fileName, FileMode.Open))
-                            document = XamlReader.Load(memoryStream, new ParserContext(new Xml.XmlParserContext(null, null, null, Xml.XmlSpace.Default, Encoding.Unicode))) as Document;
-                    }
-                    catch (Exception e)
-                    {
-                        throw new InvalidOperationException(Resources.Localization.ReportingService.XamlFileCouldNotBeLoadedExceptionMessage, e);
-                    }
+                // Creates a new synchronized stream to make the stream thread-safe
+                Stream threadSafeStream = Stream.Synchronized(new MemoryStream());
 
-                    // Checks if the document could not be loaded, if so then an exception is thrown
-                    if (document == null)
-                        throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
+                // Executes the exporting on an STA thread
+                await this.ExecuteInStaThreadAsync<bool>(async () =>
+                {
+                    // Exports the document to an in-memory stream
+                    await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters);
 
-                    // Renders the document and returns it
-                return await this.RenderAsync(document, typeof(TViewModel), parameters);
+                    // Since everything went alright, true is returned
+                    return true;
+                }, cancellationToken);
+
+                // Opens the exported XPS package
+                threadSafeStream.Seek(0, SeekOrigin.Begin);
+                Package package = Package.Open(threadSafeStream);
+                string packagePath = string.Format("memorystream://{0}.xps", Guid.NewGuid());
+                PackageStore.AddPackage(new Uri(packagePath), package);
+
+                // Gets the first fixed document from the document sequence of the XPS package                
+                XpsDocument xpsDocument = new XpsDocument(package, CompressionOption.NotCompressed, packagePath);
+                return xpsDocument.GetFixedDocumentSequence().References.First().GetDocument(false);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeRenderedExceptionMessage, e);
+                throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeExportedExceptionMessage, e);
             }
         }
 
@@ -512,8 +626,18 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, outputStream, null, cancellationToken);
+
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, object parameters = null) where TDocument : Document
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -537,11 +661,15 @@ namespace System.Windows.Documents.Reporting
 
                     // Since everything went alright, true is returned
                     return true;
-                });
+                }, cancellationToken);
 
                 // Copies the contents of the synchronized stream into the output stream
                 threadSafeStream.Seek(0, SeekOrigin.Begin);
                 await threadSafeStream.CopyToAsync(outputStream);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -556,8 +684,19 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputStream, null, cancellationToken);
+
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
+        /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters = null)
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -581,11 +720,15 @@ namespace System.Windows.Documents.Reporting
 
                     // Since everything went alright, true is returned
                     return true;
-                });
+                }, cancellationToken);
 
                 // Copies the contents of the synchronized stream into the output stream
                 threadSafeStream.Seek(0, SeekOrigin.Begin);
                 await threadSafeStream.CopyToAsync(outputStream);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -599,11 +742,21 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, fileName, null, cancellationToken);
+
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, object parameters = null) where TDocument : Document
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
-                await this.ExportAsync<TDocument>(documentFormat, fileStream, parameters);
+                await this.ExportAsync<TDocument>(documentFormat, fileStream, parameters, cancellationToken);
         }
 
         /// <summary>
@@ -613,11 +766,22 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputFileName, null, cancellationToken);
+
+        /// <summary>
+        /// Renders and exports the specified document to the specified document format.
+        /// </summary>
+        /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
+        /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
+        /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
+        /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters = null)
+        /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters, CancellationToken cancellationToken = default(CancellationToken))
         {
             using (FileStream fileStream = new FileStream(outputFileName, FileMode.Create))
-                await this.ExportAsync<TViewModel>(fileName, documentFormat, fileStream, parameters);
+                await this.ExportAsync<TViewModel>(fileName, documentFormat, fileStream, parameters, cancellationToken);
         }
 
         #endregion
