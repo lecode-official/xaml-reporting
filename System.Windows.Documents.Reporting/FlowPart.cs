@@ -37,8 +37,9 @@ namespace System.Windows.Documents.Reporting
         /// Paginates the flowing content, wraps the pages in the page defined by the page template, and renders the pages.
         /// </summary>
         /// <param name="dataContext">The data context, that is to be used during the rendering. The document part can bind to the content of this data context.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns>Returns the renderd pages.</returns>
-        public override async Task<IEnumerable<FixedPage>> RenderAsync(object dataContext)
+        public override async Task<IEnumerable<FixedPage>> RenderAsync(object dataContext, IProgress<double> progress)
         {
             // If either the page template or the content is null, then nothing can be rendered, therefore an empty list of fixed pages is returned
             if (this.PageTemplate == null || this.Content == null)
@@ -48,6 +49,9 @@ namespace System.Windows.Documents.Reporting
             IDocumentPaginatorSource paginatorSource = this.Content as IDocumentPaginatorSource;
             if (paginatorSource == null)
                 return new List<FixedPage>();
+
+            // Reports that the page rendering has started
+            progress.Report(0);
 
             // Sets the data contet of the content, so that it is able to bind against its contents
             this.Content.DataContext = dataContext;
@@ -104,7 +108,13 @@ namespace System.Windows.Documents.Reporting
                 contentPresenter.Content = new VisualHost { Visual = documentPage.Visual };
                 contentPresenter.UpdateLayout();
                 renderedFixedPages.Add(fixedPage);
+                
+                // Reports that the page has been rendered
+                progress.Report((currentPage + 1.0) / paginatorSource.DocumentPaginator.PageCount);
             } while (++currentPage < paginatorSource.DocumentPaginator.PageCount);
+
+            // Reports that the all pages have been rendered
+            progress.Report(1);
 
             // Returns the rendered pages
             return renderedFixedPages;

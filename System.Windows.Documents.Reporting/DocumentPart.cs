@@ -20,8 +20,9 @@ namespace System.Windows.Documents.Reporting
         /// Renders the document part.
         /// </summary>
         /// <param name="dataContext">The data context, that is to be used during the rendering. The document part can bind to the content of this data context.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns>Returns a list of rendered fixed pages, which can then be added to the document.</returns>
-        public abstract Task<IEnumerable<FixedPage>> RenderAsync(object dataContext);
+        public abstract Task<IEnumerable<FixedPage>> RenderAsync(object dataContext, IProgress<double> progress);
 
         #endregion
 
