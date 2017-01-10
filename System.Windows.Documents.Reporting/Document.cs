@@ -56,16 +56,25 @@ namespace System.Windows.Documents.Reporting
         /// Renders the document, by rendering each part of the document and concatenating them.
         /// </summary>
         /// <param name="dataContext">The data context, which is to be used during rendering. The document and its parts can bind to the contents of the data context.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns></returns>
-        public async Task<FixedDocument> RenderAsync(object dataContext)
+        public async Task<FixedDocument> RenderAsync(object dataContext, IProgress<double> progress = null)
         {
+            // Checks whether a progress is provided
+            if (progress == null)
+                progress = new Progress<double>();
+
             // Creates a new fixed document, which will contain the visual content of the parts of the document
             FixedDocument fixedDocument = new FixedDocument();
 
             // First all pages of all document parts are retrieved, before they are rendered, this is needed to compute the total number of pages
             IEnumerable<FixedPage> fixedPages = new List<FixedPage>();
+            int partIndex = 0;
             foreach (DocumentPart documentPart in this.Parts)
-                fixedPages = fixedPages.Union(await documentPart.RenderAsync(dataContext));
+            {
+                fixedPages = fixedPages.Union(await documentPart.RenderAsync(dataContext, new Progress<double>(partProgress => progress.Report(0.5 * (partIndex + partProgress) / this.Parts.Count))));
+                partIndex++;
+            }
 
             // Cycles over all of the fixed pages of the document and adds the visuals to the fixed document
             int currentPageNumber = 1;
@@ -78,6 +87,8 @@ namespace System.Windows.Documents.Reporting
 
                 // Adds the newly rendered fixed page to the fixed document
                 fixedDocument.Pages.Add(new PageContent { Child = fixedPage });
+
+                progress.Report(0.5 + (0.5 * (currentPageNumber / fixedPages.Count())));
             }
 
             // Returns the rendered fixed document

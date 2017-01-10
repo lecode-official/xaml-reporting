@@ -99,7 +99,7 @@ namespace System.Windows.Documents.Reporting
 
             // Makes the thread an STA thread
             thread.SetApartmentState(ApartmentState.STA);
-
+            
             // Registers for the cancellation of the token
             cancellationToken.Register(() => thread.Abort());
 
@@ -121,8 +121,9 @@ namespace System.Windows.Documents.Reporting
         /// <param name="document">The document that is to be rendered.</param>
         /// <param name="viewModelType">The type of the view model that is to be instantiated and used for the rendering.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns>Returns the rendered document.</returns>
-        private async Task<FixedDocument> RenderFixedDocumentAsync(Document document, Type viewModelType, object parameters)
+        private async Task<FixedDocument> RenderFixedDocumentAsync(Document document, Type viewModelType, object parameters, IProgress<double> progress)
         {
             // Instantiates the new view model
             object viewModel = null;
@@ -148,7 +149,7 @@ namespace System.Windows.Documents.Reporting
             }
 
             // Renders the document and returns it
-            return await document.RenderAsync(viewModel);
+            return await document.RenderAsync(viewModel, progress);
         }
 
         /// <summary>
@@ -156,8 +157,9 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        private async Task<FixedDocument> RenderFixedDocumentAsync<TDocument>(object parameters = null) where TDocument : Document
+        private async Task<FixedDocument> RenderFixedDocumentAsync<TDocument>(object parameters, IProgress<double> progress) where TDocument : Document
         {
             // Determines the type of the view model, which can be done via attribute or convention
             Type viewModelType = null;
@@ -188,7 +190,7 @@ namespace System.Windows.Documents.Reporting
             // Renders the XAML document
             try
             {
-                return await this.RenderFixedDocumentAsync(document, viewModelType, parameters);
+                return await this.RenderFixedDocumentAsync(document, viewModelType, parameters, progress);
             }
             catch (Exception e)
             {
@@ -202,8 +204,9 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        private async Task<FixedDocument> RenderFixedDocumentAsync<TViewModel>(string fileName, object parameters = null)
+        private async Task<FixedDocument> RenderFixedDocumentAsync<TViewModel>(string fileName, object parameters, IProgress<double> progress)
         {
             // Checks if the specified XAML file exists, if the file does not exist, then an exception is thrown
             if (!File.Exists(fileName))
@@ -229,7 +232,7 @@ namespace System.Windows.Documents.Reporting
                     throw new InvalidOperationException(Resources.Localization.ReportingService.DocumentCouldNotBeLoadedExceptionMessage);
 
                 // Renders the document and returns it
-                return await this.RenderFixedDocumentAsync(document, typeof(TViewModel), parameters);
+                return await this.RenderFixedDocumentAsync(document, typeof(TViewModel), parameters, progress);
             }
             catch (Exception e)
             {
@@ -243,7 +246,8 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document => this.ExportToXps(await this.RenderFixedDocumentAsync<TDocument>(parameters), outputStream);
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
+        private async Task ExportToXpsAsync<TDocument>(Stream outputStream, object parameters, IProgress<double> progress) where TDocument : Document => this.ExportToXps(await this.RenderFixedDocumentAsync<TDocument>(parameters, progress), outputStream);
 
         /// <summary>
         /// Exports a document to XPS.
@@ -252,7 +256,8 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to XPS, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToXpsAsync<TViewModel>(string fileName, Stream outputStream, object parameters) => this.ExportToXps(await this.RenderFixedDocumentAsync<TViewModel>(fileName, parameters), outputStream);
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
+        private async Task ExportToXpsAsync<TViewModel>(string fileName, Stream outputStream, object parameters, IProgress<double> progress) => this.ExportToXps(await this.RenderFixedDocumentAsync<TViewModel>(fileName, parameters, progress), outputStream);
 
         /// <summary>
         /// Exports the specified rendered fixed document to XPS.
@@ -289,12 +294,13 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync<TDocument>(Stream outputStream, object parameters) where TDocument : Document
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
+        private async Task ExportToPdfAsync<TDocument>(Stream outputStream, object parameters, IProgress<double> progress) where TDocument : Document
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                await this.ExportToXpsAsync<TDocument>(memoryStream, parameters);
+                await this.ExportToXpsAsync<TDocument>(memoryStream, parameters, progress);
                 this.ExportToPdf(memoryStream, outputStream);
             }
         }
@@ -306,12 +312,13 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file from which the document, that is to be exported to PDF, should be loaded.</param>
         /// <param name="outputStream">The stream to which the file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
-        private async Task ExportToPdfAsync<TViewModel>(string fileName, Stream outputStream, object parameters)
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
+        private async Task ExportToPdfAsync<TViewModel>(string fileName, Stream outputStream, object parameters, IProgress<double> progress)
         {
             // Since there is no direct way to render a fixed document, the document is first rendered to an XPS document in a memory stream, which is later converted to a PDF document
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                await this.ExportToXpsAsync<TViewModel>(fileName, memoryStream, parameters);
+                await this.ExportToXpsAsync<TViewModel>(fileName, memoryStream, parameters, progress);
                 this.ExportToPdf(memoryStream, outputStream);
             }
         }
@@ -517,18 +524,20 @@ namespace System.Windows.Documents.Reporting
         /// Renders the specified document.
         /// </summary>
         /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public Task<FixedDocument> RenderAsync<TDocument>(CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TDocument>(null, cancellationToken);
+        public Task<FixedDocument> RenderAsync<TDocument>(IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TDocument>(null, progress, cancellationToken);
 
         /// <summary>
         /// Renders the specified document.
         /// </summary>
         /// <typeparam name="TDocument">The type of document that is to be rendered.</typeparam>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync<TDocument>(object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
+        public async Task<FixedDocument> RenderAsync<TDocument>(object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -540,7 +549,7 @@ namespace System.Windows.Documents.Reporting
                 await this.ExecuteInStaThreadAsync<bool>(async () =>
                 {
                     // Exports the document to an in-memory stream
-                    await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters);
+                    await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters, progress);
 
                     // Since everything went alright, true is returned
                     return true;
@@ -571,18 +580,20 @@ namespace System.Windows.Documents.Reporting
         /// </summary>
         /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the rendering process.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public Task<FixedDocument> RenderAsync<TViewModel>(string fileName, CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TViewModel>(fileName, null, cancellationToken);
+        public Task<FixedDocument> RenderAsync<TViewModel>(string fileName, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => this.RenderAsync<TViewModel>(fileName, null, progress, cancellationToken);
 
         /// <summary>
         /// Loads the specified XAML file and renders it.
         /// </summary>
         /// <typeparam name="TViewModel">The type of the view model with which the document is to be rendered.</typeparam>
         /// <param name="fileName">The name of the XAML file that is to be loaded and rendered.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
         /// <returns>Returns the rendered fixed document.</returns>
-        public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<FixedDocument> RenderAsync<TViewModel>(string fileName, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -594,7 +605,7 @@ namespace System.Windows.Documents.Reporting
                 await this.ExecuteInStaThreadAsync<bool>(async () =>
                 {
                     // Exports the document to an in-memory stream
-                    await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters);
+                    await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters, progress);
 
                     // Since everything went alright, true is returned
                     return true;
@@ -626,8 +637,9 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, outputStream, null, cancellationToken);
+        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, outputStream, null, progress, cancellationToken);
 
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
@@ -636,8 +648,9 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, Stream outputStream, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -652,10 +665,10 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters);
+                            await this.ExportToXpsAsync<TDocument>(threadSafeStream, parameters, progress);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync<TDocument>(threadSafeStream, parameters);
+                            await this.ExportToPdfAsync<TDocument>(threadSafeStream, parameters, progress);
                             break;
                     }
 
@@ -684,8 +697,9 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputStream, null, cancellationToken);
+        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputStream, null, progress, cancellationToken);
 
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
@@ -695,8 +709,9 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputStream">The output stream to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, Stream outputStream, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tries to export the document, if it could not be exported, then an exception is thrown
             try
@@ -711,10 +726,10 @@ namespace System.Windows.Documents.Reporting
                     switch (documentFormat)
                     {
                         case DocumentFormat.Xps:
-                            await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters);
+                            await this.ExportToXpsAsync<TViewModel>(fileName, threadSafeStream, parameters, progress);
                             break;
                         case DocumentFormat.Pdf:
-                            await this.ExportToPdfAsync<TViewModel>(fileName, threadSafeStream, parameters);
+                            await this.ExportToPdfAsync<TViewModel>(fileName, threadSafeStream, parameters, progress);
                             break;
                     }
 
@@ -742,8 +757,9 @@ namespace System.Windows.Documents.Reporting
         /// <typeparam name="TDocument">The type of document that is to be rendered and exported.</typeparam>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, fileName, null, cancellationToken);
+        public Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document => this.ExportAsync<TDocument>(documentFormat, fileName, null, progress, cancellationToken);
 
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
@@ -752,11 +768,12 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="fileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, object parameters, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
+        public async Task ExportAsync<TDocument>(DocumentFormat documentFormat, string fileName, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) where TDocument : Document
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
-                await this.ExportAsync<TDocument>(documentFormat, fileStream, parameters, cancellationToken);
+                await this.ExportAsync<TDocument>(documentFormat, fileStream, parameters, progress, cancellationToken);
         }
 
         /// <summary>
@@ -766,8 +783,9 @@ namespace System.Windows.Documents.Reporting
         /// <param name="fileName">The name of the XAML file, which contains the document that is to be exported.</param>
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputFileName, null, cancellationToken);
+        public Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken)) => this.ExportAsync<TViewModel>(fileName, documentFormat, outputFileName, null, progress, cancellationToken);
 
         /// <summary>
         /// Renders and exports the specified document to the specified document format.
@@ -777,11 +795,12 @@ namespace System.Windows.Documents.Reporting
         /// <param name="documentFormat">The file format of the document to which it is to be exported.</param>
         /// <param name="outputFileName">The name of the file to which the rendered document file is written.</param>
         /// <param name="parameters">The parameters that are to be injected into the view model of the document.</param>
+        /// <param name="progress">The object which is used to report the progess of the rendering process.</param>
         /// <param name="cancellationToken">The token that can be used to cancel the export.</param>
-        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ExportAsync<TViewModel>(string fileName, DocumentFormat documentFormat, string outputFileName, object parameters, IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             using (FileStream fileStream = new FileStream(outputFileName, FileMode.Create))
-                await this.ExportAsync<TViewModel>(fileName, documentFormat, fileStream, parameters, cancellationToken);
+                await this.ExportAsync<TViewModel>(fileName, documentFormat, fileStream, parameters, progress, cancellationToken);
         }
 
         #endregion
